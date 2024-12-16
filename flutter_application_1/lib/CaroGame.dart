@@ -6,7 +6,7 @@ void main() {
 }
 
 bool isMuted = false;
-int maxTime = 10;
+double maxTime = 10;
 
 class TicTacToeApp extends StatelessWidget {
   const TicTacToeApp({super.key});
@@ -27,9 +27,12 @@ class GameScreen extends StatefulWidget {
   _GameScreenState createState() => _GameScreenState();
 }
 
+// Chuyển đổi cấu trúc bàn cờ sang danh sách hai chiều
+List<List<int>> board = List.generate(5, (_) => List.filled(5, 0));
+
 class _GameScreenState extends State<GameScreen> {
   int currentPlayer = 1; // 1 là người chơi X, 2 là người chơi O
-  int timeLeft = 10; // Thời gian còn lại cho mỗi lượt chơi
+  double timeLeft = 10; // Thời gian còn lại cho mỗi lượt chơi
   Timer? timer;
 
   @override
@@ -45,12 +48,15 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // Bắt đầu đếm ngược thời gian cho mỗi lượt chơi
+  // Hàm bắt đầu đếm ngược thời gian
   void startTimer() {
+    timer?.cancel(); // Hủy Timer cũ nếu có
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (timeLeft > 0) {
-          timeLeft--;
+          timeLeft--; // Giảm thời gian mỗi giây
         } else {
+          // Nếu hết thời gian, tự động chuyển lượt
           switchPlayer();
         }
       });
@@ -58,11 +64,165 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // Chuyển lượt chơi khi hết thời gian
+  // Hàm chuyển lượt chơi
   void switchPlayer() {
     setState(() {
-      currentPlayer = currentPlayer == 1 ? 2 : 1;
-      timeLeft = 10; // Đặt lại thời gian cho lượt tiếp theo
+      currentPlayer = currentPlayer == 1 ? 2 : 1; // Đổi người chơi
+      timeLeft = maxTime; // Reset thời gian cho người chơi tiếp theo
+      startTimer(); // Bắt đầu đếm ngược lại
+      isActionLocked = false;
     });
+  }
+
+// Hàm mở rộng bàn cờ
+  void expandBoard() {
+    setState(() {
+      int currentSize = board.length; // Kích thước hiện tại
+
+      // Sao chép board cũ
+      List<List<int>> newBoard = List.generate(
+        currentSize + 4,
+        (_) => List.filled(currentSize + 4, 0),
+      );
+
+      // Ghi lại dữ liệu cũ vào board mới
+      for (int i = 0; i < currentSize; i++) {
+        for (int j = 0; j < currentSize; j++) {
+          newBoard[i + 2][j + 2] = board[i][j];
+        }
+      }
+
+      board = newBoard; // Cập nhật lại board
+    });
+  }
+
+// Hàm kiểm tra xem bàn cờ có đầy không
+  bool isBoardFull() {
+    return board.every((row) => row.every((cell) => cell != 0));
+  }
+
+  // Biến kiểm soát trạng thái lượt chơi
+  bool isPlayerTurn = true;
+
+  bool isActionLocked = false; // Biến toàn cục để khóa hành động
+
+  // Sửa đổi hàm onCellTap
+  void onCellTap(int row, int col) {
+    if (isActionLocked) {
+      return; // Nếu đang khóa, không làm gì cả
+    }
+
+    if (board[row][col] == 0) {
+      // Chỉ xử lý khi ô còn trống
+      setState(() {
+        board[row][col] = currentPlayer; // Đánh dấu ô
+        timeLeft = 0; // Đặt thời gian hiện tại thành 0
+        isActionLocked = true; // Khóa hành động
+      });
+
+      if (checkWin(currentPlayer)) {
+        timer?.cancel(); // Dừng timer nếu có người thắng
+        showWinnerDialog(currentPlayer);
+      } else if (isBoardFull()) {
+        expandBoard(); // Mở rộng bàn cờ nếu tất cả các ô đã được đánh
+      } else {
+        // Nếu chưa thắng hoặc hòa, chuyển lượt
+        switchPlayer();
+        isActionLocked = false; // Mở khóa khi đã chuyển lượt
+      }
+    }
+  }
+
+// Hàm kiểm tra chiến thắng
+  // Sửa đổi hàm checkWin để hoạt động với danh sách hai chiều
+  bool checkWin(int player) {
+    int size = board.length;
+    for (int row = 0; row < size; row++) {
+      for (int col = 0; col < size; col++) {
+        // Kiểm tra ngang
+        if (col <= size - 4 &&
+            List.generate(4, (j) => board[row][col + j] == player)
+                .every((e) => e)) return true;
+
+        // Kiểm tra dọc
+        if (row <= size - 4 &&
+            List.generate(4, (j) => board[row + j][col] == player)
+                .every((e) => e)) return true;
+
+        // Kiểm tra chéo phải
+        if (row <= size - 4 &&
+            col <= size - 4 &&
+            List.generate(4, (j) => board[row + j][col + j] == player)
+                .every((e) => e)) return true;
+
+        // Kiểm tra chéo trái
+        if (row <= size - 4 &&
+            col >= 3 &&
+            List.generate(4, (j) => board[row + j][col - j] == player)
+                .every((e) => e)) return true;
+      }
+    }
+    return false;
+  }
+
+// Hiển thị dialog người chiến thắng
+  void showWinnerDialog(int player) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Game Over'),
+          content: Text('Người chơi ${player == 1 ? "X" : "O"} thắng!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                resetGame();
+                Navigator.pop(context);
+              },
+              child: const Text('Chơi lại'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+// Hiển thị dialog hòa
+  void showDrawDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Game Over'),
+          content: const Text('Trò chơi hòa!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                resetGame();
+                Navigator.pop(context);
+              },
+              child: const Text('Chơi lại'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+// Hàm reset bàn cờ
+  void resetGame() {
+    setState(() {
+      board = List.generate(
+        5, // Số hàng
+        (_) => List.filled(5, 0), // Số cột và giá trị mặc định
+      );
+      currentPlayer = 1; // Người chơi bắt đầu là 1
+      timeLeft = 10; // Reset thời gian
+    });
+    startTimer(); // Khởi động lại Timer
+    isActionLocked = false;
   }
 
   @override
@@ -245,8 +405,8 @@ class _GameScreenState extends State<GameScreen> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0), // Giảm padding vertical
                 child: Container(
-                  width: 380,
-                  height: 380,
+                  width: 400,
+                  height: 400,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
@@ -259,21 +419,42 @@ class _GameScreenState extends State<GameScreen> {
                     ],
                   ),
                   child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: board.length,
                       crossAxisSpacing: 5,
                       mainAxisSpacing: 5,
                     ),
+                    itemCount: board.length * board.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(5),
+                      int row = index ~/ board.length;
+                      int col = index % board.length;
+                      return GestureDetector(
+                        onTap: () =>
+                            onCellTap(row, col), // Xử lý khi nhấn vào ô
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100, // Màu nền mặc định
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Center(
+                            child: Text(
+                              board[row][col] == 1
+                                  ? 'X' // Hiển thị "X" cho người chơi 1
+                                  : board[row][col] == 2
+                                      ? 'O' // Hiển thị "O" cho người chơi 2
+                                      : '', // Không hiển thị gì nếu ô trống
+                              style: TextStyle(
+                                fontSize: 32, // Kích thước chữ
+                                fontWeight: FontWeight.bold, // In đậm
+                                color: board[row][col] == 1
+                                    ? Colors.red // Màu chữ của X
+                                    : Colors.blue, // Màu chữ của O
+                              ),
+                            ),
+                          ),
                         ),
                       );
                     },
-                    itemCount: 9,
                   ),
                 ),
               ),
