@@ -38,6 +38,7 @@ dependencies:
   flare_flutter: ^3.0.0      # Animation Flare
   lottie: ^2.0.0  
   font_awesome_flutter: ^10.4.0           # Animation JSON từ Lottie
+  flutter_screenutil: ^5.9.1
 
 
   # The following adds the Cupertino Icons font to your application.
