@@ -25,7 +25,10 @@ class _ScreenGameState extends State<ScreenGame> {
             height: 1.0,
           ),
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,  
+                      vertical: 10.h,   
+            ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(

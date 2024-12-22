@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.local_fire_department, color: Colors.grey),
+                icon: Icon(Icons.local_fire_department, color: Colors.grey,size: 35.h),
                 onPressed: () {},
               ),
               Text(
@@ -68,14 +68,14 @@ class _MyAppState extends State<MyApp> {
               Stack(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.notifications, color: Colors.black),
+                    icon: Icon(Icons.notifications, color: Colors.black,size: 35.h),
                     onPressed: () {},
                   ),
                   Positioned(
                     right: 7.w,
                     top: 7.h,
                     child: CircleAvatar(
-                      radius: 12.r,
+                      radius: 10.r,
                       backgroundColor: Colors.red,
                       child: Text(
                         '2',
