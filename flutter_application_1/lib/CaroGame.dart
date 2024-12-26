@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'dart:convert';
 
 void main() {
   runApp(const TicTacToeApp());
@@ -7,6 +9,21 @@ void main() {
 
 bool isMuted = false;
 double maxTime = 10;
+
+// web socket
+late WebSocketChannel channel; // Kênh WebSocket
+bool isOnlineMode = true; // Kích hoạt chế độ online
+//
+
+// ID player
+Map<int, String> playerIds = {
+  1: "player1", // Người chơi 1
+  2: "player2", // Người chơi 2
+};
+String gameStatus = 'playing'; // Trạng thái ban đầu là 'playing'
+String? winnerId; // Biến lưu ID của người chơi thắng
+
+//
 
 class TicTacToeApp extends StatelessWidget {
   const TicTacToeApp({super.key});
@@ -29,8 +46,10 @@ class GameScreen extends StatefulWidget {
 
 // Chuyển đổi cấu trúc bàn cờ sang danh sách hai chiều
 List<List<int>> board = List.generate(5, (_) => List.filled(5, 0));
+List<List<int>> winningCells = []; // Danh sách lưu các ô chiến thắng
+String? currentPlayerId; // Lưu ID của người chơi hiện tại
 
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int currentPlayer = 1; // 1 là người chơi X, 2 là người chơi O
   double timeLeft = 10; // Thời gian còn lại cho mỗi lượt chơi
   Timer? timer;
@@ -38,11 +57,41 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
+    if (isOnlineMode) {
+      channel = WebSocketChannel.connect(
+        Uri.parse('ws://your-server-url'), // Thay bằng URL của server
+      );
+
+      // Lắng nghe thông điệp từ server
+      channel.stream.listen((message) {
+        handleServerMessage(message);
+      });
+    }
     startTimer();
+  }
+
+  void handleServerMessage(String message) {
+    final data = jsonDecode(message);
+
+    if (data['type'] == 'updateBoard') {
+      setState(() {
+        board =
+            List<List<int>>.from(data['board']); // Cập nhật bàn cờ từ server
+        currentPlayerId = data['currentPlayerId']; // Cập nhật lượt chơi
+      });
+    } else if (data['type'] == 'gameOver') {
+      showWinnerDialog(data['winnerId']); // Hiển thị người thắng
+    } else if (data['type'] == 'playerJoined') {
+      // Xử lý khi có người chơi tham gia phòng
+      print('Player joined: ${data['playerId']}');
+    }
   }
 
   @override
   void dispose() {
+    if (isOnlineMode) {
+      channel.sink.close(); // Đóng WebSocket khi thoát
+    }
     timer?.cancel();
     super.dispose();
   }
@@ -108,58 +157,117 @@ class _GameScreenState extends State<GameScreen> {
 
   // Sửa đổi hàm onCellTap
   void onCellTap(int row, int col) {
-    if (isActionLocked) {
+    if (isActionLocked || gameStatus != 'playing' || board[row][col] != 0) {
       return; // Nếu đang khóa, không làm gì cả
     }
+    String currentPlayerId = playerIds[currentPlayer]!;
 
-    if (board[row][col] == 0) {
-      // Chỉ xử lý khi ô còn trống
-      setState(() {
-        board[row][col] = currentPlayer; // Đánh dấu ô
-        timeLeft = 0; // Đặt thời gian hiện tại thành 0
-        isActionLocked = true; // Khóa hành động
-      });
+    if (isOnlineMode) {
+      if (board[row][col] == 0 && currentPlayerId == playerIds[1]) {
+        // Kiểm tra lượt
+        // Gửi thông điệp đến server
+        channel.sink.add(jsonEncode({
+          'type': 'makeMove',
+          'row': row,
+          'col': col,
+          'playerId': currentPlayerId,
+        }));
+      }
+    } else {
+      if (board[row][col] == 0) {
+        // Chỉ xử lý khi ô còn trống
+        setState(() {
+          board[row][col] =
+              currentPlayer; // lưu tạng thái đanhs của người chơi
+          timeLeft = 0; // Đặt thời gian hiện tại thành 0
+          isActionLocked = true; // Khóa hành động
+        });
 
-      if (checkWin(currentPlayer)) {
-        timer?.cancel(); // Dừng timer nếu có người thắng
-        showWinnerDialog(currentPlayer);
-      } else if (isBoardFull()) {
-        expandBoard(); // Mở rộng bàn cờ nếu tất cả các ô đã được đánh
-      } else {
-        // Nếu chưa thắng hoặc hòa, chuyển lượt
-        switchPlayer();
-        isActionLocked = false; // Mở khóa khi đã chuyển lượt
+        if (checkWin(currentPlayer)) {
+          timer?.cancel(); // Dừng timer nếu có người thắng
+          _startBrushEffect(); // Thực hiện hiệu ứng "bút lông" tô màu
+        } else if (isBoardFull()) {
+          expandBoard(); // Mở rộng bàn cờ nếu tất cả các ô đã được đánh
+        } else {
+          // Nếu chưa thắng hoặc hòa, chuyển lượt
+          switchPlayer();
+          isActionLocked = false; // Mở khóa khi đã chuyển lượt
+        }
       }
     }
+  }
+
+  void _startBrushEffect() async {
+    for (int i = 0; i < winningCells.length; i++) {
+      await Future.delayed(const Duration(milliseconds: 500), () {
+        setState(() {
+          // Tô màu cho từng ô thắng
+          final cell = winningCells[i];
+          board[cell[0]][cell[1]] =
+              3; // Tạm gán giá trị 3 để biểu thị ô đang được vẽ
+        });
+      });
+    }
+
+    // Sau khi hoàn tất hiệu ứng tô màu, hiển thị thông báo chiến thắng
+    Future.delayed(const Duration(seconds: 1), () {
+      showWinnerDialog(currentPlayer);
+    });
   }
 
 // Hàm kiểm tra chiến thắng
   // Sửa đổi hàm checkWin để hoạt động với danh sách hai chiều
   bool checkWin(int player) {
+    winningCells.clear();
     int size = board.length;
     for (int row = 0; row < size; row++) {
       for (int col = 0; col < size; col++) {
         // Kiểm tra ngang
+        // Kiểm tra ngang
         if (col <= size - 4 &&
             List.generate(4, (j) => board[row][col + j] == player)
-                .every((e) => e)) return true;
+                .every((e) => e)) {
+          winningCells = List.generate(4, (j) => [row, col + j]);
+          setState(() {
+            gameStatus = 'win'; // Cập nhật trạng thái khi có người thắng
+          });
+          return true;
+        }
 
-        // Kiểm tra dọc
+// Kiểm tra dọc
         if (row <= size - 4 &&
             List.generate(4, (j) => board[row + j][col] == player)
-                .every((e) => e)) return true;
+                .every((e) => e)) {
+          winningCells = List.generate(4, (j) => [row + j, col]);
+          setState(() {
+            gameStatus = 'win'; // Cập nhật trạng thái khi có người thắng
+          });
+          return true;
+        }
 
-        // Kiểm tra chéo phải
+// Kiểm tra chéo phải
         if (row <= size - 4 &&
             col <= size - 4 &&
             List.generate(4, (j) => board[row + j][col + j] == player)
-                .every((e) => e)) return true;
+                .every((e) => e)) {
+          winningCells = List.generate(4, (j) => [row + j, col + j]);
+          setState(() {
+            gameStatus = 'win'; // Cập nhật trạng thái khi có người thắng
+          });
+          return true;
+        }
 
-        // Kiểm tra chéo trái
+// Kiểm tra chéo trái
         if (row <= size - 4 &&
             col >= 3 &&
             List.generate(4, (j) => board[row + j][col - j] == player)
-                .every((e) => e)) return true;
+                .every((e) => e)) {
+          winningCells = List.generate(4, (j) => [row + j, col - j]);
+          setState(() {
+            gameStatus = 'win'; // Cập nhật trạng thái khi có người thắng
+          });
+          return true;
+        }
       }
     }
     return false;
@@ -167,22 +275,43 @@ class _GameScreenState extends State<GameScreen> {
 
 // Hiển thị dialog người chiến thắng
   void showWinnerDialog(int player) {
+    winnerId = playerIds[player]; // Lưu ID người thắng vào biến
+    sendWinnerToServer(); // Gửi dữ liệu lên server
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Game Over'),
-          content: Text('Người chơi ${player == 1 ? "X" : "O"} thắng!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                resetGame();
-                Navigator.pop(context);
-              },
-              child: const Text('Chơi lại'),
+        return Center(
+          child: ScaleTransition(
+            scale: CurvedAnimation(
+              parent: AnimationController(
+                duration: const Duration(milliseconds: 500),
+                vsync: this,
+              )..forward(),
+              curve: Curves.elasticOut,
             ),
-          ],
+            child: AlertDialog(
+              title: const Text('🎉 Chúc mừng!'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Người chơi ${player == 1 ? "X" : "O"} đã thắng!'),
+                  const SizedBox(height: 20),
+                  const Icon(Icons.star, size: 50, color: Colors.amber),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    resetGame();
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Chơi lại'),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -222,6 +351,7 @@ class _GameScreenState extends State<GameScreen> {
       timeLeft = 10; // Reset thời gian
     });
     startTimer(); // Khởi động lại Timer
+    winningCells.clear();
     isActionLocked = false;
   }
 
@@ -239,6 +369,22 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
           ),
+          Positioned.fill(
+            child: IgnorePointer(
+              // Đảm bảo hiệu ứng không cản trở người chơi
+              ignoring: true,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 500), // Hiệu ứng mờ dần
+                opacity: winningCells.isNotEmpty
+                    ? 1.0
+                    : 0.0, // Hiển thị khi có ô thắng
+                child: CustomPaint(
+                  painter: FireworksPainter(), // Vẽ pháo hoa trên toàn màn hình
+                ),
+              ),
+            ),
+          ),
+
           // Giao diện trò chơi
           Column(
             mainAxisAlignment: MainAxisAlignment
@@ -426,29 +572,42 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                     itemCount: board.length * board.length,
                     itemBuilder: (context, index) {
-                      int row = index ~/ board.length;
-                      int col = index % board.length;
+                      int row = index ~/ board.length; // Hàng của ô
+                      int col = index % board.length; // Cột của ô
+
+                      // Kiểm tra nếu đây là ô chiến thắng
+                      bool isWinningCell = winningCells.any(
+                        (cell) => cell[0] == row && cell[1] == col,
+                      );
+
                       return GestureDetector(
-                        onTap: () =>
-                            onCellTap(row, col), // Xử lý khi nhấn vào ô
-                        child: Container(
+                        onTap: () => onCellTap(row, col),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade100, // Màu nền mặc định
+                            color: board[row][col] == 3
+                                ? Colors.orange // Hiệu ứng tô màu "bút lông"
+                                : isWinningCell
+                                    ? Colors.yellow.withOpacity(
+                                        0.8) // Màu vàng nếu là ô thắng
+                                    : Colors.grey.shade100, // Màu mặc định
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Center(
                             child: Text(
                               board[row][col] == 1
-                                  ? 'X' // Hiển thị "X" cho người chơi 1
+                                  ? 'X'
                                   : board[row][col] == 2
-                                      ? 'O' // Hiển thị "O" cho người chơi 2
-                                      : '', // Không hiển thị gì nếu ô trống
+                                      ? 'O'
+                                      : '',
                               style: TextStyle(
-                                fontSize: 32, // Kích thước chữ
-                                fontWeight: FontWeight.bold, // In đậm
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
                                 color: board[row][col] == 1
-                                    ? Colors.red // Màu chữ của X
-                                    : Colors.blue, // Màu chữ của O
+                                    ? Colors.red // Màu đỏ cho X
+                                    : board[row][col] == 2
+                                        ? Colors.blue // Màu xanh cho O
+                                        : Colors.black,
                               ),
                             ),
                           ),
@@ -582,8 +741,7 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget XOWidget(int player) {
-    bool isCurrentPlayer = currentPlayer ==
-        player; // Kiểm tra xem có phải lượt chơi hiện tại không
+// Kiểm tra xem có phải lượt chơi hiện tại không
     return SizedBox(
       width: 50, // Kích thước cố định
       height: 50,
@@ -602,4 +760,34 @@ class _GameScreenState extends State<GameScreen> {
       ),
     );
   }
+}
+
+void sendWinnerToServer() {
+  if (isOnlineMode && winnerId != null) {
+    final message = jsonEncode({
+      'type': 'gameOver',
+      'winnerId': winnerId,
+    });
+
+    channel.sink.add(message); // Gửi thông điệp qua WebSocket
+  }
+}
+
+class FireworksPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.amber.withOpacity(0.8)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    for (int i = 0; i < 10; i++) {
+      double x = size.width * (0.1 + 0.8 * i / 10);
+      double y = size.height * (0.1 + 0.8 * i / 10);
+      canvas.drawCircle(Offset(x, y), 20 + i * 2, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
