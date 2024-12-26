@@ -23,10 +23,9 @@ class InputScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Danh sách loại tài khoản và màu tương ứng
     final accountTypes = [
-      {'name': 'Facebook', 'color': Colors.blue},
+      {'name': 'Username & Password', 'color': Colors.blue},
       {'name': 'Google', 'color': Colors.green},
-      {'name': 'Email or Fhone numbers', 'color': Colors.red},
-      {'name': 'Tài khoản VIP', 'color': Colors.red}
+      {'name': 'Email', 'color': Colors.red},
     ];
 
     return Scaffold(
@@ -158,7 +157,7 @@ class InputScreen extends StatelessWidget {
                 ),
                 child: const Center(
                   child: Text(
-                    'Tài khoản khác',
+                    'Tạo tài khoản mới',
                     style: TextStyle(
                       color: Colors.black87,
                       fontSize: 16,
