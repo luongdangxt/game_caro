@@ -59,7 +59,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     super.initState();
     if (isOnlineMode) {
       channel = WebSocketChannel.connect(
-        Uri.parse('ws://your-server-url'), // Thay bằng URL của server
+        Uri.parse('ws://localhost:8080'), // Thay bằng URL của server
       );
 
       // Lắng nghe thông điệp từ server
@@ -116,10 +116,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   // Hàm chuyển lượt chơi
   void switchPlayer() {
     setState(() {
-      currentPlayer = currentPlayer == 1 ? 2 : 1; // Đổi người chơi
-      timeLeft = maxTime; // Reset thời gian cho người chơi tiếp theo
-      startTimer(); // Bắt đầu đếm ngược lại
-      isActionLocked = false;
+      currentPlayer = currentPlayer == 1 ? 2 : 1; // Đổi lượt
+      timeLeft = maxTime; // Reset thời gian
+      isPlayerTurn = true; // Mở lại lượt cho người chơi
+      isActionLocked = false; // Mở khóa hành động
+      startTimer(); // Bắt đầu lại đếm ngược
     });
   }
 
@@ -158,40 +159,74 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   // Sửa đổi hàm onCellTap
   void onCellTap(int row, int col) {
     if (isActionLocked || gameStatus != 'playing' || board[row][col] != 0) {
-      return; // Nếu đang khóa, không làm gì cả
+      return; // Khóa hành động hoặc ô đã đánh
     }
-    String currentPlayerId = playerIds[currentPlayer]!;
 
     if (isOnlineMode) {
-      if (board[row][col] == 0 && currentPlayerId == playerIds[1]) {
-        // Kiểm tra lượt
-        // Gửi thông điệp đến server
-        channel.sink.add(jsonEncode({
-          'type': 'makeMove',
-          'row': row,
-          'col': col,
-          'playerId': currentPlayerId,
-        }));
+      // Kiểm tra lượt chơi online
+      String currentPlayerId = playerIds[currentPlayer]!;
+      if (currentPlayerId != playerIds[1]) {
+        // Không phải lượt của người chơi, không làm gì cả
+        return;
       }
-    } else {
-      if (board[row][col] == 0) {
-        // Chỉ xử lý khi ô còn trống
-        setState(() {
-          board[row][col] =
-              currentPlayer; // lưu tạng thái đanhs của người chơi
-          timeLeft = 0; // Đặt thời gian hiện tại thành 0
-          isActionLocked = true; // Khóa hành động
-        });
 
-        if (checkWin(currentPlayer)) {
-          timer?.cancel(); // Dừng timer nếu có người thắng
-          _startBrushEffect(); // Thực hiện hiệu ứng "bút lông" tô màu
-        } else if (isBoardFull()) {
-          expandBoard(); // Mở rộng bàn cờ nếu tất cả các ô đã được đánh
-        } else {
-          // Nếu chưa thắng hoặc hòa, chuyển lượt
-          switchPlayer();
-          isActionLocked = false; // Mở khóa khi đã chuyển lượt
+      // Xử lý lượt của người chơi
+      setState(() {
+        board[row][col] = currentPlayer;
+        timeLeft = 0; // Đặt lại thời gian
+        isActionLocked = true; // Khóa hành động chờ phản hồi từ server
+      });
+
+      // Gửi thông điệp lên server
+      channel.sink.add(jsonEncode({
+        'type': 'makeMove',
+        'row': row,
+        'col': col,
+        'playerId': currentPlayerId,
+      }));
+    } else {
+      // Chơi offline: Người chơi đánh, sau đó AI đánh
+      setState(() {
+        board[row][col] = currentPlayer;
+        timeLeft = 0; // Đặt lại thời gian
+      });
+
+      if (checkWin(currentPlayer)) {
+        timer?.cancel();
+        _startBrushEffect();
+      } else if (isBoardFull()) {
+        expandBoard();
+      } else {
+        // Đến lượt AI đánh
+        switchPlayer(); // Chuyển sang AI
+        Future.delayed(const Duration(milliseconds: 500), () {
+          playAIMove(); // Gọi hàm xử lý nước đi của AI
+        });
+      }
+    }
+  }
+
+// Hàm xử lý nước đi của AI
+  void playAIMove() {
+    if (gameStatus != 'playing') return;
+
+    // Logic đơn giản: AI đánh ô trống đầu tiên tìm được
+    for (int i = 0; i < board.length; i++) {
+      for (int j = 0; j < board[i].length; j++) {
+        if (board[i][j] == 0) {
+          setState(() {
+            board[i][j] = currentPlayer; // AI đánh ô
+          });
+
+          if (checkWin(currentPlayer)) {
+            timer?.cancel();
+            _startBrushEffect();
+          } else if (isBoardFull()) {
+            expandBoard();
+          } else {
+            switchPlayer(); // Chuyển lại lượt cho người chơi
+          }
+          return;
         }
       }
     }
