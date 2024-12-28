@@ -1,6 +1,7 @@
 import 'package:flutter_application_1/CaroGame.dart';
 import 'package:flutter_application_1/model/model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/setup_sence.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ScreenToday extends StatefulWidget {
@@ -91,7 +92,7 @@ class _ScreenTodayState extends State<ScreenToday> {
         onTap: () {
           Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TicTacToeApp()),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
         );
         },
         child: Container(

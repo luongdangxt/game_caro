@@ -39,6 +39,7 @@ dependencies:
   lottie: ^2.0.0  
   font_awesome_flutter: ^10.4.0           # Animation JSON từ Lottie
   flutter_screenutil: ^5.9.1
+  web_socket_channel: ^2.3.0
 
 
   # The following adds the Cupertino Icons font to your application.

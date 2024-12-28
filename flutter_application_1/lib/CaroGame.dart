@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 void main() {
   runApp(const TicTacToeApp());
 }
@@ -227,6 +229,9 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return ScreenUtilInit(
+      designSize: Size(430, 932), // Kích thước thiết kế ban đầu
+      builder: (context, child) {
     return Scaffold(
       body: Stack(
         children: [
@@ -268,7 +273,7 @@ class _GameScreenState extends State<GameScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(10),
                       ),
                       child: Icon(isMuted ? Icons.volume_off : Icons.volume_up),
                     ),
@@ -371,7 +376,7 @@ class _GameScreenState extends State<GameScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(10),
                       ),
                       child: const Icon(Icons.settings),
                     ),
@@ -402,11 +407,10 @@ class _GameScreenState extends State<GameScreen> {
 
               // Bàn cờ
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10.0), // Giảm padding vertical
+                padding: const EdgeInsets.all(10.0), // Giảm padding vertical
                 child: Container(
-                  width: 400,
-                  height: 400,
+                  width: 410,
+                  height: 410,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
@@ -418,7 +422,9 @@ class _GameScreenState extends State<GameScreen> {
                       ),
                     ],
                   ),
-                  child: GridView.builder(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: board.length,
                       crossAxisSpacing: 5,
@@ -456,13 +462,15 @@ class _GameScreenState extends State<GameScreen> {
                       );
                     },
                   ),
+                    ),
+                  
                 ),
               ),
 
               // Thông tin người chơi dưới bàn cờ
               Padding(
                 padding: const EdgeInsets.only(
-                    top: 20.0, left: 20.0, right: 20.0), // Padding tổng thể
+                    top: 20.0, left: 10, right: 10), // Padding tổng thể
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.center, // Căn giữa toàn bộ Column
@@ -477,18 +485,18 @@ class _GameScreenState extends State<GameScreen> {
                           children: [
                             // Avatar của người chơi 1
                             // avatarWidget(1),
-                            const SizedBox(height: 10),
+                            // const SizedBox(height: 10),
                             playerWidget(1), // Hiển thị X hoặc thời gian
                           ],
                         ),
-                        const SizedBox(width: 30), // Khoảng cách giữa 2 cột
+                        // const SizedBox(width: 30), // Khoảng cách giữa 2 cột
                         Column(
                           mainAxisAlignment: MainAxisAlignment
                               .center, // Căn giữa các phần tử trong Column 2
                           children: [
                             // Avatar của người chơi 2
                             // avatarWidget(2),
-                            const SizedBox(height: 10),
+                            // const SizedBox(height: 10),
                             playerWidget(2), // Hiển thị O hoặc thời gian
                           ],
                         ),
@@ -504,6 +512,8 @@ class _GameScreenState extends State<GameScreen> {
           )
         ],
       ),
+    );
+    }
     );
   }
 
