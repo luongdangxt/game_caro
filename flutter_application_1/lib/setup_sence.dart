@@ -998,7 +998,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   void initState() {
     super.initState();
     cells = List.filled(boardSize * boardSize, '');
-
+    joinRoom();
     channel.stream.listen((message) {
       final data = jsonDecode(message);
       setState(() {
@@ -1038,7 +1038,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    joinRoom();
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Caro Game'),
