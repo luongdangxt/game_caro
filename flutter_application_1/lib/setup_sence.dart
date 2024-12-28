@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/CaroGame.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -268,7 +272,7 @@ class SettingsScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => GameScreen(difficulty: title),
+            builder: (context) => TicTacToeApp(),
           ),
         );
       },
@@ -478,7 +482,6 @@ class PlayOnlineScreen extends StatelessWidget {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  // Xử lý tham gia phòng tại đây
                                   Navigator.pop(context);
                                 },
                                 child: const Text("Tham Gia"),
@@ -572,7 +575,10 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CaroGameScreen(roomId: "LK1694"))
+                    );
                     // Xử lý logic tham gia phòng tại đây
                   },
                   child: const Text("Tham gia"),
@@ -966,4 +972,117 @@ Widget _buildOptionButton({
       ),
     ),
   );
+}
+
+class CaroGameScreen extends StatefulWidget {
+  final String roomId;
+
+  CaroGameScreen({required this.roomId});
+
+  @override
+  _CaroGameScreenState createState() => _CaroGameScreenState();
+}
+
+class _CaroGameScreenState extends State<CaroGameScreen> {
+  final int boardSize = 15;
+  final WebSocketChannel channel = WebSocketChannel.connect(
+    Uri.parse('wss://carogame.onrender.com'),
+  );
+
+  List<String> cells = [];
+  String statusMessage = 'Waiting to join a room...';
+  String? mySymbol;
+  final TextEditingController roomIdController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    cells = List.filled(boardSize * boardSize, '');
+
+    channel.stream.listen((message) {
+      final data = jsonDecode(message);
+      setState(() {
+        if (data['type'] == 'waiting' || data['type'] == 'game-ready') {
+          statusMessage = data['message'];
+        } else if (data['type'] == 'game-start') {
+          statusMessage = 'Game started! Your symbol: ${data['symbol']}';
+          mySymbol = data['symbol'];
+        } else if (data['type'] == 'move') {
+          final index = data['payload']['index'];
+          final symbol = data['payload']['symbol'];
+          cells[index] = symbol;
+        } else if (data['type'] == 'game-over') {
+          statusMessage = data['message'];
+          channel.sink.close();
+        }
+      });
+    });
+  }
+  
+  void joinRoom() {
+    if (widget.roomId.isNotEmpty) {
+      channel.sink.add(jsonEncode({
+        'type': 'join-room',
+        'payload': {'roomId': widget.roomId},
+      }));
+    }
+  }
+
+  void makeMove(int index) {
+    if (cells[index].isEmpty) {
+      channel.sink.add(jsonEncode({
+        'type': 'move',
+        'payload': {'index': index},
+      }));
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    joinRoom();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Caro Game'),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(statusMessage, style: TextStyle(fontSize: 16)),
+          ),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: boardSize,
+                crossAxisSpacing: 2,
+                mainAxisSpacing: 2,
+              ),
+              itemCount: boardSize * boardSize,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () => makeMove(index),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: Center(
+                      child: Text(
+                        cells[index],
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    channel.sink.close();
+    super.dispose();
+  }
 }
