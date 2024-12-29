@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+import 'CaroGame.dart';
 
 void main() {
   runApp(const MyApp());
@@ -272,7 +275,7 @@ class SettingsScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TicTacToeApp(),
+            builder: (context) => const TicTacToeApp(),
           ),
         );
       },
@@ -576,9 +579,10 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
                 TextButton(
                   onPressed: () {
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CaroGameScreen(roomId: "LK1694"))
-                    );
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const CaroGameScreen(roomId: "LK1694")));
                     // Xử lý logic tham gia phòng tại đây
                   },
                   child: const Text("Tham gia"),
@@ -977,7 +981,7 @@ Widget _buildOptionButton({
 class CaroGameScreen extends StatefulWidget {
   final String roomId;
 
-  CaroGameScreen({required this.roomId});
+  const CaroGameScreen({super.key, required this.roomId});
 
   @override
   _CaroGameScreenState createState() => _CaroGameScreenState();
@@ -1018,7 +1022,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       });
     });
   }
-  
+
   void joinRoom() {
     if (widget.roomId.isNotEmpty) {
       channel.sink.add(jsonEncode({
@@ -1036,43 +1040,221 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       }));
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
-        title: Text('Caro Game'),
+        title: const Text('Caro Game'),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(statusMessage, style: TextStyle(fontSize: 16)),
-          ),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: boardSize,
-                crossAxisSpacing: 2,
-                mainAxisSpacing: 2,
+          // Nền giao diện
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/back.jpg'),
+                fit: BoxFit.cover,
               ),
-              itemCount: boardSize * boardSize,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () => makeMove(index),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                    ),
-                    child: Center(
-                      child: Text(
-                        cells[index],
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Column(
+            children: [
+              // Hiển thị avatar người chơi và thông tin
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    playerWidget(1),
+                    Text(
+                      statusMessage,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(1.0, 1.0),
+                            blurRadius: 3.0,
+                            color: Colors.black,
+                          ),
+                        ],
                       ),
                     ),
+                    playerWidget(2),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: boardSize,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5,
+                      ),
+                      itemCount: boardSize * boardSize,
+                      itemBuilder: (context, index) {
+                        int row = index ~/ boardSize;
+                        int col = index % boardSize;
+
+                        bool isWinningCell = winningCells.any(
+                          (cell) => cell[0] == row && cell[1] == col,
+                        );
+
+                        return GestureDetector(
+                          onTap: () => makeMove(index),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            decoration: BoxDecoration(
+                              color: isWinningCell
+                                  ? Colors.yellow.withOpacity(0.8)
+                                  : Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                if (isWinningCell)
+                                  const BoxShadow(
+                                    color: Colors.orange,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 0),
+                                  ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                cells[index],
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: cells[index] == 'X'
+                                      ? Colors.red
+                                      : cells[index] == 'O'
+                                          ? Colors.blue
+                                          : Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                );
-              },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  int currentPlayer = 1;
+  double timeLeft = 10; // Thời gian còn lại cho mỗi lượt chơi
+  Timer? timer;
+
+  void startTimer() {
+    timer?.cancel(); // Hủy Timer cũ nếu có
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (timeLeft > 0) {
+          timeLeft--; // Giảm thời gian mỗi giây
+        } else {
+          // Nếu hết thời gian, tự động chuyển lượt
+          switchPlayer();
+        }
+      });
+    });
+  }
+
+  void switchPlayer() {
+    setState(() {
+      currentPlayer = currentPlayer == 1 ? 2 : 1; // Đổi lượt
+      timeLeft = maxTime; // Reset thời gian
+      startTimer(); // Bắt đầu lại đếm ngược
+    });
+  }
+
+  // Widget hiển thị thông tin từng người chơi
+  Widget playerWidget(int player) {
+    bool isCurrentPlayer =
+        currentPlayer == player; // Kiểm tra người chơi hiện tại
+    bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
+
+    return SizedBox(
+      width: 200, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
+      height: 90, // Chiều cao cố định
+      child: Stack(
+        children: [
+          // Vùng màu xám với bo tròn
+          Align(
+            alignment:
+                isLeftSide ? Alignment.centerLeft : Alignment.centerRight,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 450), // Hiệu ứng mượt mà
+              width: isCurrentPlayer ? 180 : 90, // Thu phóng về avatar
+              height: isCurrentPlayer ? 70 : 40, // Cao hơn khi đến lượt
+              decoration: BoxDecoration(
+                color: isCurrentPlayer
+                    ? Colors.grey.shade300
+                    : Colors.transparent, // Màu xám khi đến lượt
+                borderRadius: BorderRadius.circular(45), // Bo tròn cả hai bên
+              ),
+            ),
+          ),
+          // Avatar
+          Align(
+            alignment:
+                isLeftSide ? Alignment.centerLeft : Alignment.centerRight,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 450), // Hiệu ứng thu phóng
+              width: isCurrentPlayer ? 70 : 40, // Avatar lớn hơn khi đến lượt
+              height: isCurrentPlayer ? 70 : 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle, // Avatar luôn hình tròn
+                image: DecorationImage(
+                  image: AssetImage(
+                    player == 1
+                        ? 'assets/images/avatar_1.jpg'
+                        : 'assets/images/avatar_2.jpg', // Avatar người chơi
+                  ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          // Thời gian
+          Align(
+            alignment:
+                isLeftSide ? Alignment.centerRight : Alignment.centerLeft,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 450), // Hiệu ứng mờ dần
+              opacity: isCurrentPlayer ? 1.0 : 0.0, // Chỉ hiển thị khi đến lượt
+              child: SizedBox(
+                width: 150, // Kích thước cố định cho vùng thời gian
+                child: Center(
+                  child: Text(
+                    '$timeLeft s', // Hiển thị thời gian còn lại
+                    style: const TextStyle(
+                      fontSize: 22,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
