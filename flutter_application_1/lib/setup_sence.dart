@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
+import 'package:flutter_application_1/model/model.dart';
+import 'package:flutter_application_1/request/apiRoom.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'CaroGame.dart';
@@ -362,167 +364,182 @@ class GameScreen extends StatelessWidget {
 // Thêm màn hình "Play Online"
 class PlayOnlineScreen extends StatelessWidget {
   const PlayOnlineScreen({super.key});
-
+  
+  Future<List<Room>> callLoadRooms() async {
+    final dataFetcher = getData();
+    return await dataFetcher.loadRooms();
+  }
   @override
   Widget build(BuildContext context) {
-    // Dữ liệu mẫu danh sách phòng
-    final List<Map<String, dynamic>> rooms = [
-      {'roomType': 'public', 'currentPlayers': 1, 'maxPlayers': 2},
-      {'roomType': 'private', 'currentPlayers': 2, 'maxPlayers': 2},
-      {'roomType': 'public', 'currentPlayers': 0, 'maxPlayers': 2},
-    ];
-
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              // Hộp tiêu đề "Play Online"
-              Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFCCE5FF), // Màu xanh pastel
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(24),
-                    bottomRight: Radius.circular(24),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Quay lại màn hình trước
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      "Play Online",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Nội dung cuộn với danh sách phòng
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: rooms.length, // Dựa trên số lượng phòng
-                  itemBuilder: (context, index) {
-                    final room = rooms[index];
-                    return buildPlayerCard(
-                      context,
-                      index,
-                      room['roomType'],
-                      room['currentPlayers'],
-                      room['maxPlayers'],
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          // Thanh ngang cố định ở phía dưới
-          Positioned(
-            bottom: 16,
-            left: 16,
-            right: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(100),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+      body: FutureBuilder(
+        future: callLoadRooms(), 
+        builder: (context, snapshot) {
+          // Kiểm tra trạng thái kết nối
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator()); // Hiển thị loading
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}')); // Hiển thị lỗi nếu có
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No rooms available')); // Không có phòng
+          } else {
+            final rooms = snapshot.data!;
+            return Scaffold(
+              body: Stack(
                 children: [
-                  buildActionButton(
-                    context,
-                    icon: Icons.add_circle_outline,
-                    label: "Tạo Phòng",
-                    onTap: () {
-                      _showCreateRoomDialog(context);
-                    },
-                  ),
-                  buildActionButton(
-                    context,
-                    icon: Icons.key,
-                    label: "Nhập Mã",
-                    onTap: () {
-                      // Xử lý logic tham gia bằng mã
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text("Tham Gia Bằng Mã"),
-                            content: const TextField(
-                              decoration: InputDecoration(
-                                labelText: "Nhập mã phòng",
-                                border: OutlineInputBorder(),
+                  Column(
+                    children: [
+                      // Hộp tiêu đề "Play Online"
+                      Container(
+                        width: double.infinity,
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFCCE5FF), // Màu xanh pastel
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(24),
+                            bottomRight: Radius.circular(24),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Navigator.pop(context); // Quay lại màn hình trước
+                              },
+                              icon: const Icon(
+                                Icons.arrow_back,
+                                color: Colors.black,
                               ),
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("Hủy"),
+                            const SizedBox(width: 8),
+                            const Text(
+                              "Play Online",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Tham Gia"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Nội dung cuộn với danh sách phòng
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: rooms.length, // Dựa trên số lượng phòng
+                          itemBuilder: (context, index) {
+                            final room = rooms[index];
+                            return buildPlayerCard(
+                              context,
+                              index,
+                              room.roomType,
+                              room.playerRight != 'null' ? 2 : 1,
+                              2,
+                              room.roomId
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  buildActionButton(
-                    context,
-                    icon: Icons.qr_code_scanner,
-                    label: "Quét QR",
-                    onTap: () {
-                      // Xử lý logic quét QR
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text("Quét QR"),
-                            content: const Text("Chức năng quét QR sẽ ở đây."),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("Đóng"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
+                  // Thanh ngang cố định ở phía dưới
+                  Positioned(
+                    bottom: 16,
+                    left: 16,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          buildActionButton(
+                            context,
+                            icon: Icons.add_circle_outline,
+                            label: "Tạo Phòng",
+                            onTap: () {
+                              _showCreateRoomDialog(context);
+                            },
+                          ),
+                          buildActionButton(
+                            context,
+                            icon: Icons.key,
+                            label: "Nhập Mã",
+                            onTap: () {
+                              // Xử lý logic tham gia bằng mã
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text("Tham Gia Bằng Mã"),
+                                    content: const TextField(
+                                      decoration: InputDecoration(
+                                        labelText: "Nhập mã phòng",
+                                        border: OutlineInputBorder(),
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("Hủy"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("Tham Gia"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          buildActionButton(
+                            context,
+                            icon: Icons.qr_code_scanner,
+                            label: "Quét QR",
+                            onTap: () {
+                              // Xử lý logic quét QR
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text("Quét QR"),
+                                    content: const Text("Chức năng quét QR sẽ ở đây."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("Đóng"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
+            );
+          }
+        },
       ),
     );
   }
@@ -559,7 +576,7 @@ Widget buildActionButton(BuildContext context,
 
 // Widget đại diện cho danh sách "thanh nhỏ"
 Widget buildPlayerCard(BuildContext context, int index, String roomType,
-    int currentPlayers, int maxPlayers) {
+    int currentPlayers, int maxPlayers, String roomId) {
   return GestureDetector(
     onTap: () {
       if (currentPlayers < maxPlayers) {
@@ -582,7 +599,7 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                const CaroGameScreen(roomId: "LK1694")));
+                                CaroGameScreen(roomId: roomId)));
                     // Xử lý logic tham gia phòng tại đây
                   },
                   child: const Text("Tham gia"),
