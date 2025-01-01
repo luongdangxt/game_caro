@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
 import 'package:flutter_application_1/model/model.dart';
 import 'package:flutter_application_1/request/apiRoom.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
 import 'CaroGame.dart';
 
 void main() {
@@ -366,7 +364,7 @@ class PlayOnlineScreen extends StatelessWidget {
   const PlayOnlineScreen({super.key});
   
   Future<List<Room>> callLoadRooms() async {
-    final dataFetcher = getData();
+    final dataFetcher = DataRoom();
     return await dataFetcher.loadRooms();
   }
   @override
@@ -378,11 +376,10 @@ class PlayOnlineScreen extends StatelessWidget {
           // Kiểm tra trạng thái kết nối
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator()); // Hiển thị loading
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}')); // Hiển thị lỗi nếu có
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No rooms available')); // Không có phòng
-          } else {
+          } else if(snapshot.data == null){
+            return Text('data');
+          }
+          else {
             final rooms = snapshot.data!;
             return Scaffold(
               body: Stack(
@@ -405,7 +402,11 @@ class PlayOnlineScreen extends StatelessWidget {
                           children: [
                             IconButton(
                               onPressed: () {
-                                Navigator.pop(context); // Quay lại màn hình trước
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                                  (Route<dynamic> route) => false,  // Loại bỏ tất cả các màn hình trước đó
+                                );
                               },
                               icon: const Icon(
                                 Icons.arrow_back,
@@ -574,6 +575,8 @@ Widget buildActionButton(BuildContext context,
   );
 }
 
+
+
 // Widget đại diện cho danh sách "thanh nhỏ"
 Widget buildPlayerCard(BuildContext context, int index, String roomType,
     int currentPlayers, int maxPlayers, String roomId) {
@@ -596,11 +599,20 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
                 TextButton(
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                CaroGameScreen(roomId: roomId)));
-                    // Xử lý logic tham gia phòng tại đây
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CaroGameScreen(roomId: roomId),
+                      ),
+                    ).then((result) async {
+                      if (result != null) {
+                        // Có dữ liệu trả về
+                      } 
+                      // Không có dữ liệu trả về
+                      final deleteResult = await DataRoom().deleteRoom(roomId);
+                      print(deleteResult);
+                      
+                      
+                    });
                   },
                   child: const Text("Tham gia"),
                 ),
