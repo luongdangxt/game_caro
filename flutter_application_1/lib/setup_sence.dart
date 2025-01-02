@@ -437,6 +437,7 @@ class PlayOnlineScreen extends StatelessWidget {
                           itemCount: rooms.length, // Dựa trên số lượng phòng
                           itemBuilder: (context, index) {
                             final room = rooms[index];
+                            print(room.roomId);
                             return buildPlayerCard(
                                 context,
                                 index,
@@ -703,7 +704,6 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
 void _showCreateRoomDialog(BuildContext context) {
   String roomName = ""; // Tên phòng
   String roomType = "Public"; // Loại phòng (mặc định Public)
-  String boardSize = "13 x 13"; // Kích thước bàn chơi (mặc định 13x13)
   int turnTime = 30; // Thời gian mỗi lượt (mặc định 30 giây)
   String errorMessage = ""; // Thông báo lỗi
 
@@ -822,39 +822,7 @@ void _showCreateRoomDialog(BuildContext context) {
                       color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 8),
 
-                  // Giữ không gian cố định cho các nút
-                  SizedBox(
-                    height: 50,
-                    child: Row(
-                      children: [
-                        _buildFixedOptionButton(
-                          label: "13 x 13",
-                          isSelected: boardSize == "13 x 13",
-                          onTap: () {
-                            setState(() => boardSize = "13 x 13");
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        _buildFixedOptionButton(
-                          label: "14 x 14",
-                          isSelected: boardSize == "14 x 14",
-                          onTap: () {
-                            setState(() => boardSize = "14 x 14");
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        _buildFixedOptionButton(
-                          label: "15 x 15",
-                          isSelected: boardSize == "15 x 15",
-                          onTap: () {
-                            setState(() => boardSize = "15 x 15");
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
                   const SizedBox(height: 16),
 
                   // Thời Gian Mỗi Lượt
@@ -905,17 +873,47 @@ void _showCreateRoomDialog(BuildContext context) {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (roomName.isEmpty || turnTime <= 0) {
                             setState(() {
                               errorMessage = "Vui lòng nhập đầy đủ thông tin!";
                             });
                           } else {
-                            print("Tên Phòng: $roomName");
-                            print("Loại Phòng: $roomType");
-                            print("Kích Thước: $boardSize");
-                            print("Thời Gian: $turnTime giây");
-                            Navigator.pop(context);
+                            try {
+                              // Gọi API để tạo phòng và lấy roomId
+                              final newRoomId = await DataRoom().createRoom(
+                                roomName,
+                                roomType,
+                                "test11@gmail.com",
+                                turnTime,
+                              );
+
+                              if (newRoomId.startsWith('Error:')) {
+                                setState(() {
+                                  errorMessage = "Không thể tạo phòng: $newRoomId";
+                                });
+                              } else {
+                                print(newRoomId);
+                                // Điều hướng đến màn hình CaroGameScreen
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CaroGameScreen(roomId: newRoomId),
+                                  ),
+                                ).then((result) async {
+                                  if (result != null) {
+                                    // Có dữ liệu trả về
+                                  }
+                                  // Xóa phòng sau khi quay lại từ CaroGameScreen
+                                  final deleteResult = await DataRoom().deleteRoom(newRoomId);
+                                  print(deleteResult);
+                                });
+                              }
+                            } catch (e) {
+                              setState(() {
+                                errorMessage = "Đã xảy ra lỗi: $e";
+                              });
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -1077,6 +1075,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     return Scaffold(
       body: Column(
         children: [
+          Text(widget.roomId),
           // Thanh hiển thị thông tin người chơi
           Container(
             height: 105,
@@ -1192,6 +1191,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                 style: TextStyle(fontSize: 18, color: Colors.black54),
               )
             : const SizedBox(),
+        
       ],
     );
   }
