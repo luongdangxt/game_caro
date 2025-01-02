@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   flame: ^1.7.0              # Framework game 2D
-  rive: ^0.10.0              # Animation tương tác
+  rive: ^0.13.20              # Animation tương tác
   forge2d: ^0.9.0            # Hệ thống vật lý Box2D
   just_audio: ^0.9.0     # Hiệu ứng âm thanh và nhạc nền
   tiled: ^0.8.0              # Hỗ trợ bản đồ tile-based

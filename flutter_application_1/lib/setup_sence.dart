@@ -6,6 +6,7 @@ import 'package:flutter_application_1/model/model.dart';
 import 'package:flutter_application_1/request/apiRoom.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'CaroGame.dart';
+import 'package:rive/rive.dart';
 
 void main() {
   runApp(const MyApp());
@@ -362,24 +363,25 @@ class GameScreen extends StatelessWidget {
 // Thêm màn hình "Play Online"
 class PlayOnlineScreen extends StatelessWidget {
   const PlayOnlineScreen({super.key});
-  
+
   Future<List<Room>> callLoadRooms() async {
     final dataFetcher = DataRoom();
     return await dataFetcher.loadRooms();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: callLoadRooms(), 
+        future: callLoadRooms(),
         builder: (context, snapshot) {
           // Kiểm tra trạng thái kết nối
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator()); // Hiển thị loading
-          } else if(snapshot.data == null){
-            return Text('data');
-          }
-          else {
+            return const Center(
+                child: CircularProgressIndicator()); // Hiển thị loading
+          } else if (snapshot.data == null) {
+            return const Text('data');
+          } else {
             final rooms = snapshot.data!;
             return Scaffold(
               body: Stack(
@@ -389,8 +391,8 @@ class PlayOnlineScreen extends StatelessWidget {
                       // Hộp tiêu đề "Play Online"
                       Container(
                         width: double.infinity,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 24),
                         decoration: const BoxDecoration(
                           color: Color(0xFFCCE5FF), // Màu xanh pastel
                           borderRadius: BorderRadius.only(
@@ -404,8 +406,10 @@ class PlayOnlineScreen extends StatelessWidget {
                               onPressed: () {
                                 Navigator.pushAndRemoveUntil(
                                   context,
-                                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                                  (Route<dynamic> route) => false,  // Loại bỏ tất cả các màn hình trước đó
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomeScreen()),
+                                  (Route<dynamic> route) =>
+                                      false, // Loại bỏ tất cả các màn hình trước đó
                                 );
                               },
                               icon: const Icon(
@@ -434,13 +438,12 @@ class PlayOnlineScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final room = rooms[index];
                             return buildPlayerCard(
-                              context,
-                              index,
-                              room.roomType,
-                              room.playerRight != 'null' ? 2 : 1,
-                              2,
-                              room.roomId
-                            );
+                                context,
+                                index,
+                                room.roomType,
+                                room.playerRight != 'null' ? 2 : 1,
+                                2,
+                                room.roomId);
                           },
                         ),
                       ),
@@ -520,7 +523,8 @@ class PlayOnlineScreen extends StatelessWidget {
                                 builder: (context) {
                                   return AlertDialog(
                                     title: const Text("Quét QR"),
-                                    content: const Text("Chức năng quét QR sẽ ở đây."),
+                                    content: const Text(
+                                        "Chức năng quét QR sẽ ở đây."),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
@@ -575,8 +579,6 @@ Widget buildActionButton(BuildContext context,
   );
 }
 
-
-
 // Widget đại diện cho danh sách "thanh nhỏ"
 Widget buildPlayerCard(BuildContext context, int index, String roomType,
     int currentPlayers, int maxPlayers, String roomId) {
@@ -606,12 +608,10 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
                     ).then((result) async {
                       if (result != null) {
                         // Có dữ liệu trả về
-                      } 
+                      }
                       // Không có dữ liệu trả về
                       final deleteResult = await DataRoom().deleteRoom(roomId);
                       print(deleteResult);
-                      
-                      
                     });
                   },
                   child: const Text("Tham gia"),
@@ -1025,7 +1025,9 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   List<String> cells = [];
   String statusMessage = 'Waiting to join a room...';
   String? mySymbol;
-  final TextEditingController roomIdController = TextEditingController();
+  int currentPlayer = 1; // Người chơi hiện tại
+  int timeLeft = 30; // Thời gian còn lại
+  double timeProgress = 1.0; // Tiến độ thời gian
 
   @override
   void initState() {
@@ -1073,221 +1075,124 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Caro Game'),
-      ),
-      body: Stack(
+      body: Column(
         children: [
-          // Nền giao diện
+          // Thanh hiển thị thông tin người chơi
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/back.jpg'),
-                fit: BoxFit.cover,
-              ),
+            height: 105,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            color: Colors.grey.shade100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                buildPlayerAvatar(1), // Avatar người chơi 1
+                buildTimer(), // Thời gian đếm ngược
+                buildPlayerAvatar(2), // Avatar người chơi 2
+              ],
             ),
           ),
-          Column(
-            children: [
-              // Hiển thị avatar người chơi và thông tin
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    playerWidget(1),
-                    Text(
-                      statusMessage,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(1.0, 1.0),
-                            blurRadius: 3.0,
-                            color: Colors.black,
-                          ),
-                        ],
-                      ),
-                    ),
-                    playerWidget(2),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: boardSize,
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 5,
-                      ),
-                      itemCount: boardSize * boardSize,
-                      itemBuilder: (context, index) {
-                        int row = index ~/ boardSize;
-                        int col = index % boardSize;
+          Expanded(
+            // Bàn cờ
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: Container(
+                  margin: const EdgeInsets.all(20),
+                  child: CustomPaint(
+                    painter: CaroBoardPainter(boardSize: boardSize),
+                    child: GestureDetector(
+                      onTapDown: (details) {
+                        // Xử lý sự kiện nhấn vào bàn cờ
+                        final tapPosition = details.localPosition;
+                        final cellSize =
+                            MediaQuery.of(context).size.width / boardSize;
+                        final row = (tapPosition.dy ~/ cellSize).toInt();
+                        final col = (tapPosition.dx ~/ cellSize).toInt();
+                        final index = row * boardSize + col;
 
-                        bool isWinningCell = winningCells.any(
-                          (cell) => cell[0] == row && cell[1] == col,
-                        );
-
-                        return GestureDetector(
-                          onTap: () => makeMove(index),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            decoration: BoxDecoration(
-                              color: isWinningCell
-                                  ? Colors.yellow.withOpacity(0.8)
-                                  : Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                if (isWinningCell)
-                                  const BoxShadow(
-                                    color: Colors.orange,
-                                    blurRadius: 10,
-                                    offset: Offset(0, 0),
-                                  ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Text(
-                                cells[index],
-                                style: TextStyle(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                  color: cells[index] == 'X'
-                                      ? Colors.red
-                                      : cells[index] == 'O'
-                                          ? Colors.blue
-                                          : Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
+                        makeMove(index);
                       },
+                      child: const SizedBox.expand(),
                     ),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  int currentPlayer = 1;
-  double timeLeft = 10; // Thời gian còn lại cho mỗi lượt chơi
-  Timer? timer;
+  /// Widget hiển thị avatar người chơi
+  Widget buildPlayerAvatar(int player) {
+    bool isCurrentPlayer = currentPlayer == player;
 
-  void startTimer() {
-    timer?.cancel(); // Hủy Timer cũ nếu có
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        if (timeLeft > 0) {
-          timeLeft--; // Giảm thời gian mỗi giây
-        } else {
-          // Nếu hết thời gian, tự động chuyển lượt
-          switchPlayer();
-        }
-      });
-    });
-  }
-
-  void switchPlayer() {
-    setState(() {
-      currentPlayer = currentPlayer == 1 ? 2 : 1; // Đổi lượt
-      timeLeft = maxTime; // Reset thời gian
-      startTimer(); // Bắt đầu lại đếm ngược
-    });
-  }
-
-  // Widget hiển thị thông tin từng người chơi
-  Widget playerWidget(int player) {
-    bool isCurrentPlayer =
-        currentPlayer == player; // Kiểm tra người chơi hiện tại
-    bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
-
-    return SizedBox(
-      width: 200, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
-      height: 90, // Chiều cao cố định
-      child: Stack(
-        children: [
-          // Vùng màu xám với bo tròn
-          Align(
-            alignment:
-                isLeftSide ? Alignment.centerLeft : Alignment.centerRight,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 450), // Hiệu ứng mượt mà
-              width: isCurrentPlayer ? 180 : 90, // Thu phóng về avatar
-              height: isCurrentPlayer ? 70 : 40, // Cao hơn khi đến lượt
-              decoration: BoxDecoration(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 70,
+              height: 70,
+              child: CircularProgressIndicator(
+                value: isCurrentPlayer ? timeProgress : 0,
                 color: isCurrentPlayer
-                    ? Colors.grey.shade300
-                    : Colors.transparent, // Màu xám khi đến lượt
-                borderRadius: BorderRadius.circular(45), // Bo tròn cả hai bên
+                    ? const Color.fromARGB(255, 0, 214, 147)
+                    : Colors.grey,
+                strokeWidth: 4,
+                backgroundColor: Colors.grey.shade300,
               ),
             ),
-          ),
-          // Avatar
-          Align(
-            alignment:
-                isLeftSide ? Alignment.centerLeft : Alignment.centerRight,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 450), // Hiệu ứng thu phóng
-              width: isCurrentPlayer ? 70 : 40, // Avatar lớn hơn khi đến lượt
-              height: isCurrentPlayer ? 70 : 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle, // Avatar luôn hình tròn
-                image: DecorationImage(
-                  image: AssetImage(
-                    player == 1
-                        ? 'assets/images/avatar_1.jpg'
-                        : 'assets/images/avatar_2.jpg', // Avatar người chơi
-                  ),
-                  fit: BoxFit.cover,
-                ),
+            CircleAvatar(
+              radius: 30,
+              backgroundImage: AssetImage(
+                player == 1
+                    ? 'assets/images/avatar_1.jpg'
+                    : 'assets/images/avatar_2.jpg',
               ),
             ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Player $player',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: isCurrentPlayer ? FontWeight.bold : FontWeight.normal,
+            color: isCurrentPlayer
+                ? const Color.fromARGB(255, 0, 214, 147)
+                : Colors.black54,
           ),
-          // Thời gian
-          Align(
-            alignment:
-                isLeftSide ? Alignment.centerRight : Alignment.centerLeft,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 450), // Hiệu ứng mờ dần
-              opacity: isCurrentPlayer ? 1.0 : 0.0, // Chỉ hiển thị khi đến lượt
-              child: SizedBox(
-                width: 150, // Kích thước cố định cho vùng thời gian
-                child: Center(
-                  child: Text(
-                    '$timeLeft s', // Hiển thị thời gian còn lại
-                    style: const TextStyle(
-                      fontSize: 22,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+        ),
+      ],
+    );
+  }
+
+  /// Widget hiển thị thời gian
+  Widget buildTimer() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          statusMessage == "Both players connected!"
+              ? timeLeft.toString()
+              : statusMessage,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
-        ],
-      ),
+        ),
+        statusMessage == "Both players connected!"
+            ? const Text(
+                ' s',
+                style: TextStyle(fontSize: 18, color: Colors.black54),
+              )
+            : const SizedBox(),
+      ],
     );
   }
 
@@ -1295,5 +1200,34 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   void dispose() {
     channel.sink.close();
     super.dispose();
+  }
+}
+
+class CaroBoardPainter extends CustomPainter {
+  final int boardSize;
+
+  CaroBoardPainter({required this.boardSize});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    final cellSize = size.width / boardSize;
+
+    for (int i = 1; i < boardSize; i++) {
+      final offset = i * cellSize;
+
+      canvas.drawLine(Offset(offset, 0), Offset(offset, size.height), paint);
+      canvas.drawLine(Offset(0, offset), Offset(size.width, offset), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
