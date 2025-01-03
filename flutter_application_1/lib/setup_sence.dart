@@ -1444,19 +1444,23 @@ class WritingText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Loading Rive file from: assets/rive/drawx.riv');
     return SizedBox(
       width: 40,
       height: 40,
       child: RiveAnimation.asset(
-        'assets/rive/draw_X.riv', // Đường dẫn tới file Rive
-        artboard: character.toUpperCase(), // Artboard tương ứng
+        'assets/rive/drawx.riv',
+        artboard: character.toUpperCase(),
         fit: BoxFit.contain,
         onInit: (Artboard artboard) {
-          // Khởi chạy animation
+          print('Bản vẽ Rive đã được khởi tạo:: ${artboard.name}');
           final controller =
               StateMachineController.fromArtboard(artboard, 'StateMachine');
           if (controller != null) {
             artboard.addController(controller);
+            print('StateMachineController added successfully.');
+          } else {
+            print('Không thể khởi tạo StateMachineController.');
           }
         },
       ),
