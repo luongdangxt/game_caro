@@ -890,7 +890,8 @@ void _showCreateRoomDialog(BuildContext context) {
 
                               if (newRoomId.startsWith('Error:')) {
                                 setState(() {
-                                  errorMessage = "Không thể tạo phòng: $newRoomId";
+                                  errorMessage =
+                                      "Không thể tạo phòng: $newRoomId";
                                 });
                               } else {
                                 print(newRoomId);
@@ -898,14 +899,16 @@ void _showCreateRoomDialog(BuildContext context) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => CaroGameScreen(roomId: newRoomId),
+                                    builder: (context) =>
+                                        CaroGameScreen(roomId: newRoomId),
                                   ),
                                 ).then((result) async {
                                   if (result != null) {
                                     // Có dữ liệu trả về
                                   }
                                   // Xóa phòng sau khi quay lại từ CaroGameScreen
-                                  final deleteResult = await DataRoom().deleteRoom(newRoomId);
+                                  final deleteResult =
+                                      await DataRoom().deleteRoom(newRoomId);
                                   print(deleteResult);
                                 });
                               }
@@ -1023,9 +1026,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   List<String> cells = [];
   String statusMessage = 'Waiting to join a room...';
   String? mySymbol;
-  int currentPlayer = 1; // Người chơi hiện tại
-  int timeLeft = 30; // Thời gian còn lại
-  double timeProgress = 1.0; // Tiến độ thời gian
+  final TextEditingController roomIdController = TextEditingController();
 
   @override
   void initState() {
@@ -1073,45 +1074,252 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      appBar: AppBar(
+        title: const Text('Caro Game'),
+      ),
+      body: Stack(
         children: [
-          Text(widget.roomId),
-          // Thanh hiển thị thông tin người chơi
+          // Nền giao diện
           Container(
-            height: 105,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            color: Colors.grey.shade100,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                buildPlayerAvatar(1), // Avatar người chơi 1
-                buildTimer(), // Thời gian đếm ngược
-                buildPlayerAvatar(2), // Avatar người chơi 2
-              ],
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/back.jpg'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          Expanded(
-            // Bàn cờ
-            child: Center(
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  margin: const EdgeInsets.all(20),
-                  child: CustomPaint(
-                    painter: CaroBoardPainter(boardSize: boardSize),
-                    child: GestureDetector(
-                      onTapDown: (details) {
-                        // Xử lý sự kiện nhấn vào bàn cờ
-                        final tapPosition = details.localPosition;
-                        final cellSize =
-                            MediaQuery.of(context).size.width / boardSize;
-                        final row = (tapPosition.dy ~/ cellSize).toInt();
-                        final col = (tapPosition.dx ~/ cellSize).toInt();
-                        final index = row * boardSize + col;
+          Column(
+            children: [
+              // Hiển thị avatar người chơi và thông tin
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    playerWidget(1),
+                    Text(
+                      statusMessage,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(1.0, 1.0),
+                            blurRadius: 3.0,
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
+                    ),
+                    playerWidget(2),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Lấy chiều rộng và chiều cao của khu vực chứa bảng
+                      double availableWidth = constraints.maxWidth;
+                      double availableHeight = constraints.maxHeight;
 
-                        makeMove(index);
-                      },
-                      child: const SizedBox.expand(),
+                      // Chọn giá trị nhỏ hơn giữa chiều rộng và chiều cao để đảm bảo bảng vuông
+                      double size = availableWidth < availableHeight
+                          ? availableWidth
+                          : availableHeight;
+
+                      // Tính toán kích thước của cell (chia đều cho bảng 15x15)
+                      double cellSize = size / 15;
+
+                      return Container(
+                        width: size,
+                        height: size,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(0, 255, 255, 255),
+                          borderRadius: BorderRadius.circular(0),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color.fromARGB(0, 0, 0, 0),
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          children: [
+                            // Vẽ các dòng kẻ với CustomPainter
+                            CustomPaint(
+                              size: Size(size, size), // Kích thước bảng
+                              painter: GridPainter(
+                                boardSize: 15, // Bảng 15x15
+                                cellSize:
+                                    cellSize, // Dùng cellSize tính từ màn hình
+                              ),
+                            ),
+                            // Các cell của bảng
+                            GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 15, // 15 cột
+                                crossAxisSpacing: 1,
+                                mainAxisSpacing: 1,
+                                childAspectRatio:
+                                    1, // Đảm bảo các cell có tỉ lệ vuông
+                              ),
+                              itemCount: 15 * 15, // Tổng số cell trong bảng
+                              shrinkWrap: true, // Không cuộn
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // Tắt cuộn
+                              itemBuilder: (context, index) {
+                                int row = index ~/ 15;
+                                int col = index % 15;
+
+                                bool isWinningCell = winningCells.any(
+                                  (cell) => cell[0] == row && cell[1] == col,
+                                );
+
+                                return GestureDetector(
+                                  onTap: () => makeMove(index),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    decoration: BoxDecoration(
+                                      color: isWinningCell
+                                          ? Colors.yellow.withOpacity(0.8)
+                                          : const Color.fromARGB(
+                                              0, 251, 168, 162),
+                                      borderRadius: BorderRadius.circular(5),
+                                      boxShadow: [
+                                        if (isWinningCell)
+                                          const BoxShadow(
+                                            color: Colors.orange,
+                                            blurRadius: 10,
+                                            offset: Offset(0, 0),
+                                          ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        cells[index],
+                                        style: TextStyle(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.bold,
+                                          color: cells[index] == 'X'
+                                              ? Colors.red
+                                              : cells[index] == 'O'
+                                                  ? Colors.blue
+                                                  : Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  int currentPlayer = 1;
+  double timeLeft = 10; // Thời gian còn lại cho mỗi lượt chơi
+  Timer? timer;
+
+  void startTimer() {
+    timer?.cancel(); // Hủy Timer cũ nếu có
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (timeLeft > 0) {
+          timeLeft--; // Giảm thời gian mỗi giây
+        } else {
+          // Nếu hết thời gian, tự động chuyển lượt
+          switchPlayer();
+        }
+      });
+    });
+  }
+
+  void switchPlayer() {
+    setState(() {
+      currentPlayer = currentPlayer == 1 ? 2 : 1; // Đổi lượt
+      timeLeft = maxTime; // Reset thời gian
+      startTimer(); // Bắt đầu lại đếm ngược
+    });
+  }
+
+  // Widget hiển thị thông tin từng người chơi
+  Widget playerWidget(int player) {
+    bool isCurrentPlayer =
+        currentPlayer == player; // Kiểm tra người chơi hiện tại
+    bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
+
+    return SizedBox(
+      width: 150, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
+      height: 90, // Chiều cao cố định
+      child: Stack(
+        children: [
+          // Vùng màu xám với bo tròn
+          Align(
+            alignment:
+                isLeftSide ? Alignment.centerLeft : Alignment.centerRight,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 450), // Hiệu ứng mượt mà
+              width: isCurrentPlayer ? 120 : 90, // Thu phóng về avatar
+              height: isCurrentPlayer ? 50 : 40, // Cao hơn khi đến lượt
+              decoration: BoxDecoration(
+                color: isCurrentPlayer
+                    ? Colors.grey.shade300
+                    : Colors.transparent, // Màu xám khi đến lượt
+                borderRadius: BorderRadius.circular(45), // Bo tròn cả hai bên
+              ),
+            ),
+          ),
+          // Avatar
+          Align(
+            alignment:
+                isLeftSide ? Alignment.centerLeft : Alignment.centerRight,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 450), // Hiệu ứng thu phóng
+              width: isCurrentPlayer ? 50 : 40, // Avatar lớn hơn khi đến lượt
+              height: isCurrentPlayer ? 50 : 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle, // Avatar luôn hình tròn
+                image: DecorationImage(
+                  image: AssetImage(
+                    player == 1
+                        ? 'assets/images/avatar_1.jpg'
+                        : 'assets/images/avatar_2.jpg', // Avatar người chơi
+                  ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          // Thời gian
+          Align(
+            alignment:
+                isLeftSide ? Alignment.centerRight : Alignment.centerLeft,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 450), // Hiệu ứng mờ dần
+              opacity: isCurrentPlayer ? 1.0 : 0.0, // Chỉ hiển thị khi đến lượt
+              child: SizedBox(
+                width: 120, // Kích thước cố định cho vùng thời gian
+                child: Center(
+                  child: Text(
+                    '$timeLeft s', // Hiển thị thời gian còn lại
+                    style: const TextStyle(
+                      fontSize: 22,
+                      color: Colors.black54,
                     ),
                   ),
                 ),
@@ -1123,79 +1331,6 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     );
   }
 
-  /// Widget hiển thị avatar người chơi
-  Widget buildPlayerAvatar(int player) {
-    bool isCurrentPlayer = currentPlayer == player;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              width: 70,
-              height: 70,
-              child: CircularProgressIndicator(
-                value: isCurrentPlayer ? timeProgress : 0,
-                color: isCurrentPlayer
-                    ? const Color.fromARGB(255, 0, 214, 147)
-                    : Colors.grey,
-                strokeWidth: 4,
-                backgroundColor: Colors.grey.shade300,
-              ),
-            ),
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: AssetImage(
-                player == 1
-                    ? 'assets/images/avatar_1.jpg'
-                    : 'assets/images/avatar_2.jpg',
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Player $player',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: isCurrentPlayer ? FontWeight.bold : FontWeight.normal,
-            color: isCurrentPlayer
-                ? const Color.fromARGB(255, 0, 214, 147)
-                : Colors.black54,
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// Widget hiển thị thời gian
-  Widget buildTimer() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          statusMessage == "Both players connected!"
-              ? timeLeft.toString()
-              : statusMessage,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        statusMessage == "Both players connected!"
-            ? const Text(
-                ' s',
-                style: TextStyle(fontSize: 18, color: Colors.black54),
-              )
-            : const SizedBox(),
-        
-      ],
-    );
-  }
-
   @override
   void dispose() {
     channel.sink.close();
@@ -1203,26 +1338,38 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   }
 }
 
-class CaroBoardPainter extends CustomPainter {
+class GridPainter extends CustomPainter {
   final int boardSize;
+  final double cellSize;
 
-  CaroBoardPainter({required this.boardSize});
+  GridPainter({required this.boardSize, required this.cellSize});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.grey
-      ..strokeWidth = 3
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
+    final Paint paint = Paint()
+      ..color = const Color.fromARGB(255, 96, 96, 96)
+      ..strokeWidth = 2 // Độ rộng của đường kẻ
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round; // Bo tròn đầu các đường kẻ
 
-    final cellSize = size.width / boardSize;
+    // Tính toán chiều cao và chiều rộng của mỗi ô (dựa trên kích thước khung chứa)
+    double cellHeight = size.height / boardSize; // Tính chiều cao của mỗi ô
+    double cellWidth = size.width / boardSize; // Tính chiều rộng của mỗi ô
 
+    // Vẽ các đường ngang (dựa trên chiều cao của khung)
     for (int i = 1; i < boardSize; i++) {
-      final offset = i * cellSize;
+      double y = i * cellHeight; // Vị trí vẽ đường ngang
+      // Dịch chuyển xuống một chút để đường kẻ không chồng lên các ô
+      canvas.drawLine(
+          Offset(0, y), Offset(size.width, y), paint); // Vẽ đường ngang
+    }
 
-      canvas.drawLine(Offset(offset, 0), Offset(offset, size.height), paint);
-      canvas.drawLine(Offset(0, offset), Offset(size.width, offset), paint);
+    // Vẽ các đường dọc (dựa trên chiều rộng của khung)
+    for (int i = 1; i < boardSize; i++) {
+      double x = i * cellWidth; // Vị trí vẽ đường dọc
+      // Dịch chuyển sang phải một chút để đường kẻ không chồng lên các ô
+      canvas.drawLine(
+          Offset(x, 0), Offset(x, size.height), paint); // Vẽ đường dọc
     }
   }
 
