@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
 import 'package:flutter_application_1/model/model.dart';
@@ -1062,171 +1063,227 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     }
   }
 
+  bool isAnimating = false;
+
   void makeMove(int index) {
-    if (cells[index].isEmpty) {
+    if (cells[index].isEmpty && !isAnimating) {
+      setState(() {
+        isAnimating = true;
+      });
+
+      // Gửi nước đi qua WebSocket
       channel.sink.add(jsonEncode({
         'type': 'move',
         'payload': {'index': index},
       }));
+
+      // Đặt lại trạng thái sau khi animation kết thúc
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {
+          isAnimating = false;
+        });
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Caro Game'),
-      ),
-      body: Stack(
-        children: [
-          // Nền giao diện
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/back.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Column(
+      appBar: null, // Xóa AppBar
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Chiều cao tổng cộng của màn hình
+          final screenHeight = constraints.maxHeight;
+          final avatarHeight = screenHeight *
+              0.23; // Chiều cao tối đa cho phần avatar và dòng trạng thái
+          final boardHeight =
+              screenHeight * 0.7; // Chiều cao tối đa cho bảng caro
+
+          return Stack(
             children: [
-              // Hiển thị avatar người chơi và thông tin
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    playerWidget(1),
-                    Text(
-                      statusMessage,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(1.0, 1.0),
-                            blurRadius: 3.0,
-                            color: Colors.black,
-                          ),
-                        ],
-                      ),
-                    ),
-                    playerWidget(2),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      // Lấy chiều rộng và chiều cao của khu vực chứa bảng
-                      double availableWidth = constraints.maxWidth;
-                      double availableHeight = constraints.maxHeight;
-
-                      // Chọn giá trị nhỏ hơn giữa chiều rộng và chiều cao để đảm bảo bảng vuông
-                      double size = availableWidth < availableHeight
-                          ? availableWidth
-                          : availableHeight;
-
-                      // Tính toán kích thước của cell (chia đều cho bảng 15x15)
-                      double cellSize = size / 15;
-
-                      return Container(
-                        width: size,
-                        height: size,
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(0, 255, 255, 255),
-                          borderRadius: BorderRadius.circular(0),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color.fromARGB(0, 0, 0, 0),
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            // Vẽ các dòng kẻ với CustomPainter
-                            CustomPaint(
-                              size: Size(size, size), // Kích thước bảng
-                              painter: GridPainter(
-                                boardSize: 15, // Bảng 15x15
-                                cellSize:
-                                    cellSize, // Dùng cellSize tính từ màn hình
-                              ),
-                            ),
-                            // Các cell của bảng
-                            GridView.builder(
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 15, // 15 cột
-                                crossAxisSpacing: 1,
-                                mainAxisSpacing: 1,
-                                childAspectRatio:
-                                    1, // Đảm bảo các cell có tỉ lệ vuông
-                              ),
-                              itemCount: 15 * 15, // Tổng số cell trong bảng
-                              shrinkWrap: true, // Không cuộn
-                              physics:
-                                  const NeverScrollableScrollPhysics(), // Tắt cuộn
-                              itemBuilder: (context, index) {
-                                int row = index ~/ 15;
-                                int col = index % 15;
-
-                                bool isWinningCell = winningCells.any(
-                                  (cell) => cell[0] == row && cell[1] == col,
-                                );
-
-                                return GestureDetector(
-                                  onTap: () => makeMove(index),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 300),
-                                    decoration: BoxDecoration(
-                                      color: isWinningCell
-                                          ? Colors.yellow.withOpacity(0.8)
-                                          : const Color.fromARGB(
-                                              0, 251, 168, 162),
-                                      borderRadius: BorderRadius.circular(5),
-                                      boxShadow: [
-                                        if (isWinningCell)
-                                          const BoxShadow(
-                                            color: Colors.orange,
-                                            blurRadius: 10,
-                                            offset: Offset(0, 0),
-                                          ),
-                                      ],
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        cells[index],
-                                        style: TextStyle(
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.bold,
-                                          color: cells[index] == 'X'
-                                              ? Colors.red
-                                              : cells[index] == 'O'
-                                                  ? Colors.blue
-                                                  : Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+              // Nền giao diện
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/back3.jpg'),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
+              Column(
+                children: [
+                  // Phần avatar và trạng thái
+                  Container(
+                    height: avatarHeight,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/player2.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        playerWidget(1),
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 35),
+                            child: Text(
+                              statusMessage,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(1.0, 1.0),
+                                    blurRadius: 3.0,
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        playerWidget(2),
+                      ],
+                    ),
+                  ),
+
+                  // Đẩy bảng caro lên sát avatar hơn
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6.0,
+                          vertical: 4.6), // Thêm khoảng cách hai bên
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          double availableWidth = constraints.maxWidth -
+                              30; // Trừ khoảng padding hai bên
+                          double size = availableWidth < constraints.maxHeight
+                              ? availableWidth
+                              : constraints.maxHeight;
+
+                          double cellSize = size / 15;
+
+                          return Center(
+                            child: Container(
+                              width: size,
+                              height: size,
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(0, 255, 255, 255),
+                                borderRadius: BorderRadius.circular(0),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color.fromARGB(0, 0, 0, 0),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                children: [
+                                  CustomPaint(
+                                    size: Size(size, size),
+                                    painter: GridPainter(
+                                      boardSize: 15,
+                                      cellSize: cellSize,
+                                    ),
+                                  ),
+                                  GridView.builder(
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 15,
+                                      crossAxisSpacing: 1,
+                                      mainAxisSpacing: 1,
+                                      childAspectRatio: 1,
+                                    ),
+                                    itemCount: 15 * 15,
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      int row = index ~/ boardSize;
+                                      int col = index % boardSize;
+
+                                      bool isWinningCell = winningCells.any(
+                                        (cell) =>
+                                            cell[0] == row && cell[1] == col,
+                                      );
+
+                                      return GestureDetector(
+                                        onTap: () => makeMove(index),
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          decoration: BoxDecoration(
+                                            color: isWinningCell
+                                                ? Colors.yellow.withOpacity(0.8)
+                                                : const Color.fromARGB(
+                                                    0, 251, 168, 162),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            boxShadow: [
+                                              if (isWinningCell)
+                                                const BoxShadow(
+                                                  color: Colors.orange,
+                                                  blurRadius: 10,
+                                                  offset: Offset(0, 0),
+                                                ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: AnimatedSwitcher(
+                                              duration: const Duration(
+                                                  milliseconds:
+                                                      500), // Thời gian hiệu ứng
+                                              transitionBuilder: (Widget child,
+                                                  Animation<double> animation) {
+                                                return FadeTransition(
+                                                  opacity:
+                                                      animation, // Hiệu ứng mờ dần khi thay đổi
+                                                  child: ScaleTransition(
+                                                    scale:
+                                                        animation, // Hiệu ứng phóng to/thu nhỏ
+                                                    child: child,
+                                                  ),
+                                                );
+                                              },
+                                              child: Center(
+                                                child: cells[index].isNotEmpty
+                                                    ? WritingText(
+                                                        character: cells[index],
+                                                        color:
+                                                            cells[index] == 'X'
+                                                                ? Colors.red
+                                                                : Colors.blue,
+                                                      )
+                                                    : const SizedBox.shrink(),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  // Khoảng trống nhỏ bên dưới
+                  const SizedBox(height: 8.0),
+                ],
+              ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -1376,5 +1433,37 @@ class GridPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return false;
+  }
+}
+
+class WritingText extends StatelessWidget {
+  final String character; // "X" hoặc "O"
+  final Color color;
+
+  const WritingText({required this.character, required this.color, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    print('Loading Rive file from: assets/rive/drawx.riv');
+    return SizedBox(
+      width: 40,
+      height: 40,
+      child: RiveAnimation.asset(
+        'assets/rive/drawx.riv',
+        artboard: character.toUpperCase(),
+        fit: BoxFit.contain,
+        onInit: (Artboard artboard) {
+          print('Bản vẽ Rive đã được khởi tạo:: ${artboard.name}');
+          final controller =
+              StateMachineController.fromArtboard(artboard, 'StateMachine');
+          if (controller != null) {
+            artboard.addController(controller);
+            print('StateMachineController added successfully.');
+          } else {
+            print('Không thể khởi tạo StateMachineController.');
+          }
+        },
+      ),
+    );
   }
 }
