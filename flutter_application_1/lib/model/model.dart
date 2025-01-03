@@ -61,3 +61,33 @@ class Room {
     return 'items(id: $id, roomId: $roomId, roomName: $roomName, roomType: $roomType, playerLeft: $playerLeft, playerRight: $playerRight, game: $game, turnGame: $turnGame)';
   }
 }
+
+class User {
+  final String id;
+  final String username;
+  final String email;
+  final String time;
+  final String v;
+  User({
+    required this.id,
+    required this.username,
+    required this.email,
+    required this.time,
+    required this.v,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['_id'],
+      username: json['username'],
+      email: json['email'],
+      time: json['time'],
+      v: json['__v'].toString(),
+    );
+  }
+
+  @override
+  String toString() {
+    return 'User(id: $id, Username: $username, Email: $email, Time: $time, __v: $v)';
+  }
+}
