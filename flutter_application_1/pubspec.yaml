@@ -72,7 +72,12 @@ flutter:
   assets:
       - assets/images/
   #   - images/a_dot_ham.jpeg
+<<<<<<< Updated upstream
 
+=======
+      - assets/rive/ 
+      
+>>>>>>> Stashed changes
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
