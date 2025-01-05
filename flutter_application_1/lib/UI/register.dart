@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/UI/login.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/request/apiUser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class registerScreen extends StatelessWidget {
   registerScreen({super.key});
@@ -75,15 +77,29 @@ class registerScreen extends StatelessWidget {
                             final username = usernameController.text;
                             final password = passwordController.text;
                             final confirm = confirmController.text;
-                            // Xử lý đăng nhập tại đây
-                            if (!username.isEmpty && !password.isEmpty && password == confirm) {
+                            // Xử lý đăng kí tại đây
+                            if (username.isNotEmpty &&
+                                password.isNotEmpty &&
+                                password == confirm) {
                               try {
-                                final response = await DataUser().register(username, password);
+                                final response = await DataUser()
+                                    .register(username, password);
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.setString('username', username);
+                                await prefs.setString('avatar',
+                                    'assets/images/defaultAvatar.jpg');
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const MyAppMain(),
+                                  ),
+                                );
                                 print('Register successful: $response');
                               } catch (e) {
-                                print('Login failed: $e');
+                                print('Register failed: $e');
                               }
-                            }  
+                            }
                           },
                           child: const Padding(
                             padding: EdgeInsets.only(top: 12, bottom: 12),
@@ -153,7 +169,7 @@ class registerScreen extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => loginScreen(),
+                          builder: (context) => const loginScreen(),
                         ),
                       );
                     },

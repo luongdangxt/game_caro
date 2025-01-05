@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 
 class DataUser {
   Future<User> searchUser(String username) async {
-    final url = Uri.parse('https://api-gamecaro.onrender.com/api/user/${username}');
+    final url =
+        Uri.parse('https://api-gamecaro.onrender.com/api/user/$username');
     final headers = {
       'Authorization': 'testAPI', // Header Authorization
     };
@@ -48,8 +49,8 @@ class DataUser {
     }
   }
 
-  Future<String> register(String username, String password) async {
-    final url = Uri.parse('https://api-gamecaro.onrender.com/api/user/register');
+  Future<int> register(String username, String password) async {
+    final url = Uri.parse('https://api-gamecaro.onrender.com/api/register');
     final headers = {
       'Authorization': 'testAPI',
       'Content-Type': 'application/json',
@@ -62,9 +63,9 @@ class DataUser {
 
     try {
       final response = await http.post(url, headers: headers, body: body);
-
+      print(response.body);
       if (response.statusCode == 200) {
-        return response.body; // Trả về thông báo thành công
+        return response.statusCode; // Trả về thông báo thành công
       } else {
         throw Exception('Registration failed');
       }

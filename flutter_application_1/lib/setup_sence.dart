@@ -368,6 +368,7 @@ class PlayOnlineScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController idRoom = TextEditingController();
     return Scaffold(
       body: FutureBuilder(
         future: callLoadRooms(),
@@ -487,8 +488,9 @@ class PlayOnlineScreen extends StatelessWidget {
                                 builder: (context) {
                                   return AlertDialog(
                                     title: const Text("Tham Gia Bằng Mã"),
-                                    content: const TextField(
-                                      decoration: InputDecoration(
+                                    content: TextField(
+                                      controller: idRoom,
+                                      decoration: const InputDecoration(
                                         labelText: "Nhập mã phòng",
                                         border: OutlineInputBorder(),
                                       ),
@@ -500,7 +502,24 @@ class PlayOnlineScreen extends StatelessWidget {
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          Navigator.pop(context);
+                                          final joinRoomId = idRoom.text;
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CaroGameScreen(
+                                                      roomId: joinRoomId),
+                                            ),
+                                          ).then((result) async {
+                                            if (result != null) {
+                                              // Có dữ liệu trả về
+                                            }
+                                            // Xóa phòng sau khi quay lại từ CaroGameScreen
+                                            final deleteResult =
+                                                await DataRoom()
+                                                    .deleteRoom(joinRoomId);
+                                            print(deleteResult);
+                                          });
                                         },
                                         child: const Text("Tham Gia"),
                                       ),
