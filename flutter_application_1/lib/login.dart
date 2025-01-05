@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream:flutter_application_1/lib/login.dart
+=======
+import 'package:flutter_application_1/UI/login.dart';
+>>>>>>> Stashed changes:flutter_application_1/lib/UI/forgotpass.dart
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
