@@ -23,7 +23,7 @@ class DataUser {
     }
   }
 
-  Future<String> login(String username, String password) async {
+  Future<int> login(String username, String password) async {
     final url = Uri.parse('https://api-gamecaro.onrender.com/api/login');
     final headers = {
       'Authorization': 'testAPI',
@@ -37,9 +37,8 @@ class DataUser {
 
     try {
       final response = await http.post(url, headers: headers, body: body);
-      print(response.statusCode);
       if (response.statusCode == 200) {
-        return response.body; // Trả về token hoặc thông tin từ server
+        return response.statusCode; // Trả về token hoặc thông tin từ server
       } else {
         throw Exception('Login failed');
       }
