@@ -9,10 +9,6 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'CaroGame.dart';
 import 'package:rive/rive.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

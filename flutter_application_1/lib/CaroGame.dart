@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
-
-void main() {
-  runApp(const TicTacToeApp());
-}
-
 bool isMuted = false;
 double maxTime = 10;
 

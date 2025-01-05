@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/UI/login.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -138,7 +134,7 @@ class forgotpassScreen extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => loginScreen(),
+                          builder: (context) => const loginScreen(),
                         ),
                       );
                     },

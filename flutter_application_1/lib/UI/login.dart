@@ -163,7 +163,7 @@ class _loginScreenState extends State<loginScreen> {
                   child: TextButton(
                       onPressed: () {},
                       child: const Text(
-                        'Google',
+                        'Google (Coming soon)',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,

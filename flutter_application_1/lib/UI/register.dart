@@ -2,22 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/UI/login.dart';
 import 'package:flutter_application_1/request/apiUser.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: registerScreen(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
 class registerScreen extends StatelessWidget {
   registerScreen({super.key});
   final TextEditingController usernameController = TextEditingController();
@@ -95,7 +79,7 @@ class registerScreen extends StatelessWidget {
                             if (!username.isEmpty && !password.isEmpty && password == confirm) {
                               try {
                                 final response = await DataUser().register(username, password);
-                                print('Login successful: $response');
+                                print('Register successful: $response');
                               } catch (e) {
                                 print('Login failed: $e');
                               }
@@ -103,7 +87,7 @@ class registerScreen extends StatelessWidget {
                           },
                           child: const Padding(
                             padding: EdgeInsets.only(top: 12, bottom: 12),
-                            child: Text('Login'),
+                            child: Text('Register'),
                           )),
                     ],
                   ),

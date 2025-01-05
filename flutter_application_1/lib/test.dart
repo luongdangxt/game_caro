@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-void main() {
-  runApp(const CaroGameApp());
-}
-
 class CaroGameApp extends StatelessWidget {
   const CaroGameApp({super.key});
 
