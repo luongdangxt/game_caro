@@ -1,29 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/UI/forgotpass.dart';
 import 'package:flutter_application_1/UI/register.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/request/apiUser.dart';
+import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class loginScreen extends StatefulWidget {
+  const loginScreen({super.key});
+  
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: loginScreen(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
+  State<loginScreen> createState() => _loginScreenState();
 }
 
-class loginScreen extends StatelessWidget {
-  loginScreen({super.key});
+class _loginScreenState extends State<loginScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final isLoggedIn = await saveLogin().checkLogin();
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MyAppMain(),
+        ),
+      );
+    };
+  }
+
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,7 +112,13 @@ class loginScreen extends StatelessWidget {
                               final response = await DataUser().login(username, password);
                               final prefs = await SharedPreferences.getInstance();
                               await prefs.setString('username', username);
-                              await prefs.setString('avatar', 'assets/images/defaultAvate.jpg');
+                              await prefs.setString('avatar', 'assets/images/defaultAvatar.jpg');
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const MyAppMain(),
+                                ),
+                              );
                               print('Login successful: $response');
                             } catch (e) {
                               print('Login failed: $e');
@@ -235,4 +253,9 @@ class loginScreen extends StatelessWidget {
       ),
     );
   }
+<<<<<<< Updated upstream
 }
+=======
+}
+
+>>>>>>> Stashed changes

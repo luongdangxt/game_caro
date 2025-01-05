@@ -15,14 +15,14 @@ void main() {
   ));
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class MyAppMain extends StatefulWidget {
+  const MyAppMain({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyAppMain> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyAppMain> {
   int indexScreen = 0;
   List<Widget> screens = [
     const ScreenToday(),
