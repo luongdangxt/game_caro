@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
 import 'package:flutter_application_1/model/model.dart';
 import 'package:flutter_application_1/request/apiRoom.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'CaroGame.dart';
 import 'package:rive/rive.dart';
@@ -1103,204 +1104,220 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: null, // Xóa AppBar
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // Chiều cao tổng cộng của màn hình
-          final screenHeight = constraints.maxHeight;
-          final avatarHeight = screenHeight *
-              0.23; // Chiều cao tối đa cho phần avatar và dòng trạng thái
-          final boardHeight =
-              screenHeight * 0.7; // Chiều cao tối đa cho bảng caro
-
-          return Stack(
-            children: [
-              // Nền giao diện
-              Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/back3.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Column(
-                children: [
-                  // Phần avatar và trạng thái
-                  Container(
-                    height: avatarHeight,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/player2.png'),
-                        fit: BoxFit.cover,
+    return ScreenUtilInit(
+        designSize: const Size(390, 844), // Kích thước thiết kế ban đầu
+        builder: (context, child) {
+          return Scaffold(
+            appBar: null, // Xóa AppBar
+            body: LayoutBuilder(
+              builder: (context, constraints) {
+                // Chiều cao tổng cộng của màn hình
+                final screenHeight = constraints.maxHeight;
+                final avatarHeight = screenHeight *
+                    0.23; // Chiều cao tối đa cho phần avatar và dòng trạng thái
+                final boardHeight =
+                    screenHeight * 0.7; // Chiều cao tối đa cho bảng caro
+                return Stack(
+                  children: [
+                    // Nền giao diện
+                    Container(
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/back3.jpg'),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Column(
                       children: [
-                        playerWidget(1),
-                        Flexible(
+                        // Phần avatar và trạng thái
+                        Container(
+                          height: avatarHeight,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/player2.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              playerWidget(1),
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 35),
+                                  child: Text(
+                                    statusMessage,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      shadows: [
+                                        Shadow(
+                                          offset: Offset(1.0, 1.0),
+                                          blurRadius: 3.0,
+                                          color: Colors.black,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              playerWidget(2),
+                            ],
+                          ),
+                        ),
+
+                        // Đẩy bảng caro lên sát avatar hơn
+                        Expanded(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 35),
-                            child: Text(
-                              statusMessage,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                shadows: [
-                                  Shadow(
-                                    offset: Offset(1.0, 1.0),
-                                    blurRadius: 3.0,
-                                    color: Colors.black,
+                                horizontal: 6.0,
+                                vertical: 4.6), // Thêm khoảng cách hai bên
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                double availableWidth = constraints.maxWidth -
+                                    30; // Trừ khoảng padding hai bên
+                                double size =
+                                    availableWidth < constraints.maxHeight
+                                        ? availableWidth
+                                        : constraints.maxHeight;
+
+                                double cellSize = size / 15;
+
+                                return Center(
+                                  child: Container(
+                                    width: size,
+                                    height: size,
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(
+                                          0, 255, 255, 255),
+                                      borderRadius: BorderRadius.circular(0),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Color.fromARGB(0, 0, 0, 0),
+                                          blurRadius: 5,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        CustomPaint(
+                                          size: Size(size, size),
+                                          painter: GridPainter(
+                                            boardSize: 15,
+                                            cellSize: cellSize,
+                                          ),
+                                        ),
+                                        GridView.builder(
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 15,
+                                            crossAxisSpacing: 1,
+                                            mainAxisSpacing: 1,
+                                            childAspectRatio: 1,
+                                          ),
+                                          itemCount: 15 * 15,
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemBuilder: (context, index) {
+                                            int row = index ~/ boardSize;
+                                            int col = index % boardSize;
+
+                                            bool isWinningCell =
+                                                winningCells.any(
+                                              (cell) =>
+                                                  cell[0] == row &&
+                                                  cell[1] == col,
+                                            );
+
+                                            return GestureDetector(
+                                              onTap: () => makeMove(index),
+                                              child: AnimatedContainer(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                decoration: BoxDecoration(
+                                                  color: isWinningCell
+                                                      ? Colors.yellow
+                                                          .withOpacity(0.8)
+                                                      : const Color.fromARGB(
+                                                          0, 251, 168, 162),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  boxShadow: [
+                                                    if (isWinningCell)
+                                                      const BoxShadow(
+                                                        color: Colors.orange,
+                                                        blurRadius: 10,
+                                                        offset: Offset(0, 0),
+                                                      ),
+                                                  ],
+                                                ),
+                                                child: Center(
+                                                  child: AnimatedSwitcher(
+                                                    duration: const Duration(
+                                                        milliseconds:
+                                                            500), // Thời gian hiệu ứng
+                                                    transitionBuilder:
+                                                        (Widget child,
+                                                            Animation<double>
+                                                                animation) {
+                                                      return FadeTransition(
+                                                        opacity:
+                                                            animation, // Hiệu ứng mờ dần khi thay đổi
+                                                        child: ScaleTransition(
+                                                          scale:
+                                                              animation, // Hiệu ứng phóng to/thu nhỏ
+                                                          child: child,
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Center(
+                                                      child: cells[index]
+                                                              .isNotEmpty
+                                                          ? WritingText(
+                                                              character:
+                                                                  cells[index],
+                                                              color:
+                                                                  cells[index] ==
+                                                                          'X'
+                                                                      ? Colors
+                                                                          .red
+                                                                      : Colors
+                                                                          .blue,
+                                                            )
+                                                          : const SizedBox
+                                                              .shrink(),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           ),
                         ),
-                        playerWidget(2),
+                        // Khoảng trống nhỏ bên dưới
+                        const SizedBox(height: 8.0),
                       ],
                     ),
-                  ),
-
-                  // Đẩy bảng caro lên sát avatar hơn
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6.0,
-                          vertical: 4.6), // Thêm khoảng cách hai bên
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          double availableWidth = constraints.maxWidth -
-                              30; // Trừ khoảng padding hai bên
-                          double size = availableWidth < constraints.maxHeight
-                              ? availableWidth
-                              : constraints.maxHeight;
-
-                          double cellSize = size / 15;
-
-                          return Center(
-                            child: Container(
-                              width: size,
-                              height: size,
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(0, 255, 255, 255),
-                                borderRadius: BorderRadius.circular(0),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color.fromARGB(0, 0, 0, 0),
-                                    blurRadius: 5,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Stack(
-                                children: [
-                                  CustomPaint(
-                                    size: Size(size, size),
-                                    painter: GridPainter(
-                                      boardSize: 15,
-                                      cellSize: cellSize,
-                                    ),
-                                  ),
-                                  GridView.builder(
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 15,
-                                      crossAxisSpacing: 1,
-                                      mainAxisSpacing: 1,
-                                      childAspectRatio: 1,
-                                    ),
-                                    itemCount: 15 * 15,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      int row = index ~/ boardSize;
-                                      int col = index % boardSize;
-
-                                      bool isWinningCell = winningCells.any(
-                                        (cell) =>
-                                            cell[0] == row && cell[1] == col,
-                                      );
-
-                                      return GestureDetector(
-                                        onTap: () => makeMove(index),
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                          decoration: BoxDecoration(
-                                            color: isWinningCell
-                                                ? Colors.yellow.withOpacity(0.8)
-                                                : const Color.fromARGB(
-                                                    0, 251, 168, 162),
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            boxShadow: [
-                                              if (isWinningCell)
-                                                const BoxShadow(
-                                                  color: Colors.orange,
-                                                  blurRadius: 10,
-                                                  offset: Offset(0, 0),
-                                                ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                            child: AnimatedSwitcher(
-                                              duration: const Duration(
-                                                  milliseconds:
-                                                      500), // Thời gian hiệu ứng
-                                              transitionBuilder: (Widget child,
-                                                  Animation<double> animation) {
-                                                return FadeTransition(
-                                                  opacity:
-                                                      animation, // Hiệu ứng mờ dần khi thay đổi
-                                                  child: ScaleTransition(
-                                                    scale:
-                                                        animation, // Hiệu ứng phóng to/thu nhỏ
-                                                    child: child,
-                                                  ),
-                                                );
-                                              },
-                                              child: Center(
-                                                child: cells[index].isNotEmpty
-                                                    ? WritingText(
-                                                        character: cells[index],
-                                                        color:
-                                                            cells[index] == 'X'
-                                                                ? Colors.red
-                                                                : Colors.blue,
-                                                      )
-                                                    : const SizedBox.shrink(),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  // Khoảng trống nhỏ bên dưới
-                  const SizedBox(height: 8.0),
-                ],
-              ),
-            ],
+                  ],
+                );
+              },
+            ),
           );
-        },
-      ),
-    );
+        });
   }
 
   int currentPlayer = 1;

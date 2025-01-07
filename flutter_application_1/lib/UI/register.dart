@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/UI/loading.dart';
 import 'package:flutter_application_1/UI/login.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/request/apiUser.dart';
@@ -82,6 +83,14 @@ class registerScreen extends StatelessWidget {
                                 password.isNotEmpty &&
                                 password == confirm) {
                               try {
+                                // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const myLoading(
+                                        isLoading: true, errorMessage: null),
+                                  ),
+                                );
                                 final response = await DataUser()
                                     .register(username, password);
                                 final prefs =
@@ -97,7 +106,15 @@ class registerScreen extends StatelessWidget {
                                 );
                                 print('Register successful: $response');
                               } catch (e) {
-                                print('Register failed: $e');
+                                // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const myLoading(
+                                        isLoading: true,
+                                        errorMessage: 'Register failed'),
+                                  ),
+                                );
                               }
                             }
                           },
