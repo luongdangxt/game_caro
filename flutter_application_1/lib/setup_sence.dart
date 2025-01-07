@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'CaroGame.dart';
 import 'package:rive/rive.dart';
+import 'AI caro/caro_offline.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -139,10 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const SettingsScreen(
-                          title: "Play Offline",
-                          subtitle: "This is the content for Play Offline",
-                        ),
+                        builder: (context) => const CaroGame(),
                       ),
                     );
                   },
@@ -168,191 +166,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// Màn hình bên trong (SettingsScreen)
-class SettingsScreen extends StatelessWidget {
-  final String title;
-  final String subtitle;
-
-  const SettingsScreen(
-      {super.key, required this.title, required this.subtitle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          // Hộp tiêu đề với nút mũi tên
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            decoration: const BoxDecoration(
-              color: Color(0xFFCCE5FF), // Màu xanh pastel
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Quay lại màn hình trước
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          if (title == "Play Offline")
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  buildDifficultyCard(
-                    context,
-                    title: "Dễ",
-                    description: "Dành cho người mới bắt đầu",
-                    color: const Color(0xFFE8F8E8), // Xanh lá nhạt
-                    icon: Icons.emoji_emotions, // Biểu tượng mặt cười
-                  ),
-                  buildDifficultyCard(
-                    context,
-                    title: "Trung Bình",
-                    description: "Cấp độ thử thách nhẹ nhàng",
-                    color: const Color(0xFFFFF2CC), // Vàng nhạt
-                    icon: Icons.insights, // Biểu tượng phân tích
-                  ),
-                  buildDifficultyCard(
-                    context,
-                    title: "Khó",
-                    description: "Độ khó nâng cao",
-                    color: const Color(0xFFCCE5FF), // Xanh dương nhạt
-                    icon: Icons.trending_up, // Biểu tượng tăng trưởng
-                  ),
-                  buildDifficultyCard(
-                    context,
-                    title: "Cao Thủ",
-                    description: "Đỉnh cao thử thách",
-                    color: const Color(0xFFF4D7F8), // Tím nhạt
-                    icon: Icons.star, // Biểu tượng ngôi sao
-                  ),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  // Widget cho từng nút độ khó
-  Widget buildDifficultyCard(BuildContext context,
-      {required String title,
-      required String description,
-      required Color color,
-      required IconData icon}) {
-    return GestureDetector(
-      onTap: () {
-        // Xử lý sự kiện khi nhấn vào nút
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const TicTacToeApp(),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(40),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: const BoxDecoration(
-                color: Colors.white, // Nền trắng cho biểu tượng
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 24,
-                color: Colors.black.withOpacity(0.8),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black.withOpacity(0.6),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(
-              Icons.chevron_right,
-              color: Colors.black,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Màn hình chơi game với độ khó được chọn
-class GameScreen extends StatelessWidget {
-  final String difficulty;
-
-  const GameScreen({super.key, required this.difficulty});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Caro - Độ khó: $difficulty'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Text(
-          'Đang chơi ở chế độ $difficulty',
-          style: const TextStyle(fontSize: 24),
-        ),
       ),
     );
   }
