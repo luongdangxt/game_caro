@@ -1093,19 +1093,23 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                                     child: Center(
                                                       child: cells[index]
                                                               .isNotEmpty
-                                                          ? WritingText(
-                                                              character:
-                                                                  cells[index],
-                                                              color:
-                                                                  cells[index] ==
-                                                                          'X'
-                                                                      ? Colors
-                                                                          .red
-                                                                      : Colors
-                                                                          .blue,
+                                                          ? Text(
+                                                              cells[
+                                                                  index], // Hiển thị "X" hoặc "O"
+                                                              style: TextStyle(
+                                                                fontSize: 24,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: cells[
+                                                                            index] ==
+                                                                        'X'
+                                                                    ? Colors.red
+                                                                    : Colors
+                                                                        .blue,
+                                                              ),
                                                             )
-                                                          : const SizedBox
-                                                              .shrink(),
+                                                          : null, // Không hiển thị gì nếu ô trống
                                                     ),
                                                   ),
                                                 ),
