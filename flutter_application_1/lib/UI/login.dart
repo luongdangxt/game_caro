@@ -115,10 +115,10 @@ class _loginScreenState extends State<loginScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const myLoading(
-                                            isLoading: true,
-                                            errorMessage: null),
-                                      ),
+                                          builder: (context) => const myLoading(
+                                              isLoading: true,
+                                              errorMessage: null,
+                                              backScreen: '/login')),
                                     );
                                     final response = await DataUser()
                                         .login(username, password);
@@ -127,14 +127,15 @@ class _loginScreenState extends State<loginScreen> {
                                           await SharedPreferences.getInstance();
                                       await prefs.setString(
                                           'username', username);
-                                      await prefs.setString('avatar',
-                                          'assets/images/defaultAvatar.jpg');
-                                      Navigator.pushReplacement(
+                                      final avatar =
+                                          await DataUser().getAvatar(username);
+                                      await prefs.setString('avatar', avatar);
+                                      Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const MyAppMain(),
-                                        ),
+                                            builder: (context) =>
+                                                const MyAppMain()),
+                                        (Route<dynamic> route) => false,
                                       );
                                     } else {
                                       // Cập nhật trạng thái khi đăng nhập không thành công
@@ -142,9 +143,11 @@ class _loginScreenState extends State<loginScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => const myLoading(
-                                              isLoading: true,
-                                              errorMessage:
-                                                  'Invalid username or password'),
+                                            isLoading: true,
+                                            errorMessage:
+                                                'Invalid username or password',
+                                            backScreen: '/login',
+                                          ),
                                         ),
                                       );
                                     }
@@ -155,7 +158,8 @@ class _loginScreenState extends State<loginScreen> {
                                       MaterialPageRoute(
                                         builder: (context) => const myLoading(
                                             isLoading: true,
-                                            errorMessage: 'Error'),
+                                            errorMessage: 'Login failed',
+                                            backScreen: '/login'),
                                       ),
                                     );
                                   }
@@ -167,7 +171,8 @@ class _loginScreenState extends State<loginScreen> {
                                       builder: (context) => const myLoading(
                                           isLoading: true,
                                           errorMessage:
-                                              'Please enter username and password!'),
+                                              'Please enter username and password!',
+                                          backScreen: '/login'),
                                     ),
                                   );
                                 }

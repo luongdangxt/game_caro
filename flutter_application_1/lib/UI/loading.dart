@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 class myLoading extends StatefulWidget {
   final bool isLoading;
   final String? errorMessage;
-  const myLoading({super.key, this.errorMessage, required this.isLoading});
+  final String backScreen;
+  const myLoading(
+      {super.key,
+      this.errorMessage,
+      required this.isLoading,
+      required this.backScreen});
 
   @override
   State<myLoading> createState() => _myLoadingState();
@@ -40,7 +45,8 @@ class _myLoadingState extends State<myLoading> {
                   // Nút Close để tắt lớp phủ
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context)
+                          .pushReplacementNamed(widget.backScreen);
                     },
                     child: const Text('Close'),
                   ),

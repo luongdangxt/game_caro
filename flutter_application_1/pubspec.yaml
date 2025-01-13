@@ -2,7 +2,7 @@ name: flutter_application_1
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -30,18 +30,19 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flame: ^1.7.0              # Framework game 2D
-  rive: ^0.13.20      # Animation tương tác
-  forge2d: ^0.9.0            # Hệ thống vật lý Box2D
-  just_audio: ^0.9.0     # Hiệu ứng âm thanh và nhạc nền
-  tiled: ^0.8.0              # Hỗ trợ bản đồ tile-based
-  flare_flutter: ^3.0.0      # Animation Flare
-  lottie: ^2.0.0  
-  font_awesome_flutter: ^10.4.0           # Animation JSON từ Lottie
+  flame: ^1.7.0 # Framework game 2D
+  rive: ^0.13.20 # Animation tương tác
+  forge2d: ^0.9.0 # Hệ thống vật lý Box2D
+  just_audio: ^0.9.0 # Hiệu ứng âm thanh và nhạc nền
+  tiled: ^0.8.0 # Hỗ trợ bản đồ tile-based
+  flare_flutter: ^3.0.0 # Animation Flare
+  lottie: ^2.0.0
+  font_awesome_flutter: ^10.4.0 # Animation JSON từ Lottie
   flutter_screenutil: ^5.9.1
   qr_flutter: ^4.1.0
   shared_preferences: ^2.0.17
-
+  image_picker: ^1.1.2
+  http: ^1.2.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -65,7 +66,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -73,9 +73,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-      - assets/images/
-  #   - images/a_dot_ham.jpeg
-      - assets/rive/ 
+    - assets/images/
+    #   - images/a_dot_ham.jpeg
+    - assets/rive/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

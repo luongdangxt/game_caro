@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/UI/game.dart';
 import 'package:flutter_application_1/UI/login.dart';
 import 'package:flutter_application_1/UI/quest.dart';
+import 'package:flutter_application_1/UI/register.dart';
+import 'package:flutter_application_1/UI/settingUser.dart';
 import 'package:flutter_application_1/UI/test.dart';
 import 'package:flutter_application_1/UI/today.dart';
 import 'package:flutter_application_1/UI/user.dart';
@@ -9,9 +11,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 void main() {
-  runApp(const MaterialApp(
+  runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: MyAppMain(),
+    routes: {
+      '/home': (context) => const MyAppMain(),
+      '/login': (context) => const loginScreen(),
+      '/register': (context) => registerScreen(),
+    },
+    home: const loginScreen(),
   ));
 }
 

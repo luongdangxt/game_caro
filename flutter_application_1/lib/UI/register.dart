@@ -88,7 +88,9 @@ class registerScreen extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => const myLoading(
-                                        isLoading: true, errorMessage: null),
+                                        isLoading: true,
+                                        errorMessage: null,
+                                        backScreen: '/register'),
                                   ),
                                 );
                                 final response = await DataUser()
@@ -112,7 +114,8 @@ class registerScreen extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) => const myLoading(
                                         isLoading: true,
-                                        errorMessage: 'Register failed'),
+                                        errorMessage: 'Register failed',
+                                        backScreen: '/register'),
                                   ),
                                 );
                               }

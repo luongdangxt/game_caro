@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/UI/login.dart';
+import 'package:flutter_application_1/UI/settingUser.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
 
 class ScreenUser extends StatefulWidget {
@@ -10,8 +14,8 @@ class ScreenUser extends StatefulWidget {
 }
 
 class _ScreenUserState extends State<ScreenUser> {
-  String nameUser = 'no name'; // Khởi tạo giá trị mặc định
-  String urlAvatar = 'no avatar'; // Khởi tạo giá trị mặc định
+  String nameUser = 'ok'; // Khởi tạo giá trị mặc định
+  String stringAvatar = 'ok'; // Khởi tạo giá trị mặc định
 
   @override
   void initState() {
@@ -22,13 +26,14 @@ class _ScreenUserState extends State<ScreenUser> {
   Future<void> getInfoLogin() async {
     final dataUser = await saveLogin().getUserData();
     setState(() {
-      nameUser = dataUser['username'] ?? 'no name';
-      urlAvatar = dataUser['avatar'] ?? 'no avatar';
+      nameUser = dataUser['username'] ?? 'ok';
+      stringAvatar = dataUser['avatar'] ?? 'ok';
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Uint8List urlAvatar = base64Decode(stringAvatar.split(',').last);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -40,9 +45,7 @@ class _ScreenUserState extends State<ScreenUser> {
             const SizedBox(height: 20),
             CircleAvatar(
               radius: 50, // Kích thước hình tròn
-              backgroundImage: urlAvatar != 'no avatar'
-                  ? NetworkImage(urlAvatar) as ImageProvider
-                  : const AssetImage('assets/images/defaultAvatar.jpg'),
+              backgroundImage: MemoryImage(urlAvatar),
             ),
             const SizedBox(height: 10),
             // Tên người dùng
@@ -64,10 +67,13 @@ class _ScreenUserState extends State<ScreenUser> {
                   onPressed: () async {
                     // Xử lý đăng xuất
                     await saveLogin().logout();
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>  loginScreen(),
+                        // builder: (context) => const loginScreen(),
+                        builder: (context) => EditUserScreen(
+                          initialAvatarUrl: urlAvatar,
+                        ),
                       ),
                     );
                   },
