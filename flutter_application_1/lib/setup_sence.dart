@@ -11,6 +11,13 @@ import 'CaroGame.dart';
 import 'package:rive/rive.dart';
 import 'AI caro/caro_offline.dart';
 
+void main() {
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: MyApp(),
+  ));
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -78,8 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 250,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage(
-                            'assets/images/avatar_1.jpg'), // Đường dẫn hình ảnh
+                        image: AssetImage(''), // Đường dẫn hình ảnh
                         fit: BoxFit.cover,
                       ),
                       borderRadius: BorderRadius.only(
@@ -931,65 +937,83 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                 final boardHeight =
                     screenHeight * 0.7; // Chiều cao tối đa cho bảng caro
                 return Stack(
+                  alignment: Alignment.topCenter,
                   children: [
                     // Nền giao diện
                     Container(
                       decoration: const BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/images/back3.jpg'),
+                          image: AssetImage('assets/images/back_game.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    Column(
-                      children: [
-                        // Phần avatar và trạng thái
-                        Container(
-                          height: avatarHeight,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/player2.png'),
-                              fit: BoxFit.cover,
+
+                    Container(
+                      height: 405,
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 144, 97, 80),
+                        borderRadius: BorderRadius.circular(25),
+                        // image: const DecorationImage(
+                        //   image: AssetImage('assets/images/back_game.png'),
+                        //   fit: BoxFit.cover,
+                        // ),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 35),
+                              // child: Text(
+                              //   statusMessage,
+                              //   textAlign: TextAlign.center,
+                              //   style: const TextStyle(
+                              //     fontSize: 16,
+                              //     color: Colors.white,
+                              //     fontWeight: FontWeight.bold,
+                              //     shadows: [
+                              //       Shadow(
+                              //         offset: Offset(1.0, 1.0),
+                              //         blurRadius: 3.0,
+                              //         color: Colors.black,
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              playerWidget(1),
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0, vertical: 35),
-                                  child: Text(
-                                    statusMessage,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      shadows: [
-                                        Shadow(
-                                          offset: Offset(1.0, 1.0),
-                                          blurRadius: 3.0,
-                                          color: Colors.black,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        const SizedBox(height: 35),
+                        Text(
+                          statusMessage,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                offset: Offset(1.0, 1.0),
+                                blurRadius: 3.0,
+                                color: Colors.black,
                               ),
-                              playerWidget(2),
                             ],
                           ),
                         ),
-
                         // Đẩy bảng caro lên sát avatar hơn
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6.0,
+                                //horizontal: 5.0,
                                 vertical: 4.6), // Thêm khoảng cách hai bên
+
                             child: LayoutBuilder(
                               builder: (context, constraints) {
                                 double availableWidth = constraints.maxWidth -
@@ -1007,7 +1031,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                     height: size,
                                     decoration: BoxDecoration(
                                       color: const Color.fromARGB(
-                                          0, 255, 255, 255),
+                                          255, 255, 255, 255),
                                       borderRadius: BorderRadius.circular(0),
                                       boxShadow: const [
                                         BoxShadow(
@@ -1125,8 +1149,142 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                             ),
                           ),
                         ),
+
                         // Khoảng trống nhỏ bên dưới
-                        const SizedBox(height: 8.0),
+
+                        SizedBox(
+                          height: avatarHeight,
+                          // decoration: const BoxDecoration(
+                          //   image: DecorationImage(
+                          //     image: AssetImage(''),
+                          //     fit: BoxFit.cover,
+                          //   ),
+                          // ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              playerWidget(1),
+                              // Flexible(
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.symmetric(
+                              //         horizontal: 8.0, vertical: 35),
+                              //     child: Text(
+                              //       statusMessage,
+                              //       textAlign: TextAlign.center,
+                              //       style: const TextStyle(
+                              //         fontSize: 16,
+                              //         color: Colors.white,
+                              //         fontWeight: FontWeight.bold,
+                              //         shadows: [
+                              //           Shadow(
+                              //             offset: Offset(1.0, 1.0),
+                              //             blurRadius: 3.0,
+                              //             color: Colors.black,
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                              playerWidget(2),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .spaceEvenly, // Căn đều trong màn hình
+                          children: [
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Circle background
+                                Container(
+                                  width: 80, // Adjust the size to your needs
+                                  height: 80,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white, // Outer circle color
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                // Inner circle
+                                Container(
+                                  width:
+                                      70, // Slightly smaller than outer circle
+                                  height: 70,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.brown, // Inner circle color
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.play_arrow, // Play icon
+                                    color: Colors.white,
+                                    size: 44, // Icon size
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Circle background
+                                Container(
+                                  width: 80, // Adjust the size to your needs
+                                  height: 80,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white, // Outer circle color
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                // Inner circle
+                                Container(
+                                  width:
+                                      70, // Slightly smaller than outer circle
+                                  height: 70,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.brown, // Inner circle color
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.pause, // Play icon
+                                    color: Colors.white,
+                                    size: 44, // Icon size
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Circle background
+                                Container(
+                                  width: 80, // Adjust the size to your needs
+                                  height: 80,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white, // Outer circle color
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                // Inner circle
+                                Container(
+                                  width:
+                                      70, // Slightly smaller than outer circle
+                                  height: 70,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.brown, // Inner circle color
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.reply, // Play icon
+                                    color: Colors.white,
+                                    size: 44, // Icon size
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 80),
                       ],
                     ),
                   ],
@@ -1170,41 +1328,51 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
 
     return SizedBox(
-      width: 150, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
-      height: 90, // Chiều cao cố định
+      width: 225, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
+      height: 140, // Chiều cao cố định
+
       child: Stack(
         children: [
-          // Vùng màu xám với bo tròn
-          Align(
-            alignment:
-                isLeftSide ? Alignment.centerLeft : Alignment.centerRight,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 450), // Hiệu ứng mượt mà
-              width: isCurrentPlayer ? 120 : 90, // Thu phóng về avatar
-              height: isCurrentPlayer ? 50 : 40, // Cao hơn khi đến lượt
-              decoration: BoxDecoration(
-                color: isCurrentPlayer
-                    ? Colors.grey.shade300
-                    : Colors.transparent, // Màu xám khi đến lượt
-                borderRadius: BorderRadius.circular(45), // Bo tròn cả hai bên
-              ),
+          Container(
+            decoration: BoxDecoration(
+              // image: const DecorationImage(
+              //   image: AssetImage('assets/images/back_game.png'),
+              //   fit: BoxFit.cover,
+              // ),
+
+              color: isLeftSide
+                  ? const Color.fromARGB(255, 63, 205, 198)
+                  : const Color.fromARGB(255, 205, 63, 63),
+              borderRadius: BorderRadius.circular(25),
             ),
           ),
+          // Vùng màu xám với bo tròn
+          // Align(
+          //   alignment:
+          //       isLeftSide ? Alignment.centerLeft : Alignment.centerRight,
+          //   child: AnimatedContainer(
+          //     duration: const Duration(milliseconds: 450), // Hiệu ứng mượt mà
+          //     width: isCurrentPlayer ? 120 : 90, // Thu phóng về avatar
+          //     height: isCurrentPlayer ? 50 : 40, // Cao hơn khi đến lượt
+          //     decoration: BoxDecoration(
+          //       color: isCurrentPlayer
+          //           ? Colors.grey.shade300
+          //           : Colors.transparent, // Màu xám khi đến lượt
+          //       borderRadius: BorderRadius.circular(45), // Bo tròn cả hai bên
+          //     ),
+          //   ),
+          // ),
           // Avatar
           Align(
-            alignment:
-                isLeftSide ? Alignment.centerLeft : Alignment.centerRight,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 450), // Hiệu ứng thu phóng
-              width: isCurrentPlayer ? 50 : 40, // Avatar lớn hơn khi đến lượt
-              height: isCurrentPlayer ? 50 : 40,
+            alignment: Alignment.center,
+            child: Container(
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle, // Avatar luôn hình tròn
                 image: DecorationImage(
                   image: AssetImage(
-                    player == 1
-                        ? 'assets/images/avatar_1.jpg'
-                        : 'assets/images/avatar_2.jpg', // Avatar người chơi
+                    player == 1 ? '' : '', // Avatar người chơi
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -1212,26 +1380,26 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             ),
           ),
           // Thời gian
-          Align(
-            alignment:
-                isLeftSide ? Alignment.centerRight : Alignment.centerLeft,
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 450), // Hiệu ứng mờ dần
-              opacity: isCurrentPlayer ? 1.0 : 0.0, // Chỉ hiển thị khi đến lượt
-              child: SizedBox(
-                width: 120, // Kích thước cố định cho vùng thời gian
-                child: Center(
-                  child: Text(
-                    '$timeLeft s', // Hiển thị thời gian còn lại
-                    style: const TextStyle(
-                      fontSize: 22,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Align(
+          //   alignment:
+          //       isLeftSide ? Alignment.centerRight : Alignment.centerLeft,
+          //   child: AnimatedOpacity(
+          //     duration: const Duration(milliseconds: 450), // Hiệu ứng mờ dần
+          //     opacity: isCurrentPlayer ? 1.0 : 0.0, // Chỉ hiển thị khi đến lượt
+          //     child: SizedBox(
+          //       width: 120, // Kích thước cố định cho vùng thời gian
+          //       child: Center(
+          //         child: Text(
+          //           '$timeLeft s', // Hiển thị thời gian còn lại
+          //           style: const TextStyle(
+          //             fontSize: 22,
+          //             color: Colors.black54,
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
