@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
 import 'package:flutter_application_1/model/model.dart';
 import 'package:flutter_application_1/request/apiRoom.dart';
+import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'CaroGame.dart';
@@ -84,10 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: double.infinity,
                     height: 250,
                     decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(''), // Đường dẫn hình ảnh
-                        fit: BoxFit.cover,
-                      ),
+                      // image: DecorationImage(
+                      //   image: AssetImage(''), // Đường dẫn hình ảnh
+                      //   fit: BoxFit.cover,
+                      // ),
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(24),
                         bottomRight: Radius.circular(24),
@@ -854,11 +855,23 @@ class CaroGameScreen extends StatefulWidget {
 }
 
 class _CaroGameScreenState extends State<CaroGameScreen> {
+  String? nameUser; // Khởi tạo giá trị mặc định
+  String? stringAvatar; // Khởi tạo giá trị mặc định
+
+  Future<void> getInfoLogin() async {
+    final dataUser = await saveLogin().getUserData();
+    setState(() {
+      nameUser = dataUser['username'];
+      stringAvatar = dataUser['avatar'];
+    });
+  }
+
   final int boardSize = 15;
   final WebSocketChannel channel = WebSocketChannel.connect(
     Uri.parse('wss://carogame.onrender.com'),
   );
 
+  List<String> dataPlayers = []; // [username1, username2 , avatar1, avatar2]
   List<String> cells = [];
   String statusMessage = 'Waiting to join a room...';
   String? mySymbol;
@@ -867,13 +880,21 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   void initState() {
     super.initState();
+    getInfoLogin();
     cells = List.filled(boardSize * boardSize, '');
     joinRoom();
     channel.stream.listen((message) {
       final data = jsonDecode(message);
       setState(() {
-        if (data['type'] == 'waiting' || data['type'] == 'game-ready') {
+        if (data['type'] == 'waiting') {
           statusMessage = data['message'];
+        } else if (data['type'] == 'game-ready') {
+          statusMessage = data['message'];
+          data['players'].forEach((player) {
+            dataPlayers.add(player['username']);
+            dataPlayers.add(player['avatar']);
+          });
+          print(dataPlayers);
         } else if (data['type'] == 'game-start') {
           statusMessage = 'Game started! Your symbol: ${data['symbol']}';
           mySymbol = data['symbol'];
@@ -893,7 +914,11 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     if (widget.roomId.isNotEmpty) {
       channel.sink.add(jsonEncode({
         'type': 'join-room',
-        'payload': {'roomId': widget.roomId},
+        'payload': {
+          'roomId': widget.roomId,
+          'username': 'nameUser',
+          'avatar': 'stringAvatar'
+        },
       }));
     }
   }
@@ -1160,11 +1185,11 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                           //     fit: BoxFit.cover,
                           //   ),
                           // ),
-                          child: Row(
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              playerWidget(1),
+                              // playerWidget(1),
                               // Flexible(
                               //   child: Padding(
                               //     padding: const EdgeInsets.symmetric(
@@ -1187,7 +1212,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                               //     ),
                               //   ),
                               // ),
-                              playerWidget(2),
+                              // playerWidget(2),
                             ],
                           ),
                         ),

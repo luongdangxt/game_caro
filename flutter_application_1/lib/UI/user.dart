@@ -33,7 +33,7 @@ class _ScreenUserState extends State<ScreenUser> {
 
   @override
   Widget build(BuildContext context) {
-    Uint8List urlAvatar = base64Decode(stringAvatar.split(',').last);
+    Uint8List urlAvatar = base64Decode(stringAvatar);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
