@@ -12,6 +12,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'CaroGame.dart';
 import 'package:rive/rive.dart';
 import 'AI caro/caro_offline.dart';
+import 'package:flutter/widgets.dart' as flutter;
+import 'package:rive/rive.dart' as rive;
 
 void main() {
   runApp(const MaterialApp(
@@ -58,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
       showImage = false; // Hiển thị lại hộp xanh
     });
     // Tự động thay đổi từ hộp xanh sang hình ảnh sau 2 giây
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 0), () {
       setState(() {
         showImage = true; // Chuyển sang hiển thị hình ảnh
       });
@@ -74,102 +76,211 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          // Hộp trên cùng hiển thị hộp xanh hoặc hình ảnh
-          AnimatedSwitcher(
-            duration:
-                const Duration(milliseconds: 500), // Hiệu ứng chuyển đổi mượt
-            child: showImage
-                ? Container(
-                    key: const ValueKey("image"),
-                    width: double.infinity,
-                    height: 250,
-                    decoration: const BoxDecoration(
-                      // image: DecorationImage(
-                      //   image: AssetImage(''), // Đường dẫn hình ảnh
-                      //   fit: BoxFit.cover,
-                      // ),
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(24),
-                        bottomRight: Radius.circular(24),
-                      ),
-                    ),
-                  )
-                : Container(
-                    key: const ValueKey("blueBox"),
-                    width: double.infinity,
-                    height: 250,
-                    decoration: const BoxDecoration(
-                      color: Colors.blue, // Hộp xanh
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(24),
-                        bottomRight: Radius.circular(24),
-                      ),
-                    ),
-                  ),
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/back_setup.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-          const SizedBox(height: 32),
+          // Hộp trên cùng hiển thị hộp xanh hoặc hình ảnh
+          // AnimatedSwitcher(
+          //   duration:
+          //       const Duration(milliseconds: 500), // Hiệu ứng chuyển đổi mượt
+          //   child: showImage
+          //       ? Container(
+          //           key: const ValueKey("image"),
+          //           width: double.infinity,
+          //           height: 250,
+          //           decoration: const BoxDecoration(
+          //             // image: DecorationImage(
+          //             //   image: AssetImage(''), // Đường dẫn hình ảnh
+          //             //   fit: BoxFit.cover,
+          //             // ),
+          //             borderRadius: BorderRadius.only(
+          //               bottomLeft: Radius.circular(24),
+          //               bottomRight: Radius.circular(24),
+          //             ),
+          //           ),
+          //         )
+          //       : Container(
+          //           key: const ValueKey("blueBox"),
+          //           width: double.infinity,
+          //           height: 250,
+          //           decoration: const BoxDecoration(
+          //             color: Colors.blue, // Hộp xanh
+          //             borderRadius: BorderRadius.only(
+          //               bottomLeft: Radius.circular(24),
+          //               bottomRight: Radius.circular(24),
+          //             ),
+          //           ),
+          //         ),
+          // ),
+          // const SizedBox(height: 32),
           // Hai nút với màu khác nhau
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const PlayOnlineScreen(),
+                const SizedBox(height: 100),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 132,
+                        width: 350,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/btn.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Colors.transparent, // Để nền nút trong suốt
+                            shadowColor: Colors.transparent, // Bỏ hiệu ứng bóng
+                          ),
+                          onPressed: () {
+                            Navigator.pop(
+                                context); // Quay lại màn hình trước đó
+                          },
+                          child: const Text(
+                            'MENU GAME',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // Nút màu đỏ
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Play Online",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                  ],
+                ),
+                const SizedBox(height: 32),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 100,
+                        width: 300,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/btn.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Colors.transparent, // Để nền nút trong suốt
+                            shadowColor: Colors.transparent, // Bỏ hiệu ứng bóng
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PlayOnlineScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Play Online',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CaroGame(),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 100,
+                        width: 300,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/btn.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Colors.transparent, // Để nền nút trong suốt
+                            shadowColor: Colors.transparent, // Bỏ hiệu ứng bóng
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CaroGame(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Play Offline',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green, // Nút màu xanh
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Play Offline",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
+                const SizedBox(height: 32),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment
+                      .spaceEvenly, // Các phần tử cách đều nhau
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/btn_how.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/btn_home.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/btn_audio.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -181,12 +292,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // Thêm màn hình "Play Online"
 class PlayOnlineScreen extends StatelessWidget {
-  const PlayOnlineScreen({super.key});
+  PlayOnlineScreen({super.key});
 
   Future<List<Room>> callLoadRooms() async {
     final dataFetcher = DataRoom();
     return await dataFetcher.loadRooms();
   }
+
+  final TextEditingController idRoom = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -197,8 +310,7 @@ class PlayOnlineScreen extends StatelessWidget {
         builder: (context, snapshot) {
           // Kiểm tra trạng thái kết nối
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-                child: CircularProgressIndicator()); // Hiển thị loading
+            return const AnimatedBackgroundLoader();
           } else if (snapshot.data == null) {
             return const Text('data');
           } else {
@@ -206,65 +318,123 @@ class PlayOnlineScreen extends StatelessWidget {
             return Scaffold(
               body: Stack(
                 children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/back_room.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                   Column(
                     children: [
-                      // Hộp tiêu đề "Play Online"
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 24),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFCCE5FF), // Màu xanh pastel
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(24),
-                            bottomRight: Radius.circular(24),
+                      const SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment
+                            .spaceBetween, // Đặt khoảng cách đều
+                        children: [
+                          SizedBox(
+                            height: 50,
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    // Hành động khi nhấn vào Container
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomeScreen()),
+                                      (Route<dynamic> route) =>
+                                          false, // Loại bỏ tất cả các màn hình trước đó
+                                    );
+                                    // Hoặc điều hướng, logic khác ở đây
+                                  },
+                                  child: Container(
+                                    height: 35,
+                                    width: 70,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/btn_back.png'),
+                                        fit: BoxFit.fitHeight,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const HomeScreen()),
-                                  (Route<dynamic> route) =>
-                                      false, // Loại bỏ tất cả các màn hình trước đó
-                                );
-                              },
-                              icon: const Icon(
-                                Icons.arrow_back,
-                                color: Colors.black,
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                height: 80,
+                                width: 200,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/khung.png'),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              "Play Online",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                              const Text(
+                                "Play Online",
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          const SizedBox(width: 70),
+                        ],
+                      ),
+
+                      // Hộp tiêu đề "Play Online"
+                      const SizedBox(height: 15),
+                      Container(
+                        alignment: Alignment.center,
+                        height: 2, // Độ dày của đường kẻ
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16), // Thu hẹp chiều dài ở hai đầu
+                        decoration: BoxDecoration(
+                          color: Colors.grey, // Màu sắc của đường kẻ
+                          borderRadius:
+                              BorderRadius.circular(4), // Bo tròn hai đầu
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 15),
                       // Nội dung cuộn với danh sách phòng
+
                       Expanded(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: GridView.builder(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // Số container mỗi hàng
+                            crossAxisSpacing:
+                                16, // Khoảng cách ngang giữa các container
+                            mainAxisSpacing:
+                                16, // Khoảng cách dọc giữa các container
+                            childAspectRatio:
+                                1, // Tỉ lệ width : height của mỗi container (1 là vuông)
+                          ),
                           itemCount: rooms.length, // Dựa trên số lượng phòng
                           itemBuilder: (context, index) {
                             final room = rooms[index];
                             print(room.roomId);
                             return buildPlayerCard(
-                                context,
-                                index,
-                                room.roomType,
-                                room.playerRight != 'null' ? 2 : 1,
-                                2,
-                                room.roomId);
+                              context,
+                              index,
+                              room.roomType,
+                              room.playerRight != 'null' ? 2 : 1,
+                              2,
+                              room.roomId,
+                            );
                           },
                         ),
                       ),
@@ -275,109 +445,210 @@ class PlayOnlineScreen extends StatelessWidget {
                     bottom: 16,
                     left: 16,
                     right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(100),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+                    child: Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          height: 2, // Độ dày của đường kẻ
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16), // Thu hẹp chiều dài ở hai đầu
+                          decoration: BoxDecoration(
+                            color: Colors.grey, // Màu sắc của đường kẻ
+                            borderRadius:
+                                BorderRadius.circular(4), // Bo tròn hai đầu
                           ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          buildActionButton(
-                            context,
-                            icon: Icons.add_circle_outline,
-                            label: "Tạo Phòng",
-                            onTap: () {
-                              _showCreateRoomDialog(context);
-                            },
-                          ),
-                          buildActionButton(
-                            context,
-                            icon: Icons.key,
-                            label: "Nhập Mã",
-                            onTap: () {
-                              // Xử lý logic tham gia bằng mã
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text("Tham Gia Bằng Mã"),
-                                    content: TextField(
-                                      controller: idRoom,
-                                      decoration: const InputDecoration(
-                                        labelText: "Nhập mã phòng",
-                                        border: OutlineInputBorder(),
-                                      ),
+                        ),
+                        SizedBox(
+                          height: 100,
+                          width: 400,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(255, 148, 74,
+                                        21), // Màu nền nâu nhạt (tan)
+                                    borderRadius: BorderRadius.circular(
+                                        20), // Bo góc khung
+                                    border: Border.all(
+                                      color: const Color.fromARGB(
+                                          255, 136, 68, 19), // Màu viền nâu đậm
+                                      width: 2,
                                     ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text("Hủy"),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8), // Thêm padding bên trong
+                                  child: TextField(
+                                    controller: idRoom,
+                                    decoration: const InputDecoration(
+                                      labelText: "ID Room",
+                                      labelStyle: TextStyle(
+                                        color: Color.fromARGB(255, 255, 255,
+                                            255), // Màu chữ của label
                                       ),
-                                      TextButton(
-                                        onPressed: () {
-                                          final joinRoomId = idRoom.text;
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CaroGameScreen(
-                                                      roomId: joinRoomId),
-                                            ),
-                                          ).then((result) async {
-                                            if (result != null) {
-                                              // Có dữ liệu trả về
-                                            }
-                                            // Xóa phòng sau khi quay lại từ CaroGameScreen
-                                            final deleteResult =
-                                                await DataRoom()
-                                                    .deleteRoom(joinRoomId);
-                                            print(deleteResult);
-                                          });
-                                        },
-                                        child: const Text("Tham Gia"),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
+                                      border: InputBorder
+                                          .none, // Loại bỏ viền mặc định của TextField
+                                    ),
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(255, 255, 255,
+                                          255), // Màu chữ của nội dung nhập
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                height: 65,
+                                width: 110,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/btn.png'),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                child: const Text(
+                                  "ENTER",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                          buildActionButton(
-                            context,
-                            icon: Icons.qr_code_scanner,
-                            label: "Quét QR",
-                            onTap: () {
-                              // Xử lý logic quét QR
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text("Quét QR"),
-                                    content: const Text(
-                                        "Chức năng quét QR sẽ ở đây."),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text("Đóng"),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          height: 120,
+                          width: 300,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn.png'),
+                              fit: BoxFit.fill,
+                            ),
                           ),
-                        ],
-                      ),
+                          child: const Text(
+                            "CREATE ROOM",
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+
+                  const Column(
+                    children: [
+                      //   Container(
+                      //     padding: const EdgeInsets.symmetric(vertical: 8),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.white,
+                      //       borderRadius: BorderRadius.circular(100),
+                      //       boxShadow: [
+                      //         BoxShadow(
+                      //           color: Colors.black.withOpacity(0.1),
+                      //           blurRadius: 8,
+                      //           offset: const Offset(0, 4),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     child: Row(
+                      //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      //       children: [
+                      //         buildActionButton(
+                      //           context,
+                      //           icon: Icons.add_circle_outline,
+                      //           label: "Tạo Phòng",
+                      //           onTap: () {
+                      //             _showCreateRoomDialog(context);
+                      //           },
+                      //         ),
+                      //         buildActionButton(
+                      //           context,
+                      //           icon: Icons.key,
+                      //           label: "Nhập Mã",
+                      //           onTap: () {
+                      //             // Xử lý logic tham gia bằng mã
+                      //             showDialog(
+                      //               context: context,
+                      //               builder: (context) {
+                      //                 return AlertDialog(
+                      //                   title: const Text("Tham Gia Bằng Mã"),
+                      //                   content: TextField(
+                      //                     controller: idRoom,
+                      //                     decoration: const InputDecoration(
+                      //                       labelText: "Nhập mã phòng",
+                      //                       border: OutlineInputBorder(),
+                      //                     ),
+                      //                   ),
+                      //                   actions: [
+                      //                     TextButton(
+                      //                       onPressed: () =>
+                      //                           Navigator.pop(context),
+                      //                       child: const Text("Hủy"),
+                      //                     ),
+                      //                     TextButton(
+                      //                       onPressed: () {
+                      //                         final joinRoomId = idRoom.text;
+                      //                         Navigator.push(
+                      //                           context,
+                      //                           MaterialPageRoute(
+                      //                             builder: (context) =>
+                      //                                 CaroGameScreen(
+                      //                                     roomId: joinRoomId),
+                      //                           ),
+                      //                         ).then((result) async {
+                      //                           if (result != null) {
+                      //                             // Có dữ liệu trả về
+                      //                           }
+                      //                           // Xóa phòng sau khi quay lại từ CaroGameScreen
+                      //                           final deleteResult =
+                      //                               await DataRoom()
+                      //                                   .deleteRoom(joinRoomId);
+                      //                           print(deleteResult);
+                      //                         });
+                      //                       },
+                      //                       child: const Text("Tham Gia"),
+                      //                     ),
+                      //                   ],
+                      //                 );
+                      //               },
+                      //             );
+                      //           },
+                      //         ),
+                      //         buildActionButton(
+                      //           context,
+                      //           icon: Icons.qr_code_scanner,
+                      //           label: "Quét QR",
+                      //           onTap: () {
+                      //             // Xử lý logic quét QR
+                      //             showDialog(
+                      //               context: context,
+                      //               builder: (context) {
+                      //                 return AlertDialog(
+                      //                   title: const Text("Quét QR"),
+                      //                   content: const Text(
+                      //                       "Chức năng quét QR sẽ ở đây."),
+                      //                   actions: [
+                      //                     TextButton(
+                      //                       onPressed: () =>
+                      //                           Navigator.pop(context),
+                      //                       child: const Text("Đóng"),
+                      //                     ),
+                      //                   ],
+                      //                 );
+                      //               },
+                      //             );
+                      //           },
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                    ],
                   ),
                 ],
               ),
@@ -464,76 +735,83 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
     child: Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(40),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/khung.png'),
+          fit: BoxFit.fill,
+        ),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xFFCCE5FF), // Nền xanh nhạt
-            ),
-            child: Center(
-              child: Text(
-                "${index + 1}",
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double containerWidth = constraints.maxWidth;
+          double containerHeight = constraints.maxHeight;
+
+          return Column(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: containerHeight * 0.1), // Khoảng cách động
+                    FractionallySizedBox(
+                      widthFactor: 0.5, // Chiếm 50% chiều rộng container
+                      child: Container(
+                        height: containerHeight * 0.2, // Chiều cao theo tỷ lệ
+                        width: containerWidth * 0.8,
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Room ${index + 1}",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: containerWidth * 0.14, // Font động
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                        height: containerHeight * 0.05), // Khoảng cách động
+                    Text(
+                      "Người chơi: $currentPlayers/$maxPlayers",
+                      style: TextStyle(
+                        fontSize: containerWidth * 0.09, // Font động
+                        color: const Color.fromARGB(255, 255, 255, 255)
+                            .withOpacity(0.6),
+                      ),
+                    ),
+                    const Spacer(),
+                  ],
                 ),
               ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Room ${index + 1} (${roomType == 'public' ? 'Public' : 'Private'})",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+              FractionallySizedBox(
+                widthFactor: 0.6, // 60% chiều rộng container
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: containerWidth * 0.03, // Padding động
+                    vertical: containerHeight * 0.01, // Padding động
+                  ),
+                  decoration: BoxDecoration(
+                    color:
+                        currentPlayers < maxPlayers ? Colors.green : Colors.red,
+                    borderRadius: BorderRadius.circular(containerWidth * 0.03),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    currentPlayers < maxPlayers ? "Available" : "Full",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: containerWidth * 0.1, // Font động
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                Text(
-                  "Người chơi: $currentPlayers/$maxPlayers",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black.withOpacity(0.6),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: currentPlayers < maxPlayers ? Colors.green : Colors.red,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              currentPlayers < maxPlayers ? "Available" : "Full",
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-          ),
-        ],
+              SizedBox(height: containerHeight * 0.23), // Khoảng cách động
+            ],
+          );
+        },
       ),
     ),
   );
@@ -844,6 +1122,97 @@ Widget _buildOptionButton({
       ),
     ),
   );
+}
+
+class AnimatedBackgroundLoader extends StatefulWidget {
+  const AnimatedBackgroundLoader({super.key});
+
+  @override
+  State<AnimatedBackgroundLoader> createState() =>
+      _AnimatedBackgroundLoaderState();
+}
+
+class _AnimatedBackgroundLoaderState extends State<AnimatedBackgroundLoader>
+    with SingleTickerProviderStateMixin {
+  final List<String> _loadingImages = [
+    'assets/images/loading/6.png',
+    'assets/images/loading/5.png',
+    'assets/images/loading/4.png',
+    'assets/images/loading/3.png',
+    'assets/images/loading/2.png',
+    'assets/images/loading/1.png',
+  ];
+  int _currentImageIndex = 0;
+  int _nextImageIndex = 1;
+  bool _isFirstImageDisplayed = true; // Cờ để xác định ảnh đầu tiên
+  late AnimationController _animationController;
+  late Animation<double> _opacityAnimation;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _opacityAnimation =
+        Tween<double>(begin: 1.0, end: 0.0).animate(_animationController);
+
+    _startImageRotation();
+  }
+
+  void _startImageRotation() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (_isFirstImageDisplayed) {
+        // Bỏ qua hiệu ứng cho ảnh đầu tiên
+        setState(() {
+          _isFirstImageDisplayed = false;
+        });
+        return;
+      }
+
+      await _animationController.forward(); // Hiệu ứng mờ dần
+      setState(() {
+        _currentImageIndex = _nextImageIndex;
+        _nextImageIndex = (_nextImageIndex + 1) % _loadingImages.length;
+      });
+      _animationController.reset(); // Reset để chuẩn bị cho lần tiếp theo
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Ảnh hiện tại
+        flutter.Image.asset(
+          _loadingImages[_currentImageIndex],
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        ),
+        // Hiệu ứng fade chỉ áp dụng từ ảnh thứ hai trở đi
+        if (!_isFirstImageDisplayed)
+          FadeTransition(
+            opacity: _opacityAnimation,
+            child: flutter.Image.asset(
+              _loadingImages[_nextImageIndex],
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+      ],
+    );
+  }
 }
 
 class CaroGameScreen extends StatefulWidget {
