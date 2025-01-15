@@ -698,33 +698,129 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
         showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
-              title: const Text("Tham gia phòng"),
-              content: Text("Bạn muốn tham gia Room ${index + 1}?"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Hủy"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CaroGameScreen(roomId: roomId),
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  height: 280,
+                  width: 370,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                          "assets/images/khung.png"), // Đường dẫn ảnh nền
+                      fit: BoxFit.fitHeight, // Cách hiển thị ảnh
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "Tham gia phòng",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ).then((result) async {
-                      if (result != null) {
-                        // Có dữ liệu trả về
-                      }
-                      // Không có dữ liệu trả về
-                      final deleteResult = await DataRoom().deleteRoom(roomId);
-                      print(deleteResult);
-                    });
-                  },
-                  child: const Text("Tham gia"),
+                      const SizedBox(height: 12.0),
+                      const Text(
+                        "Bạn muốn tham gia Room?",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                      const SizedBox(height: 24.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Stack(
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                height: 70,
+                                width: 110,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        "assets/images/btn.png"), // Đường dẫn ảnh nền
+                                    fit: BoxFit.fill, // Cách hiển thị ảnh
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        "Hủy",
+                                        style: TextStyle(
+                                            color: Colors.redAccent,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 80.0),
+                          Stack(
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                height: 70,
+                                width: 110,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        "assets/images/btn.png"), // Đường dẫn ảnh nền
+                                    fit: BoxFit.fill, // Cách hiển thị ảnh
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CaroGameScreen(roomId: roomId),
+                                          ),
+                                        ).then((result) async {
+                                          if (result != null) {
+                                            // Có dữ liệu trả về
+                                          }
+                                          // Không có dữ liệu trả về
+                                          final deleteResult = await DataRoom()
+                                              .deleteRoom(roomId);
+                                          print(deleteResult);
+                                        });
+                                      },
+                                      child: const Text(
+                                        "Tham gia",
+                                        style: TextStyle(
+                                            color:
+                                                Color.fromARGB(255, 0, 94, 255),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             );
