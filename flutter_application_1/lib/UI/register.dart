@@ -13,198 +13,183 @@ class registerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image:
-                AssetImage('assets/images/back.jpg'), // Đường dẫn đến hình ảnh
-            fit: BoxFit.cover,
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                    'assets/images/back_login.png'), // Đường dẫn đến hình ảnh
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Dòng text trên cùng (tên màn hình)
-              const Padding(
-                padding: EdgeInsets.only(bottom: 20.0),
-                child: Text(
-                  'Register',
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+          Container(
+            height: 500,
+            width: 500,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                    'assets/images/khung_login.png'), // Đường dẫn đến hình ảnh
+                fit: BoxFit.fitHeight,
               ),
-              // Đăng kí tài khoản
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      TextField(
-                        controller: usernameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Username',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.person),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: passwordController,
-                        decoration: const InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.lock),
-                        ),
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: confirmController,
-                        decoration: const InputDecoration(
-                          labelText: 'Confirm',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                          onPressed: () async {
-                            final username = usernameController.text;
-                            final password = passwordController.text;
-                            final confirm = confirmController.text;
-                            // Xử lý đăng kí tại đây
-                            if (username.isNotEmpty &&
-                                password.isNotEmpty &&
-                                password == confirm) {
-                              try {
-                                // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const myLoading(
-                                        isLoading: true,
-                                        errorMessage: null,
-                                        backScreen: '/register'),
-                                  ),
-                                );
-                                final response = await DataUser()
-                                    .register(username, password);
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.setString('username', username);
-                                await prefs.setString('avatar',
-                                    'assets/images/defaultAvatar.jpg');
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const MyAppMain(),
-                                  ),
-                                );
-                                print('Register successful: $response');
-                              } catch (e) {
-                                // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const myLoading(
-                                        isLoading: true,
-                                        errorMessage: 'Register failed',
-                                        backScreen: '/register'),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.only(top: 12, bottom: 12),
-                            child: Text('Register'),
-                          )),
-                    ],
-                  ),
-                ),
-              ),
-              // Dòng kẻ ngăn cách
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        color: Colors.black,
-                        thickness: 1,
-                        endIndent: 10,
-                      ),
-                    ),
-                    Text(
-                      'OR',
+            ),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Dòng text trên cùng (tên màn hình)
+                  const Padding(
+                    padding: EdgeInsets.only(
+                        top: 1.0, bottom: 16, left: 50, right: 50),
+                    child: Text(
+                      'SIGN - UP',
                       style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        color: Colors.black,
-                        thickness: 1,
-                        indent: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Dòng chữ tạo tài khoản mới
-              const Text(
-                'Already have an account, log in now!',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-              ),
-
-              // Ô cuối cùng (tách biệt)
-              const SizedBox(height: 20),
-              Container(
-                width: 300,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(221, 152, 150, 150),
-                  borderRadius: BorderRadius.circular(25),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 5,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const loginScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Already have an account',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-                    )),
+                    ),
+                  ),
+                  // Đăng kí tài khoản
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 1.0, bottom: 16, left: 50, right: 50),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextField(
+                            controller: usernameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Username',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.person),
+                              filled: true, // Bật tính năng nền màu
+                              fillColor: Color.fromARGB(
+                                  255, 255, 255, 255), // Chọn màu nền bạn muốn
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 16),
+                          TextField(
+                            controller: passwordController,
+                            decoration: const InputDecoration(
+                              labelText: 'Password',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.lock),
+                              filled: true, // Bật tính năng nền màu
+                              fillColor: Color.fromARGB(
+                                  255, 255, 255, 255), // Chọn màu nền bạn muốn
+                            ),
+                            obscureText: true,
+                          ),
+                          const SizedBox(height: 16),
+                          TextField(
+                            controller: confirmController,
+                            decoration: const InputDecoration(
+                                labelText: 'Confirm password',
+                                border: OutlineInputBorder(),
+                                filled: true, // Bật tính năng nền màu
+                                fillColor: Color.fromARGB(255, 255, 255, 255)),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                              onPressed: () async {
+                                final username = usernameController.text;
+                                final password = passwordController.text;
+                                final confirm = confirmController.text;
+                                // Xử lý đăng kí tại đây
+                                if (username.isNotEmpty &&
+                                    password.isNotEmpty &&
+                                    password == confirm) {
+                                  try {
+                                    // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const myLoading(
+                                            isLoading: true,
+                                            errorMessage: null,
+                                            backScreen: '/register'),
+                                      ),
+                                    );
+                                    final response = await DataUser()
+                                        .register(username, password);
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    await prefs.setString('username', username);
+                                    await prefs.setString('avatar',
+                                        'assets/images/defaultAvatar.jpg');
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const MyAppMain(),
+                                      ),
+                                    );
+                                    print('Register successful: $response');
+                                  } catch (e) {
+                                    // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const myLoading(
+                                            isLoading: true,
+                                            errorMessage: 'Register failed',
+                                            backScreen: '/register'),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.only(top: 12, bottom: 12),
+                                child: Text(
+                                  'Sign - up',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Dòng kẻ ngăn cách
+
+                  // Dòng chữ tạo tài khoản mới
+
+                  // Ô cuối cùng (tách biệt)
+                  SizedBox(
+                    width: 300,
+                    height: 50,
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const loginScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Back to login',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -7,6 +7,10 @@ import 'package:flutter_application_1/request/apiUser.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+void main() {
+  runApp(const loginScreen());
+}
+
 class loginScreen extends StatefulWidget {
   const loginScreen({super.key});
 
@@ -39,12 +43,23 @@ class _loginScreenState extends State<loginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
+        alignment: Alignment.center,
         children: [
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/back.jpg'),
+                image: AssetImage('assets/images/back_login.png'),
                 fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            height: 500,
+            width: 500,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/khung_login.png'),
+                fit: BoxFit.fitHeight,
               ),
             ),
             child: Center(
@@ -56,7 +71,7 @@ class _loginScreenState extends State<loginScreen> {
                     CrossAxisAlignment.center, // Căn giữa theo trục ngang
                 children: [
                   const Padding(
-                    padding: EdgeInsets.only(bottom: 20.0),
+                    padding: EdgeInsets.only(top: 23, bottom: 20.0),
                     child: Text(
                       'Select account type',
                       style: TextStyle(
@@ -66,19 +81,10 @@ class _loginScreenState extends State<loginScreen> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 5.0),
-                    child: Text(
-                      'Sign in with',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white70,
-                      ),
-                    ),
-                  ),
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.only(
+                          top: 1.0, bottom: 16, left: 50, right: 50),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -89,6 +95,9 @@ class _loginScreenState extends State<loginScreen> {
                               labelText: 'Username',
                               border: OutlineInputBorder(),
                               prefixIcon: Icon(Icons.person),
+                              filled: true, // Bật tính năng nền màu
+                              fillColor: Color.fromARGB(
+                                  255, 255, 255, 255), // Chọn màu nền bạn muốn
                             ),
                             keyboardType: TextInputType.emailAddress,
                           ),
@@ -99,6 +108,9 @@ class _loginScreenState extends State<loginScreen> {
                               labelText: 'Password',
                               border: OutlineInputBorder(),
                               prefixIcon: Icon(Icons.lock),
+                              filled: true, // Bật tính năng nền màu
+                              fillColor: Color.fromARGB(
+                                  255, 255, 255, 255), // Chọn màu nền bạn muốn
                             ),
                             obscureText: true,
                           ),
@@ -182,9 +194,37 @@ class _loginScreenState extends State<loginScreen> {
                               },
                               child: const Padding(
                                 padding: EdgeInsets.only(top: 12, bottom: 12),
-                                child: Text('Login'),
+                                child: Text(
+                                  'Sign - in',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               )),
                           const SizedBox(height: 8),
+                          SizedBox(
+                            width: 300,
+                            height: 50,
+                            child: TextButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => registerScreen(),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  'Sign - up',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
+                          ),
                           TextButton(
                             onPressed: () {
                               Navigator.pushReplacement(
@@ -194,109 +234,20 @@ class _loginScreenState extends State<loginScreen> {
                                 ),
                               );
                             },
-                            child: const Text('Forgot Password?'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Container(
-                      width: 300,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 5,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Google (Coming soon)',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            child: const Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 207, 207, 207),
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          )),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                            endIndent: 10,
                           ),
-                        ),
-                        Text(
-                          'OR',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                            indent: 10,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Text(
-                    "Don't have an account, register now!",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Container(
-                    width: 300,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(221, 152, 150, 150),
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 5,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => registerScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Register new account',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )),
-                  ),
                 ],
               ),
             ),
