@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
@@ -858,20 +859,12 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   String? nameUser; // Khởi tạo giá trị mặc định
   String? stringAvatar; // Khởi tạo giá trị mặc định
 
-  Future<void> getInfoLogin() async {
-    final dataUser = await saveLogin().getUserData();
-    setState(() {
-      nameUser = dataUser['username'];
-      stringAvatar = dataUser['avatar'];
-    });
-  }
-
   final int boardSize = 15;
   final WebSocketChannel channel = WebSocketChannel.connect(
     Uri.parse('wss://carogame.onrender.com'),
   );
 
-  List<String> dataPlayers = []; // [username1, username2 , avatar1, avatar2]
+  List<String> dataPlayers = []; // [username1, avatar1, username2, avatar2]
   List<String> cells = [];
   String statusMessage = 'Waiting to join a room...';
   String? mySymbol;
@@ -880,9 +873,10 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   void initState() {
     super.initState();
-    getInfoLogin();
+    getInfoLogin().then((_) {
+      joinRoom(); // Chỉ gọi joinRoom sau khi getInfoLogin hoàn tất
+    });
     cells = List.filled(boardSize * boardSize, '');
-    joinRoom();
     channel.stream.listen((message) {
       final data = jsonDecode(message);
       setState(() {
@@ -890,11 +884,11 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           statusMessage = data['message'];
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
+          print(data['players']);
           data['players'].forEach((player) {
             dataPlayers.add(player['username']);
             dataPlayers.add(player['avatar']);
           });
-          print(dataPlayers);
         } else if (data['type'] == 'game-start') {
           statusMessage = 'Game started! Your symbol: ${data['symbol']}';
           mySymbol = data['symbol'];
@@ -916,11 +910,19 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
         'type': 'join-room',
         'payload': {
           'roomId': widget.roomId,
-          'username': 'nameUser',
-          'avatar': 'stringAvatar'
+          'username': nameUser,
+          'avatar': stringAvatar
         },
       }));
     }
+  }
+
+  Future<void> getInfoLogin() async {
+    final dataUser = await saveLogin().getUserData();
+    setState(() {
+      nameUser = dataUser['username'];
+      stringAvatar = dataUser['avatar'];
+    });
   }
 
   bool isAnimating = false;
@@ -1185,34 +1187,16 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                           //     fit: BoxFit.cover,
                           //   ),
                           // ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // playerWidget(1),
-                              // Flexible(
-                              //   child: Padding(
-                              //     padding: const EdgeInsets.symmetric(
-                              //         horizontal: 8.0, vertical: 35),
-                              //     child: Text(
-                              //       statusMessage,
-                              //       textAlign: TextAlign.center,
-                              //       style: const TextStyle(
-                              //         fontSize: 16,
-                              //         color: Colors.white,
-                              //         fontWeight: FontWeight.bold,
-                              //         shadows: [
-                              //           Shadow(
-                              //             offset: Offset(1.0, 1.0),
-                              //             blurRadius: 3.0,
-                              //             color: Colors.black,
-                              //           ),
-                              //         ],
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                              // playerWidget(2),
+                              dataPlayers.isNotEmpty
+                                  ? playerWidget(1, dataPlayers[1])
+                                  : Container(),
+                              dataPlayers.isNotEmpty
+                                  ? playerWidget(2, dataPlayers[3])
+                                  : Container(),
                             ],
                           ),
                         ),
@@ -1347,11 +1331,11 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   }
 
   // Widget hiển thị thông tin từng người chơi
-  Widget playerWidget(int player) {
+  Widget playerWidget(int player, String stringAvatar) {
     bool isCurrentPlayer =
         currentPlayer == player; // Kiểm tra người chơi hiện tại
     bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
-
+    Uint8List avatar = base64Decode(stringAvatar);
     return SizedBox(
       width: 225, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
       height: 140, // Chiều cao cố định
@@ -1396,9 +1380,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle, // Avatar luôn hình tròn
                 image: DecorationImage(
-                  image: AssetImage(
-                    player == 1 ? '' : '', // Avatar người chơi
-                  ),
+                  image: MemoryImage(avatar),
                   fit: BoxFit.cover,
                 ),
               ),

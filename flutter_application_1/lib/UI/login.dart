@@ -130,6 +130,9 @@ class _loginScreenState extends State<loginScreen> {
                                       final avatar =
                                           await DataUser().getAvatar(username);
                                       await prefs.setString('avatar', avatar);
+                                      final dataUser =
+                                          await saveLogin().getUserData();
+                                      print(dataUser['avatar']);
                                       Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(

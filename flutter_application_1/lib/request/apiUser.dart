@@ -37,7 +37,6 @@ class DataUser {
       final response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data);
         // final decodedString =
         // print(decodedString);
         return data; // Trả về thông báo thành công
