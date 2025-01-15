@@ -868,6 +868,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   List<String> cells = [];
   String statusMessage = 'Waiting to join a room...';
   String? mySymbol;
+  String currentPlayerNow = "X";
+
   final TextEditingController roomIdController = TextEditingController();
 
   @override
@@ -882,23 +884,34 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       setState(() {
         if (data['type'] == 'waiting') {
           statusMessage = data['message'];
+          print(1);
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
-          print(data['players']);
           data['players'].forEach((player) {
             dataPlayers.add(player['username']);
             dataPlayers.add(player['avatar']);
           });
+          print(2);
         } else if (data['type'] == 'game-start') {
           statusMessage = 'Game started! Your symbol: ${data['symbol']}';
           mySymbol = data['symbol'];
+          print(3);
         } else if (data['type'] == 'move') {
           final index = data['payload']['index'];
           final symbol = data['payload']['symbol'];
           cells[index] = symbol;
+          print(4);
         } else if (data['type'] == 'game-over') {
           statusMessage = data['message'];
           channel.sink.close();
+          print(5);
+        } else if (data['type'] == 'time-update') {
+          statusMessage = data['payload']['timeLeft'];
+          currentPlayerNow = data['payload']['currentPlayer'];
+          print(6);
+        } else if (data['type'] == 'timeout') {
+          statusMessage = data['message'];
+          print(7);
         }
       });
     });
@@ -1192,10 +1205,12 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               dataPlayers.isNotEmpty
-                                  ? playerWidget(1, dataPlayers[1])
+                                  ? playerWidget(
+                                      1, dataPlayers[0], dataPlayers[1])
                                   : Container(),
                               dataPlayers.isNotEmpty
-                                  ? playerWidget(2, dataPlayers[3])
+                                  ? playerWidget(
+                                      2, dataPlayers[2], dataPlayers[3])
                                   : Container(),
                             ],
                           ),
@@ -1331,7 +1346,13 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   }
 
   // Widget hiển thị thông tin từng người chơi
-  Widget playerWidget(int player, String stringAvatar) {
+  Widget playerWidget(int player, String username, String stringAvatar) {
+    // currentPlayerNow
+    Color right = const Color.fromARGB(255, 153, 190, 189);
+    Color rightSelect = const Color.fromARGB(255, 13, 199, 190);
+    Color left = const Color.fromARGB(255, 197, 156, 156);
+    Color leftSelect = const Color.fromARGB(255, 202, 19, 19);
+
     bool isCurrentPlayer =
         currentPlayer == player; // Kiểm tra người chơi hiện tại
     bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
@@ -1350,8 +1371,12 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
               // ),
 
               color: isLeftSide
-                  ? const Color.fromARGB(255, 63, 205, 198)
-                  : const Color.fromARGB(255, 205, 63, 63),
+                  ? currentPlayerNow == "X"
+                      ? leftSelect
+                      : left
+                  : currentPlayerNow == "O"
+                      ? rightSelect
+                      : right,
               borderRadius: BorderRadius.circular(25),
             ),
           ),
@@ -1372,20 +1397,75 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           //   ),
           // ),
           // Avatar
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle, // Avatar luôn hình tròn
-                image: DecorationImage(
-                  image: MemoryImage(avatar),
-                  fit: BoxFit.cover,
-                ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  player == 1
+                      ? const SizedBox(
+                          width: 20,
+                        )
+                      : Container(),
+                  player == 2
+                      ? const Text(
+                          'O',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        )
+                      : Container(),
+                  player == 2
+                      ? const SizedBox(
+                          width: 10,
+                        )
+                      : Container(),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle, // Avatar luôn hình tròn
+                        image: DecorationImage(
+                          image: MemoryImage(avatar),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  player == 2
+                      ? const SizedBox(
+                          width: 20,
+                        )
+                      : Container(),
+                  player == 1
+                      ? const SizedBox(
+                          width: 10,
+                        )
+                      : Container(),
+                  player == 1
+                      ? const Text(
+                          'X',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        )
+                      : Container()
+                ],
               ),
-            ),
-          ),
+              const SizedBox(
+                height: 5,
+              ),
+              Text(
+                username,
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              )
+            ],
+          )
           // Thời gian
           // Align(
           //   alignment:
