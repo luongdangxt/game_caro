@@ -1773,6 +1773,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                             ),
                           ],
                         ),
+
                         const SizedBox(height: 80),
                       ],
                     ),

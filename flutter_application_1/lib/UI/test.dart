@@ -12,15 +12,12 @@ class _ScreenTestState extends State<ScreenTest> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Divider(
-              color: Color.fromARGB(255, 32, 164, 36),
-              height: 1.0,         
-            ),
-          ]
-        ) 
-      ),
+          child: Column(children: [
+        Divider(
+          color: Color.fromARGB(255, 32, 164, 36),
+          height: 1.0,
+        ),
+      ])),
     );
   }
 }
