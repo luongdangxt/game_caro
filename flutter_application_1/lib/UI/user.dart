@@ -54,7 +54,7 @@ class _ScreenUserState extends State<ScreenUser> {
             Text(
               nameUser,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 35,
                 fontWeight: FontWeight.bold,
               ),
             ),
