@@ -25,30 +25,6 @@ class DataUser {
     }
   }
 
-  Future<String> getAvatar(String username) async {
-    final url = Uri.parse(
-        'https://api-gamecaro.onrender.com/api/users/avatar/$username');
-    final headers = {
-      'Authorization': 'testAPI',
-      'Content-Type': 'application/json',
-    };
-
-    try {
-      final response = await http.get(url, headers: headers);
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        // final decodedString =
-        // print(decodedString);
-        return data; // Trả về thông báo thành công
-      } else {
-        throw Exception('Registration failed');
-      }
-    } catch (e) {
-      print('Error: $e');
-      throw Exception('Error');
-    }
-  }
-
   Future<int> login(String username, String password) async {
     final url = Uri.parse('https://api-gamecaro.onrender.com/api/login');
     final headers = {
