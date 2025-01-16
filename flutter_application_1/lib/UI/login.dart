@@ -139,6 +139,12 @@ class _loginScreenState extends State<loginScreen> {
                                           await SharedPreferences.getInstance();
                                       await prefs.setString(
                                           'username', username);
+                                      final avatar =
+                                          await DataUser().getAvatar(username);
+                                      await prefs.setString('avatar', avatar);
+                                      final dataUser =
+                                          await saveLogin().getUserData();
+                                      print(dataUser['avatar']);
                                       Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(

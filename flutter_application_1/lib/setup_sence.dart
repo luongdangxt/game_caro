@@ -1754,7 +1754,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
 
   List<String> dataPlayers = []; // [username1, avatar1, username2, avatar2]
   List<String> cells = [];
-  String statusMessage = 'Waiting to join a room...';
+  String statusMessage = 'ROOM ID ';
   String? mySymbol;
   String currentPlayerNow = "X";
 
@@ -1763,6 +1763,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   void initState() {
     super.initState();
+    statusMessage = 'ROOM ID: '+ widget.roomId;
     getInfoLogin().then((_) {
       joinRoom(); // Chỉ gọi joinRoom sau khi getInfoLogin hoàn tất
     });
@@ -1771,7 +1772,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       final data = jsonDecode(message);
       setState(() {
         if (data['type'] == 'waiting') {
-          statusMessage = data['message'];
+          statusMessage = 'ROOM ID: '+ widget.roomId;
           print(1);
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
