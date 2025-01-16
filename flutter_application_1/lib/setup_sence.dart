@@ -1763,7 +1763,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   void initState() {
     super.initState();
-    statusMessage = 'ROOM ID: '+ widget.roomId;
+    statusMessage = 'ROOM ID: ${widget.roomId}';
     getInfoLogin().then((_) {
       joinRoom(); // Chỉ gọi joinRoom sau khi getInfoLogin hoàn tất
     });
@@ -1772,7 +1772,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       final data = jsonDecode(message);
       setState(() {
         if (data['type'] == 'waiting') {
-          statusMessage = 'ROOM ID: '+ widget.roomId;
+          statusMessage = 'ROOM ID: ${widget.roomId}';
           print(1);
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
@@ -2006,29 +2006,68 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                                   cell[1] == col,
                                             );
 
-                                            return Container(
-                                              decoration: BoxDecoration(
-                                                color: isWinningCell
-                                                    ? Colors
-                                                        .yellow // Nền ô thắng thành màu vàng
-                                                    : Colors
-                                                        .white, // Các ô khác màu trắng
-                                                border: Border.all(
-                                                    color: Colors.grey,
-                                                    width: 0.5),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  cells[index],
-                                                  style: TextStyle(
-                                                    fontSize: 24,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: isWinningCell
-                                                        ? Colors
-                                                            .green // Dấu trong ô thắng chuyển thành màu xanh lá
-                                                        : (cells[index] == 'X'
-                                                            ? Colors.red
-                                                            : Colors.blue),
+                                            return GestureDetector(
+                                              onTap: () => makeMove(index),
+                                              child: AnimatedContainer(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                decoration: BoxDecoration(
+                                                  color: isWinningCell
+                                                      ? Colors.yellow
+                                                          .withOpacity(0.8)
+                                                      : const Color.fromARGB(
+                                                          0, 251, 168, 162),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  boxShadow: [
+                                                    if (isWinningCell)
+                                                      const BoxShadow(
+                                                        color: Colors.orange,
+                                                        blurRadius: 10,
+                                                        offset: Offset(0, 0),
+                                                      ),
+                                                  ],
+                                                ),
+                                                child: Center(
+                                                  child: AnimatedSwitcher(
+                                                    duration: const Duration(
+                                                        milliseconds:
+                                                            500), // Thời gian hiệu ứng
+                                                    transitionBuilder:
+                                                        (Widget child,
+                                                            Animation<double>
+                                                                animation) {
+                                                      return FadeTransition(
+                                                        opacity:
+                                                            animation, // Hiệu ứng mờ dần khi thay đổi
+                                                        child: ScaleTransition(
+                                                          scale:
+                                                              animation, // Hiệu ứng phóng to/thu nhỏ
+                                                          child: child,
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Center(
+                                                      child: cells[index]
+                                                              .isNotEmpty
+                                                          ? Text(
+                                                              cells[
+                                                                  index], // Hiển thị "X" hoặc "O"
+                                                              style: TextStyle(
+                                                                fontSize: 24,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: cells[
+                                                                            index] ==
+                                                                        'X'
+                                                                    ? Colors.red
+                                                                    : Colors
+                                                                        .blue,
+                                                              ),
+                                                            )
+                                                          : null, // Không hiển thị gì nếu ô trống
+                                                    ),
                                                   ),
                                                 ),
                                               ),
