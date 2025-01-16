@@ -73,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _startTransition(); // Đảm bảo hộp xanh xuất hiện khi quay lại màn hình
   }
 
+  int? selectedIndex;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,168 +122,354 @@ class _HomeScreenState extends State<HomeScreen> {
           // ),
           // const SizedBox(height: 32),
           // Hai nút với màu khác nhau
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 100),
-                Stack(
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
                   children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 132,
-                        width: 350,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/btn.png'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Colors.transparent, // Để nền nút trong suốt
-                            shadowColor: Colors.transparent, // Bỏ hiệu ứng bóng
-                          ),
-                          onPressed: () {
-                            Navigator.pop(
-                                context); // Quay lại màn hình trước đó
-                          },
-                          child: const Text(
-                            'MENU GAME',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 100,
-                        width: 300,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/btn.png'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Colors.transparent, // Để nền nút trong suốt
-                            shadowColor: Colors.transparent, // Bỏ hiệu ứng bóng
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PlayOnlineScreen(),
+                    const SizedBox(height: 100),
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            height: 132,
+                            width: 350,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn.png'),
+                                fit: BoxFit.cover,
                               ),
-                            );
-                          },
-                          child: const Text(
-                            'Play Online',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 100,
-                        width: 300,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/btn.png'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Colors.transparent, // Để nền nút trong suốt
-                            shadowColor: Colors.transparent, // Bỏ hiệu ứng bóng
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CaroGame(),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.transparent, // Để nền nút trong suốt
+                                shadowColor:
+                                    Colors.transparent, // Bỏ hiệu ứng bóng
                               ),
-                            );
-                          },
-                          child: const Text(
-                            'Play Offline',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
+                              onPressed: () {
+                                Navigator.pop(
+                                    context); // Quay lại màn hình trước đó
+                              },
+                              child: const Text(
+                                'MENU GAME',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            height: 100,
+                            width: 300,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.transparent, // Để nền nút trong suốt
+                                shadowColor:
+                                    Colors.transparent, // Bỏ hiệu ứng bóng
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlayOnlineScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Play Online',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            height: 100,
+                            width: 300,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.transparent, // Để nền nút trong suốt
+                                shadowColor:
+                                    Colors.transparent, // Bỏ hiệu ứng bóng
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const CaroGame(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Play Offline',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceEvenly, // Các phần tử cách đều nhau
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn_how.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn_home.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn_audio.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 50,
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceEvenly, // Các phần tử cách đều nhau
-                  children: [
-                    Container(
+              ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    child: Container(
+                      color: const Color.fromARGB(255, 160, 87, 39),
                       height: 50,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/btn_how.png'),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 38,
+                    child: Text(
+                      'SELECT YOUR AVATAR',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 28,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 0; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 0
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5) // Tô viền màu xanh
+                            : null, // Không viền nếu không được chọn
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av1.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/btn_home.png'),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 1; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 1
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av2.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/btn_audio.png'),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 2; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 2
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av3.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                  ],
-                )
-              ],
-            ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 22,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 3; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 3
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av4.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 4; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 4
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av5.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = 5; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 5
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av6.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -1367,9 +1554,12 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           cells[index] = symbol;
           print(4);
         } else if (data['type'] == 'game-over') {
-          statusMessage = data['message'];
+          setState(() {
+            statusMessage = data['message'];
+            winningCells = List<List<int>>.from(
+                data['payload']['winningCells']); // Lưu các ô thắng
+          });
           channel.sink.close();
-          print(5);
         } else if (data['type'] == 'time-update') {
           statusMessage = data['payload']['timeLeft'];
           currentPlayerNow = data['payload']['currentPlayer'];
@@ -1441,6 +1631,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                     0.23; // Chiều cao tối đa cho phần avatar và dòng trạng thái
                 final boardHeight =
                     screenHeight * 0.7; // Chiều cao tối đa cho bảng caro
+                List<List<int>> winningCells = []; // Danh sách các ô thắng
                 return Stack(
                   alignment: Alignment.topCenter,
                   children: [
@@ -1578,68 +1769,29 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                                   cell[1] == col,
                                             );
 
-                                            return GestureDetector(
-                                              onTap: () => makeMove(index),
-                                              child: AnimatedContainer(
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                                decoration: BoxDecoration(
-                                                  color: isWinningCell
-                                                      ? Colors.yellow
-                                                          .withOpacity(0.8)
-                                                      : const Color.fromARGB(
-                                                          0, 251, 168, 162),
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  boxShadow: [
-                                                    if (isWinningCell)
-                                                      const BoxShadow(
-                                                        color: Colors.orange,
-                                                        blurRadius: 10,
-                                                        offset: Offset(0, 0),
-                                                      ),
-                                                  ],
-                                                ),
-                                                child: Center(
-                                                  child: AnimatedSwitcher(
-                                                    duration: const Duration(
-                                                        milliseconds:
-                                                            500), // Thời gian hiệu ứng
-                                                    transitionBuilder:
-                                                        (Widget child,
-                                                            Animation<double>
-                                                                animation) {
-                                                      return FadeTransition(
-                                                        opacity:
-                                                            animation, // Hiệu ứng mờ dần khi thay đổi
-                                                        child: ScaleTransition(
-                                                          scale:
-                                                              animation, // Hiệu ứng phóng to/thu nhỏ
-                                                          child: child,
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Center(
-                                                      child: cells[index]
-                                                              .isNotEmpty
-                                                          ? Text(
-                                                              cells[
-                                                                  index], // Hiển thị "X" hoặc "O"
-                                                              style: TextStyle(
-                                                                fontSize: 24,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: cells[
-                                                                            index] ==
-                                                                        'X'
-                                                                    ? Colors.red
-                                                                    : Colors
-                                                                        .blue,
-                                                              ),
-                                                            )
-                                                          : null, // Không hiển thị gì nếu ô trống
-                                                    ),
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                color: isWinningCell
+                                                    ? Colors
+                                                        .yellow // Nền ô thắng thành màu vàng
+                                                    : Colors
+                                                        .white, // Các ô khác màu trắng
+                                                border: Border.all(
+                                                    color: Colors.grey,
+                                                    width: 0.5),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  cells[index],
+                                                  style: TextStyle(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: isWinningCell
+                                                        ? Colors
+                                                            .green // Dấu trong ô thắng chuyển thành màu xanh lá
+                                                        : (cells[index] == 'X'
+                                                            ? Colors.red
+                                                            : Colors.blue),
                                                   ),
                                                 ),
                                               ),
