@@ -1780,6 +1780,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             dataPlayers.add(player['username']);
             dataPlayers.add(player['avatar']);
           });
+          print(dataPlayers);
           print(2);
         } else if (data['type'] == 'game-start') {
           statusMessage = 'Game started! Your symbol: ${data['symbol']}';
@@ -2210,7 +2211,6 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     bool isCurrentPlayer =
         currentPlayer == player; // Kiểm tra người chơi hiện tại
     bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
-    Uint8List avatar = base64Decode(stringAvatar);
     return SizedBox(
       width: 225, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
       height: 140, // Chiều cao cố định
