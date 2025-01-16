@@ -720,7 +720,6 @@ class PlayOnlineScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-<<<<<<< HEAD
                         Container(
                             alignment: Alignment.center,
                             height: 120,
@@ -742,12 +741,9 @@ class PlayOnlineScreen extends StatelessWidget {
                                 ),
                               ),
                             )),
-=======
->>>>>>> 35a3e70a2a5e68ee7b9a9b4974017cd7cb029649
                       ],
                     ),
                   ),
-
                   const Column(
                     children: [
                       //   Container(
