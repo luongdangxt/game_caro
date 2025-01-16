@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _startTransition(); // Đảm bảo hộp xanh xuất hiện khi quay lại màn hình
   }
 
-  String selectedIndex = 'assets/images/av1.png' ;
+  String selectedIndex = 'assets/images/av1.png';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,7 +191,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => PlayOnlineScreen(avatar: selectedIndex,),
+                                    builder: (context) => PlayOnlineScreen(
+                                      avatar: selectedIndex,
+                                    ),
                                   ),
                                 );
                               },
@@ -324,7 +326,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av1.png'; // Gán chỉ số nút được chọn
+                        selectedIndex =
+                            'assets/images/av1.png'; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -347,7 +350,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av2.png'; // Gán chỉ số nút được chọn
+                        selectedIndex =
+                            'assets/images/av2.png'; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -370,7 +374,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av3.png'; // Gán chỉ số nút được chọn
+                        selectedIndex =
+                            'assets/images/av3.png'; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -401,7 +406,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av4.png'; // Gán chỉ số nút được chọn
+                        selectedIndex =
+                            'assets/images/av4.png'; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -424,7 +430,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av5.png'; // Gán chỉ số nút được chọn
+                        selectedIndex =
+                            'assets/images/av5.png'; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -447,7 +454,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av6.png'; // Gán chỉ số nút được chọn
+                        selectedIndex =
+                            'assets/images/av6.png'; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -614,15 +622,15 @@ class PlayOnlineScreen extends StatelessWidget {
                           itemCount: rooms.length, // Dựa trên số lượng phòng
                           itemBuilder: (context, index) {
                             final room = rooms[index];
+                            print(room.roomId);
                             return buildPlayerCard(
-                              context,
-                              index,
-                              room.roomType,
-                              room.playerRight != 'null' ? 2 : 1,
-                              2,
-                              room.roomId,
-                              avatar
-                            );
+                                context,
+                                index,
+                                room.roomType,
+                                room.playerRight != 'null' ? 2 : 1,
+                                2,
+                                room.roomId,
+                                avatar);
                           },
                         ),
                       ),
@@ -703,9 +711,10 @@ class PlayOnlineScreen extends StatelessWidget {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 CaroGameScreen(
-                                                    roomId: joinRoomId, avatar: avatar,),
-                                          )
-                                      );
+                                              roomId: joinRoomId,
+                                              avatar: avatar,
+                                            ),
+                                          ));
                                     },
                                     child: const Text(
                                       "ENTER",
@@ -720,30 +729,239 @@ class PlayOnlineScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Container(
-                            alignment: Alignment.center,
-                            height: 120,
-                            width: 300,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/btn.png'),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            child: TextButton(
-                              onPressed: () {},
-                              child: const Text(
-                                "CREATE ROOM",
-                                style: TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 255, 255, 255),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                                alignment: Alignment.center,
+                                height: 120,
+                                width: 300,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/btn.png'),
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
-                              ),
-                            )),
+                                child: TextButton(
+                                  onPressed: () {},
+                                  child: const Text(
+                                    "CREATE ROOM",
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    ),
+                                  ),
+                                )),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 150,
+                                  width: 300,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                backgroundColor:
+                                                    const Color.fromARGB(
+                                                        0, 255, 255, 255),
+                                                content: Container(
+                                                  width: 400,
+                                                  height: 280,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: AssetImage(
+                                                          'assets/images/khung.png'),
+                                                      fit: BoxFit.fitHeight,
+                                                    ),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        32.0), // Thêm padding cho hai bên
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                // Hành động khi nhấn vào Container
+                                                                Navigator
+                                                                    .pushAndRemoveUntil(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              const HomeScreen()),
+                                                                  (Route<dynamic>
+                                                                          route) =>
+                                                                      false, // Loại bỏ tất cả các màn hình trước đó
+                                                                );
+                                                                // Hoặc điều hướng, logic khác ở đây
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 70,
+                                                                decoration:
+                                                                    const BoxDecoration(
+                                                                  image:
+                                                                      DecorationImage(
+                                                                    image: AssetImage(
+                                                                        'assets/images/btn_back.png'),
+                                                                    fit: BoxFit
+                                                                        .fitHeight,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              height: 90,
+                                                              width: 145,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image: AssetImage(
+                                                                      'assets/images/btn.png'),
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                ),
+                                                              ),
+                                                              child: const Text(
+                                                                "Public",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          255,
+                                                                          255,
+                                                                          255),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 30,
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          const HomeScreen(),
+                                                                ),
+                                                              );
+                                                            },
+                                                            child: Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              height: 90,
+                                                              width: 145,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image: AssetImage(
+                                                                      'assets/images/btn.png'),
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                ),
+                                                              ),
+                                                              child: const Text(
+                                                                "Private",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          255,
+                                                                          255,
+                                                                          255),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 40,
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: const SizedBox(
+                                          height: 120,
+                                          width: 260,
+                                        ),
+                                        // child: const Text(
+                                        //   "dâdaadada",
+                                        //   style: TextStyle(
+                                        //     color: Color.fromARGB(
+                                        //         255, 255, 255, 255),
+                                        //     fontSize: 30,
+                                        //     fontWeight: FontWeight.bold,
+                                        //   ),
+                                        // ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
+
                   const Column(
                     children: [
                       //   Container(
@@ -994,7 +1212,10 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                CaroGameScreen(roomId: roomId, avatar: avatar,),
+                                                CaroGameScreen(
+                                              roomId: roomId,
+                                              avatar: avatar,
+                                            ),
                                           ),
                                         ).then((result) async {
                                           if (result != null) {
@@ -1988,6 +2209,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     bool isCurrentPlayer =
         currentPlayer == player; // Kiểm tra người chơi hiện tại
     bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
+    Uint8List avatar = base64Decode(stringAvatar);
     return SizedBox(
       width: 225, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
       height: 140, // Chiều cao cố định
