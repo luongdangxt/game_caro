@@ -4,13 +4,12 @@ class saveLogin {
   Future<Map<String, String?>> getUserData() async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
-    final avatar = prefs.getString('avatar');
-    return {'username': username, 'avatar': avatar};
+    return {'username': username};
   }
 
   Future<bool> checkLoggedin() async {
     final userData = await getUserData();
-    if (userData['username'] != null && userData['avatar'] != null) {
+    if (userData['username'] != null) {
       return true;
     } else {
       return false;
@@ -21,7 +20,6 @@ class saveLogin {
     final prefs = await SharedPreferences.getInstance();
     // Xóa từng giá trị riêng lẻ
     await prefs.remove('username');
-    await prefs.remove('avatar');
     // Hoặc nếu muốn xóa toàn bộ dữ liệu
     // await prefs.clear();
   }
