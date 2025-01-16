@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _startTransition(); // Đảm bảo hộp xanh xuất hiện khi quay lại màn hình
   }
 
-  String selectedIndex = 'assets/images/av1.png' ;
+  int? selectedIndex;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => PlayOnlineScreen(avatar: selectedIndex,),
+                                    builder: (context) => PlayOnlineScreen(),
                                   ),
                                 );
                               },
@@ -324,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av1.png'; // Gán chỉ số nút được chọn
+                        selectedIndex = 0; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -332,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av1.png'
+                        border: selectedIndex == 0
                             ? Border.all(
                                 color: const Color.fromARGB(255, 47, 240, 175),
                                 width: 5) // Tô viền màu xanh
@@ -347,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av2.png'; // Gán chỉ số nút được chọn
+                        selectedIndex = 1; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -355,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av2.png'
+                        border: selectedIndex == 1
                             ? Border.all(
                                 color: const Color.fromARGB(255, 47, 240, 175),
                                 width: 5)
@@ -370,7 +370,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av3.png'; // Gán chỉ số nút được chọn
+                        selectedIndex = 2; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -378,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av3.png'
+                        border: selectedIndex == 2
                             ? Border.all(
                                 color: const Color.fromARGB(255, 47, 240, 175),
                                 width: 5)
@@ -401,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av4.png'; // Gán chỉ số nút được chọn
+                        selectedIndex = 3; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -409,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av4.png'
+                        border: selectedIndex == 3
                             ? Border.all(
                                 color: const Color.fromARGB(255, 47, 240, 175),
                                 width: 5)
@@ -424,7 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av5.png'; // Gán chỉ số nút được chọn
+                        selectedIndex = 4; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -432,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av5.png'
+                        border: selectedIndex == 4
                             ? Border.all(
                                 color: const Color.fromARGB(255, 47, 240, 175),
                                 width: 5)
@@ -447,7 +447,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = 'assets/images/av6.png'; // Gán chỉ số nút được chọn
+                        selectedIndex = 5; // Gán chỉ số nút được chọn
                       });
                     },
                     child: Container(
@@ -455,7 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av6.png'
+                        border: selectedIndex == 5
                             ? Border.all(
                                 color: const Color.fromARGB(255, 47, 240, 175),
                                 width: 5)
@@ -479,8 +479,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // Thêm màn hình "Play Online"
 class PlayOnlineScreen extends StatelessWidget {
-  final String avatar;
-  PlayOnlineScreen({super.key, required this.avatar});
+  PlayOnlineScreen({super.key});
 
   Future<List<Room>> callLoadRooms() async {
     final dataFetcher = DataRoom();
@@ -614,6 +613,7 @@ class PlayOnlineScreen extends StatelessWidget {
                           itemCount: rooms.length, // Dựa trên số lượng phòng
                           itemBuilder: (context, index) {
                             final room = rooms[index];
+                            print(room.roomId);
                             return buildPlayerCard(
                               context,
                               index,
@@ -621,7 +621,6 @@ class PlayOnlineScreen extends StatelessWidget {
                               room.playerRight != 'null' ? 2 : 1,
                               2,
                               room.roomId,
-                              avatar
                             );
                           },
                         ),
@@ -685,62 +684,46 @@ class PlayOnlineScreen extends StatelessWidget {
                                 ),
                               ),
                               Container(
-                                  alignment: Alignment.center,
-                                  height: 65,
-                                  width: 110,
-                                  decoration: const BoxDecoration(
-                                    image: DecorationImage(
-                                      image:
-                                          AssetImage('assets/images/btn.png'),
-                                      fit: BoxFit.fill,
-                                    ),
+                                alignment: Alignment.center,
+                                height: 65,
+                                width: 110,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/btn.png'),
+                                    fit: BoxFit.fill,
                                   ),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      final joinRoomId = idRoom.text;
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                CaroGameScreen(
-                                                    roomId: joinRoomId, avatar: avatar,),
-                                          )
-                                      );
-                                    },
-                                    child: const Text(
-                                      "ENTER",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                      ),
-                                    ),
-                                  ))
+                                ),
+                                child: const Text(
+                                  "ENTER",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),
                         Container(
-                            alignment: Alignment.center,
-                            height: 120,
-                            width: 300,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/btn.png'),
-                                fit: BoxFit.fill,
-                              ),
+                          alignment: Alignment.center,
+                          height: 120,
+                          width: 300,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn.png'),
+                              fit: BoxFit.fill,
                             ),
-                            child: TextButton(
-                              onPressed: () {},
-                              child: const Text(
-                                "CREATE ROOM",
-                                style: TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                ),
-                              ),
-                            )),
+                          ),
+                          child: const Text(
+                            "CREATE ROOM",
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -894,7 +877,7 @@ Widget buildActionButton(BuildContext context,
 
 // Widget đại diện cho danh sách "thanh nhỏ"
 Widget buildPlayerCard(BuildContext context, int index, String roomType,
-    int currentPlayers, int maxPlayers, String roomId, String avatar) {
+    int currentPlayers, int maxPlayers, String roomId) {
   return GestureDetector(
     onTap: () {
       if (currentPlayers < maxPlayers) {
@@ -994,7 +977,7 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                CaroGameScreen(roomId: roomId, avatar: avatar,),
+                                                CaroGameScreen(roomId: roomId),
                                           ),
                                         ).then((result) async {
                                           if (result != null) {
@@ -1311,21 +1294,21 @@ void _showCreateRoomDialog(BuildContext context) {
                               } else {
                                 print(newRoomId);
                                 // Điều hướng đến màn hình CaroGameScreen
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         CaroGameScreen(roomId: newRoomId, avatar: av,),
-                                //   ),
-                                // ).then((result) async {
-                                //   if (result != null) {
-                                //     // Có dữ liệu trả về
-                                //   }
-                                //   // Xóa phòng sau khi quay lại từ CaroGameScreen
-                                //   final deleteResult =
-                                //       await DataRoom().deleteRoom(newRoomId);
-                                //   print(deleteResult);
-                                // });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CaroGameScreen(roomId: newRoomId),
+                                  ),
+                                ).then((result) async {
+                                  if (result != null) {
+                                    // Có dữ liệu trả về
+                                  }
+                                  // Xóa phòng sau khi quay lại từ CaroGameScreen
+                                  final deleteResult =
+                                      await DataRoom().deleteRoom(newRoomId);
+                                  print(deleteResult);
+                                });
                               }
                             } catch (e) {
                               setState(() {
@@ -1516,8 +1499,8 @@ class _AnimatedBackgroundLoaderState extends State<AnimatedBackgroundLoader>
 
 class CaroGameScreen extends StatefulWidget {
   final String roomId;
-  final String avatar;
-  const CaroGameScreen({super.key, required this.roomId, required this.avatar});
+
+  const CaroGameScreen({super.key, required this.roomId});
 
   @override
   _CaroGameScreenState createState() => _CaroGameScreenState();
@@ -1525,6 +1508,7 @@ class CaroGameScreen extends StatefulWidget {
 
 class _CaroGameScreenState extends State<CaroGameScreen> {
   String? nameUser; // Khởi tạo giá trị mặc định
+  String? stringAvatar; // Khởi tạo giá trị mặc định
 
   final int boardSize = 15;
   final WebSocketChannel channel = WebSocketChannel.connect(
@@ -1594,7 +1578,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
         'payload': {
           'roomId': widget.roomId,
           'username': nameUser,
-          'avatar': widget.avatar
+          'avatar': stringAvatar
         },
       }));
     }
@@ -1604,6 +1588,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     final dataUser = await saveLogin().getUserData();
     setState(() {
       nameUser = dataUser['username'];
+      stringAvatar = dataUser['avatar'];
     });
   }
 
@@ -1988,6 +1973,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     bool isCurrentPlayer =
         currentPlayer == player; // Kiểm tra người chơi hiện tại
     bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
+    Uint8List avatar = base64Decode(stringAvatar);
     return SizedBox(
       width: 225, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
       height: 140, // Chiều cao cố định
@@ -2060,7 +2046,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle, // Avatar luôn hình tròn
                         image: DecorationImage(
-                          image: AssetImage(stringAvatar),
+                          image: MemoryImage(avatar),
                           fit: BoxFit.cover,
                         ),
                       ),
