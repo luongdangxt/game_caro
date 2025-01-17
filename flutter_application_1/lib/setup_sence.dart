@@ -10,7 +10,6 @@ import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'CaroGame.dart';
-import 'package:rive/rive.dart';
 import 'AI caro/caro_offline.dart';
 import 'package:flutter/widgets.dart' as flutter;
 import 'package:rive/rive.dart' as rive;

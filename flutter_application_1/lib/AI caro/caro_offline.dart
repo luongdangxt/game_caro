@@ -69,13 +69,128 @@ class _GameBoardState extends State<GameBoard> {
             });
           });
         }
+
+        // Hiển thị container thông báo chiến thắng
+        Future.delayed(Duration(milliseconds: winningCells.length * 500), () {
+          showVictoryDialog();
+        });
       } else if (isBoardFull()) {
         gameEnded = true;
         winner = 'Draw';
+        showVictoryDialog();
       } else {
         performAIMove();
       }
     });
+  }
+
+  void showVictoryDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Không cho phép đóng khi nhấn ngoài dialog
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0), // Bo góc nếu cần
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: Material(
+              color: Colors.transparent, // Loại bỏ màu nền của AlertDialog
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Container 1: Hình ảnh và nội dung
+                  Container(
+                    height: 550,
+                    width: 350,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/khung.png'),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          winner == 'Player'
+                              ? 'assets/images/win.png'
+                              : 'assets/images/lose.png',
+                          height: 270,
+                          width: 270,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Nút Thoát
+                            Container(
+                              height: 80,
+                              width: 120,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/btn.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Đóng dialog
+                                  Navigator.of(context)
+                                      .pop(); // Quay về màn hình chính
+                                },
+                                child: const Text(
+                                  'EXIT',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 0, 0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 40),
+                            // Nút Reset
+                            Container(
+                              height: 80,
+                              width: 120,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/btn.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Đóng dialog
+                                  resetGame(); // Gọi hàm reset game
+                                },
+                                child: const Text(
+                                  'Reset',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 0, 110, 255),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 170),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   bool isBoardFull() {
@@ -101,6 +216,14 @@ class _GameBoardState extends State<GameBoard> {
             });
           });
         }
+
+        Future.delayed(Duration(milliseconds: winningCells.length * 500), () {
+          showVictoryDialog();
+        });
+      } else if (isBoardFull()) {
+        gameEnded = true;
+        winner = 'Draw';
+        showVictoryDialog();
       } else if (isBoardFull()) {
         gameEnded = true;
         winner = 'Draw';
@@ -252,25 +375,33 @@ class _GameBoardState extends State<GameBoard> {
             ),
           ),
         ),
-        Container(
-          alignment: Alignment.center,
-          height: 405,
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 144, 97, 80),
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 35),
-                  // hiển thị thời gian mỗi lượt
-                ),
+        Column(
+          children: [
+            const SizedBox(
+              height: 0,
+            ),
+            Container(
+              alignment: Alignment.center,
+              height: 405,
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 144, 97, 80),
+                borderRadius: BorderRadius.circular(25),
               ),
-            ],
-          ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 35),
+                      // hiển thị thời gian mỗi lượt
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -482,13 +613,7 @@ class _GameBoardState extends State<GameBoard> {
                                                 children: [
                                                   GestureDetector(
                                                     onTap: () {
-                                                      Navigator.pushReplacement(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const HomeScreen(),
-                                                        ),
-                                                      );
+                                                      resetGame();
                                                     },
                                                     child: Container(
                                                       alignment:
@@ -586,14 +711,9 @@ class _GameBoardState extends State<GameBoard> {
                                         },
                                       );
                                     },
-                                    child: const Text(
-                                      "",
-                                      style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    child: const SizedBox(
+                                      height: 200,
+                                      width: 63,
                                     ),
                                   ),
                                 ],
@@ -648,14 +768,9 @@ class _GameBoardState extends State<GameBoard> {
                                         ),
                                       );
                                     },
-                                    child: const Text(
-                                      "",
-                                      style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    child: const SizedBox(
+                                      height: 200,
+                                      width: 63,
                                     ),
                                   ),
                                 ],
@@ -829,14 +944,9 @@ class _GameBoardState extends State<GameBoard> {
                                         },
                                       );
                                     },
-                                    child: const Text(
-                                      "",
-                                      style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    child: const SizedBox(
+                                      height: 200,
+                                      width: 63,
                                     ),
                                   ),
                                 ],
