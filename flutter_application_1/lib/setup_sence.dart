@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
@@ -476,6 +477,24 @@ class PlayOnlineScreen extends StatelessWidget {
 
   final TextEditingController idRoom = TextEditingController();
 
+  String privateIdRoom() {
+  final random = Random();
+  String letters = '';
+  String numbers = '';
+  
+  // Tạo 3 chữ cái viết hoa
+  for (int i = 0; i < 3; i++) {
+    letters += String.fromCharCode(random.nextInt(26) + 65); // 65 là mã ASCII của 'A'
+  }
+  
+  // Tạo 3 số
+  for (int i = 0; i < 3; i++) {
+    numbers += random.nextInt(10).toString();
+  }
+  
+  return letters + numbers;
+}
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController idRoom = TextEditingController();
@@ -887,8 +906,6 @@ class PlayOnlineScreen extends StatelessWidget {
                                                           ),
                                                           GestureDetector(
                                                             onTap: () {
-                                                              final joinRoomId =
-                                                                  idRoom.text;
                                                               Navigator.push(
                                                                   context,
                                                                   MaterialPageRoute(
@@ -896,7 +913,7 @@ class PlayOnlineScreen extends StatelessWidget {
                                                                         (context) =>
                                                                             CaroGameScreen(
                                                                       roomId:
-                                                                          joinRoomId,
+                                                                          privateIdRoom(),
                                                                       avatar:
                                                                           avatar,
                                                                     ),
