@@ -1,5 +1,3 @@
-import 'dart:math';
-
 class AI_hard {
   final List<List<String>> board;
   final int gridSize;

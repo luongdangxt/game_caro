@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/UI/login.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
@@ -61,9 +58,8 @@ class _ScreenUserState extends State<ScreenUser> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        // builder: (context) => const loginScreen(),
-                        builder: (context) => loginScreen()
-                      ),
+                          // builder: (context) => const loginScreen(),
+                          builder: (context) => const loginScreen()),
                     );
                   },
                   child: const Text(

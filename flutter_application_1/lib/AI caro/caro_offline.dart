@@ -387,6 +387,7 @@ class _GameBoardState extends State<GameBoard> {
                                     child: Text(
                                       board[row][col],
                                       style: TextStyle(
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: isRevealedWinningCell
                                             ? Colors
@@ -406,8 +407,9 @@ class _GameBoardState extends State<GameBoard> {
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 100,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height *
+                      0.1, // Chiều cao là 10% chiều cao màn hình
                 ),
                 Row(
                   mainAxisAlignment:
@@ -459,13 +461,19 @@ class _GameBoardState extends State<GameBoard> {
                                                 const Color.fromARGB(
                                                     0, 255, 255, 255),
                                             content: Container(
-                                              width: 400,
-                                              height: 280,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.4,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.28,
                                               decoration: const BoxDecoration(
                                                 image: DecorationImage(
                                                   image: AssetImage(
                                                       'assets/images/khung.png'),
-                                                  fit: BoxFit.fitHeight,
+                                                  fit: BoxFit.fill,
                                                 ),
                                               ),
                                               child: Row(
@@ -485,8 +493,16 @@ class _GameBoardState extends State<GameBoard> {
                                                     child: Container(
                                                       alignment:
                                                           Alignment.center,
-                                                      height: 90,
-                                                      width: 145,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.09,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.145,
                                                       decoration:
                                                           const BoxDecoration(
                                                         image: DecorationImage(
@@ -510,8 +526,12 @@ class _GameBoardState extends State<GameBoard> {
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(
-                                                    width: 30,
+                                                  SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.03,
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
@@ -526,8 +546,16 @@ class _GameBoardState extends State<GameBoard> {
                                                     child: Container(
                                                       alignment:
                                                           Alignment.center,
-                                                      height: 90,
-                                                      width: 145,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.09,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.145,
                                                       decoration:
                                                           const BoxDecoration(
                                                         image: DecorationImage(
@@ -682,13 +710,19 @@ class _GameBoardState extends State<GameBoard> {
                                                 const Color.fromARGB(
                                                     0, 255, 255, 255),
                                             content: Container(
-                                              width: 400,
-                                              height: 280,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.4,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.28,
                                               decoration: const BoxDecoration(
                                                 image: DecorationImage(
                                                   image: AssetImage(
                                                       'assets/images/khung.png'),
-                                                  fit: BoxFit.fitHeight,
+                                                  fit: BoxFit.fill,
                                                 ),
                                               ),
                                               child: Row(
@@ -702,8 +736,16 @@ class _GameBoardState extends State<GameBoard> {
                                                     child: Container(
                                                       alignment:
                                                           Alignment.center,
-                                                      height: 90,
-                                                      width: 145,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.09,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.145,
                                                       decoration:
                                                           const BoxDecoration(
                                                         image: DecorationImage(
@@ -727,8 +769,12 @@ class _GameBoardState extends State<GameBoard> {
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(
-                                                    width: 30,
+                                                  SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.03,
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
@@ -743,8 +789,16 @@ class _GameBoardState extends State<GameBoard> {
                                                     child: Container(
                                                       alignment:
                                                           Alignment.center,
-                                                      height: 90,
-                                                      width: 145,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.09,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.145,
                                                       decoration:
                                                           const BoxDecoration(
                                                         image: DecorationImage(
@@ -794,8 +848,9 @@ class _GameBoardState extends State<GameBoard> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 120,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height *
+                      0.05, // Chiều cao là 10% chiều cao màn hình
                 ),
               ],
             ),

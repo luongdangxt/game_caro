@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
@@ -14,7 +13,6 @@ import 'package:rive/rive.dart';
 import 'AI caro/caro_offline.dart';
 import 'package:flutter/widgets.dart' as flutter;
 import 'package:rive/rive.dart' as rive;
-
 
 // Màn hình chính (hiển thị hình ảnh và nút)
 class HomeScreen extends StatefulWidget {
@@ -1776,7 +1774,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   void initState() {
     super.initState();
-    statusMessage = 'ROOM ID: ' + widget.roomId;
+    statusMessage = 'ROOM ID: ${widget.roomId}';
     getInfoLogin().then((_) {
       joinRoom(); // Chỉ gọi joinRoom sau khi getInfoLogin hoàn tất
     });
@@ -1785,7 +1783,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       final data = jsonDecode(message);
       setState(() {
         if (data['type'] == 'waiting') {
-          statusMessage = 'ROOM ID: ' + widget.roomId;
+          statusMessage = 'ROOM ID: ${widget.roomId}';
           print(1);
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
@@ -2075,6 +2073,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                                                   cells[index],
                                                                   style:
                                                                       TextStyle(
+                                                                    fontSize:
+                                                                        20,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
@@ -2327,10 +2327,9 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                       ? const Text(
                           'O',
                           style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                          ),
+                              color: Colors.blue,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
                         )
                       : Container(),
                   player == 2
@@ -2366,10 +2365,9 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                       ? const Text(
                           'X',
                           style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                          ),
+                              color: Colors.red,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
                         )
                       : Container()
                 ],
@@ -2456,37 +2454,5 @@ class GridPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return false;
-  }
-}
-
-class WritingText extends StatelessWidget {
-  final String character; // "X" hoặc "O"
-  final Color color;
-
-  const WritingText({required this.character, required this.color, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    print('Loading Rive file from: assets/rive/drawx.riv');
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: RiveAnimation.asset(
-        'assets/rive/drawx.riv',
-        artboard: character.toUpperCase(),
-        fit: BoxFit.contain,
-        onInit: (Artboard artboard) {
-          print('Bản vẽ Rive đã được khởi tạo:: ${artboard.name}');
-          final controller =
-              StateMachineController.fromArtboard(artboard, 'StateMachine');
-          if (controller != null) {
-            artboard.addController(controller);
-            print('StateMachineController added successfully.');
-          } else {
-            print('Không thể khởi tạo StateMachineController.');
-          }
-        },
-      ),
-    );
   }
 }
