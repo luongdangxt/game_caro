@@ -387,7 +387,6 @@ class _GameBoardState extends State<GameBoard> {
                                     child: Text(
                                       board[row][col],
                                       style: TextStyle(
-                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: isRevealedWinningCell
                                             ? Colors
@@ -475,7 +474,13 @@ class _GameBoardState extends State<GameBoard> {
                                                 children: [
                                                   GestureDetector(
                                                     onTap: () {
-                                                      Navigator.pop(context);
+                                                      Navigator.pushReplacement(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const HomeScreen(),
+                                                        ),
+                                                      );
                                                     },
                                                     child: Container(
                                                       alignment:
@@ -510,7 +515,7 @@ class _GameBoardState extends State<GameBoard> {
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
-                                                      Navigator.push(
+                                                      Navigator.pushReplacement(
                                                         context,
                                                         MaterialPageRoute(
                                                           builder: (context) =>

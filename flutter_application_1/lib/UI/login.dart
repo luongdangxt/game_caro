@@ -7,10 +7,6 @@ import 'package:flutter_application_1/request/apiUser.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const loginScreen());
-}
-
 class loginScreen extends StatefulWidget {
   const loginScreen({super.key});
 

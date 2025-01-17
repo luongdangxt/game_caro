@@ -15,27 +15,6 @@ import 'AI caro/caro_offline.dart';
 import 'package:flutter/widgets.dart' as flutter;
 import 'package:rive/rive.dart' as rive;
 
-void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: MyApp(),
-  ));
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF3F6FF), // Nền xanh nhạt
-      ),
-      home: const HomeScreen(),
-    );
-  }
-}
 
 // Màn hình chính (hiển thị hình ảnh và nút)
 class HomeScreen extends StatefulWidget {
@@ -123,12 +102,14 @@ class _HomeScreenState extends State<HomeScreen> {
           // const SizedBox(height: 32),
           // Hai nút với màu khác nhau
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 100),
+                    const SizedBox(height: 50),
                     Stack(
                       children: [
                         Align(
@@ -166,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 25),
                     Stack(
                       children: [
                         Align(
@@ -210,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 25),
                     Stack(
                       children: [
                         Align(
@@ -252,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 25),
                     Row(
                       mainAxisAlignment: MainAxisAlignment
                           .spaceEvenly, // Các phần tử cách đều nhau
@@ -290,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     const SizedBox(
-                      height: 50,
+                      height: 40,
                     ),
                   ],
                 ),
@@ -305,12 +286,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 38,
+                    height: 30,
                     child: Text(
                       'SELECT YOUR AVATAR',
                       style: TextStyle(
                         color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 25,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -673,7 +654,7 @@ class PlayOnlineScreen extends StatelessWidget {
                                     ),
                                   ),
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8), // Thêm padding bên trong
+                                      horizontal: 20), // Thêm padding bên trong
                                   child: TextField(
                                     controller: idRoom,
                                     decoration: const InputDecoration(
@@ -799,17 +780,9 @@ class PlayOnlineScreen extends StatelessWidget {
                                                                 GestureDetector(
                                                               onTap: () {
                                                                 // Hành động khi nhấn vào Container
-                                                                Navigator
-                                                                    .pushAndRemoveUntil(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              const HomeScreen()),
-                                                                  (Route<dynamic>
-                                                                          route) =>
-                                                                      false, // Loại bỏ tất cả các màn hình trước đó
-                                                                );
+                                                                Navigator.pop(
+                                                                    context);
+
                                                                 // Hoặc điều hướng, logic khác ở đây
                                                               },
                                                               child: Container(
@@ -839,16 +812,50 @@ class PlayOnlineScreen extends StatelessWidget {
                                                                 .center,
                                                         children: [
                                                           GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.pop(
-                                                                  context);
+                                                            onTap: () async {
+                                                              // Gọi API để tạo phòng và lấy roomId
+                                                              final newRoomId =
+                                                                  await DataRoom()
+                                                                      .createRoom(
+                                                                'roomName',
+                                                                'roomType',
+                                                                "test11@gmail.com",
+                                                                10,
+                                                              );
+
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          CaroGameScreen(
+                                                                    roomId:
+                                                                        newRoomId,
+                                                                    avatar:
+                                                                        avatar,
+                                                                  ),
+                                                                ),
+                                                              ).then(
+                                                                  (result) async {
+                                                                if (result !=
+                                                                    null) {
+                                                                  // Có dữ liệu trả về
+                                                                }
+                                                                // Xóa phòng sau khi quay lại từ CaroGameScreen
+                                                                final deleteResult =
+                                                                    await DataRoom()
+                                                                        .deleteRoom(
+                                                                            newRoomId);
+                                                                print(
+                                                                    deleteResult);
+                                                              });
                                                             },
                                                             child: Container(
                                                               alignment:
                                                                   Alignment
                                                                       .center,
-                                                              height: 90,
-                                                              width: 145,
+                                                              height: 70,
+                                                              width: 100,
                                                               decoration:
                                                                   const BoxDecoration(
                                                                 image:
@@ -882,21 +889,27 @@ class PlayOnlineScreen extends StatelessWidget {
                                                           ),
                                                           GestureDetector(
                                                             onTap: () {
+                                                              final joinRoomId =
+                                                                  idRoom.text;
                                                               Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          const HomeScreen(),
-                                                                ),
-                                                              );
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            CaroGameScreen(
+                                                                      roomId:
+                                                                          joinRoomId,
+                                                                      avatar:
+                                                                          avatar,
+                                                                    ),
+                                                                  ));
                                                             },
                                                             child: Container(
                                                               alignment:
                                                                   Alignment
                                                                       .center,
-                                                              height: 90,
-                                                              width: 145,
+                                                              height: 70,
+                                                              width: 100,
                                                               decoration:
                                                                   const BoxDecoration(
                                                                 image:
@@ -1763,7 +1776,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   void initState() {
     super.initState();
-    statusMessage = 'ROOM ID: '+ widget.roomId;
+    statusMessage = 'ROOM ID: ' + widget.roomId;
     getInfoLogin().then((_) {
       joinRoom(); // Chỉ gọi joinRoom sau khi getInfoLogin hoàn tất
     });
@@ -1772,7 +1785,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       final data = jsonDecode(message);
       setState(() {
         if (data['type'] == 'waiting') {
-          statusMessage = 'ROOM ID: '+ widget.roomId;
+          statusMessage = 'ROOM ID: ' + widget.roomId;
           print(1);
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
@@ -1984,57 +1997,105 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                           ),
                                         ),
                                         GridView.builder(
-                                          gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 15,
-                                            crossAxisSpacing: 1,
-                                            mainAxisSpacing: 1,
-                                            childAspectRatio: 1,
-                                          ),
-                                          itemCount: 15 * 15,
-                                          shrinkWrap: true,
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          itemBuilder: (context, index) {
-                                            int row = index ~/ boardSize;
-                                            int col = index % boardSize;
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 15,
+                                              crossAxisSpacing: 0,
+                                              mainAxisSpacing: 0,
+                                              childAspectRatio: 1,
+                                            ),
+                                            itemCount: 15 * 15,
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemBuilder: (context, index) {
+                                              int row = index ~/ boardSize;
+                                              int col = index % boardSize;
 
-                                            bool isWinningCell =
-                                                winningCells.any(
-                                              (cell) =>
-                                                  cell[0] == row &&
-                                                  cell[1] == col,
-                                            );
+                                              bool isWinningCell =
+                                                  winningCells.any(
+                                                (cell) =>
+                                                    cell[0] == row &&
+                                                    cell[1] == col,
+                                              );
 
-                                            return Container(
-                                              decoration: BoxDecoration(
-                                                color: isWinningCell
-                                                    ? Colors
-                                                        .yellow // Nền ô thắng thành màu vàng
-                                                    : Colors
-                                                        .white, // Các ô khác màu trắng
-                                                border: Border.all(
-                                                    color: Colors.grey,
-                                                    width: 0.5),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  cells[index],
-                                                  style: TextStyle(
-                                                    fontSize: 24,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: isWinningCell
-                                                        ? Colors
-                                                            .green // Dấu trong ô thắng chuyển thành màu xanh lá
-                                                        : (cells[index] == 'X'
-                                                            ? Colors.red
-                                                            : Colors.blue),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
+                                              return GestureDetector(
+                                                  onTap: () => makeMove(index),
+                                                  child: AnimatedContainer(
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      decoration: BoxDecoration(
+                                                        color: isWinningCell
+                                                            ? Colors.yellow
+                                                                .withOpacity(
+                                                                    0.8)
+                                                            : const Color
+                                                                .fromARGB(0,
+                                                                251, 168, 162),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                        boxShadow: [
+                                                          if (isWinningCell)
+                                                            const BoxShadow(
+                                                              color:
+                                                                  Colors.orange,
+                                                              blurRadius: 10,
+                                                              offset:
+                                                                  Offset(0, 0),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                      child: Center(
+                                                          child:
+                                                              AnimatedSwitcher(
+                                                        duration: const Duration(
+                                                            milliseconds:
+                                                                500), // Thời gian hiệu ứng
+                                                        transitionBuilder:
+                                                            (Widget child,
+                                                                Animation<
+                                                                        double>
+                                                                    animation) {
+                                                          return FadeTransition(
+                                                            opacity:
+                                                                animation, // Hiệu ứng mờ dần khi thay đổi
+                                                            child:
+                                                                ScaleTransition(
+                                                              scale:
+                                                                  animation, // Hiệu ứng phóng to/thu nhỏ
+                                                              child: child,
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Center(
+                                                          child: cells[index]
+                                                                  .isNotEmpty
+                                                              ? Text(
+                                                                  cells[index],
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: cells[
+                                                                                index] ==
+                                                                            'X'
+                                                                        ? Colors
+                                                                            .red
+                                                                        : Colors
+                                                                            .blue,
+                                                                    height:
+                                                                        1.0, // Loại bỏ khoảng trống dư thừa
+                                                                  ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                )
+                                                              : null,
+                                                        ),
+                                                      ))));
+                                            }),
                                       ],
                                     ),
                                   ),
@@ -2212,8 +2273,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
         currentPlayer == player; // Kiểm tra người chơi hiện tại
     bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
     return SizedBox(
-      width: 225, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
-      height: 140, // Chiều cao cố định
+      width: 150, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
+      height: 130, // Chiều cao cố định
 
       child: Stack(
         children: [
@@ -2266,7 +2327,9 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                       ? const Text(
                           'O',
                           style: TextStyle(
+                            color: Colors.blue,
                             fontSize: 20,
+                            fontWeight: FontWeight.bold
                           ),
                         )
                       : Container(),
@@ -2303,7 +2366,9 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                       ? const Text(
                           'X',
                           style: TextStyle(
+                            color: Colors.red,
                             fontSize: 20,
+                            fontWeight: FontWeight.bold
                           ),
                         )
                       : Container()
