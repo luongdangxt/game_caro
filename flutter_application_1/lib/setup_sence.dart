@@ -1768,6 +1768,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   String statusMessage = 'ROOM ID ';
   String? mySymbol;
   String currentPlayerNow = "X";
+  List<int> indexWin = [];
 
   final TextEditingController roomIdController = TextEditingController();
 
@@ -1784,38 +1785,33 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       setState(() {
         if (data['type'] == 'waiting') {
           statusMessage = 'ROOM ID: ${widget.roomId}';
-          print(1);
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
           data['players'].forEach((player) {
             dataPlayers.add(player['username']);
             dataPlayers.add(player['avatar']);
           });
-          print(dataPlayers);
-          print(2);
         } else if (data['type'] == 'game-start') {
           statusMessage = 'Game started! Your symbol: ${data['symbol']}';
           mySymbol = data['symbol'];
-          print(3);
         } else if (data['type'] == 'move') {
           final index = data['payload']['index'];
           final symbol = data['payload']['symbol'];
           cells[index] = symbol;
-          print(4);
         } else if (data['type'] == 'game-over') {
           setState(() {
             statusMessage = data['message'];
-            winningCells = List<List<int>>.from(
-                data['payload']['winningCells']); // Lưu các ô thắng
+            print(data);
+            indexWin = List<int>.from(
+                data['payload']); // Lưu các ô thắng
+            print(indexWin);
           });
-          channel.sink.close();
+          channel.sink.close(); 
         } else if (data['type'] == 'time-update') {
           statusMessage = data['payload']['timeLeft'];
           currentPlayerNow = data['payload']['currentPlayer'];
-          print(6);
         } else if (data['type'] == 'timeout') {
           statusMessage = data['message'];
-          print(7);
         }
       });
     });
@@ -1848,6 +1844,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       setState(() {
         isAnimating = true;
       });
+      print('index: ${index}');
 
       // Gửi nước đi qua WebSocket
       channel.sink.add(jsonEncode({
@@ -1879,7 +1876,6 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                     0.23; // Chiều cao tối đa cho phần avatar và dòng trạng thái
                 final boardHeight =
                     screenHeight * 0.7; // Chiều cao tối đa cho bảng caro
-                List<List<int>> winningCells = []; // Danh sách các ô thắng
                 return Stack(
                   alignment: Alignment.topCenter,
                   children: [
@@ -1995,107 +1991,92 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                           ),
                                         ),
                                         GridView.builder(
-                                            gridDelegate:
-                                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 15,
-                                              crossAxisSpacing: 0,
-                                              mainAxisSpacing: 0,
-                                              childAspectRatio: 1,
-                                            ),
-                                            itemCount: 15 * 15,
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemBuilder: (context, index) {
-                                              int row = index ~/ boardSize;
-                                              int col = index % boardSize;
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 15,
+                                            crossAxisSpacing: 0,
+                                            mainAxisSpacing: 0,
+                                            childAspectRatio: 1,
+                                          ),
+                                          itemCount: 15 * 15,
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemBuilder: (context, index) {
+                                            // Kiểm tra ô hiện tại có nằm trong danh sách ô chiến thắng không
+                                            bool isWinningCell =
+                                                indexWin.contains(index);
 
-                                              bool isWinningCell =
-                                                  winningCells.any(
-                                                (cell) =>
-                                                    cell[0] == row &&
-                                                    cell[1] == col,
-                                              );
-
-                                              return GestureDetector(
-                                                  onTap: () => makeMove(index),
-                                                  child: AnimatedContainer(
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                      decoration: BoxDecoration(
-                                                        color: isWinningCell
-                                                            ? Colors.yellow
-                                                                .withOpacity(
-                                                                    0.8)
-                                                            : const Color
-                                                                .fromARGB(0,
-                                                                251, 168, 162),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                        boxShadow: [
-                                                          if (isWinningCell)
-                                                            const BoxShadow(
-                                                              color:
-                                                                  Colors.orange,
-                                                              blurRadius: 10,
-                                                              offset:
-                                                                  Offset(0, 0),
-                                                            ),
-                                                        ],
+                                            return GestureDetector(
+                                              onTap: () => makeMove(index),
+                                              child: AnimatedContainer(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                decoration: BoxDecoration(
+                                                  // Đổi màu nền nếu ô là ô chiến thắng
+                                                  color: isWinningCell
+                                                      ? Colors.yellow.withOpacity(
+                                                          0.8) // Màu cho ô chiến thắng
+                                                      : const Color.fromARGB(
+                                                          0,
+                                                          251,
+                                                          168,
+                                                          162), // Màu mặc định
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  boxShadow: [
+                                                    if (isWinningCell)
+                                                      const BoxShadow(
+                                                        color: Colors
+                                                            .orange, // Hiệu ứng bóng cho ô chiến thắng
+                                                        blurRadius: 10,
+                                                        offset: Offset(0, 0),
                                                       ),
-                                                      child: Center(
-                                                          child:
-                                                              AnimatedSwitcher(
-                                                        duration: const Duration(
-                                                            milliseconds:
-                                                                500), // Thời gian hiệu ứng
-                                                        transitionBuilder:
-                                                            (Widget child,
-                                                                Animation<
-                                                                        double>
-                                                                    animation) {
-                                                          return FadeTransition(
-                                                            opacity:
-                                                                animation, // Hiệu ứng mờ dần khi thay đổi
-                                                            child:
-                                                                ScaleTransition(
-                                                              scale:
-                                                                  animation, // Hiệu ứng phóng to/thu nhỏ
-                                                              child: child,
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: Center(
-                                                          child: cells[index]
-                                                                  .isNotEmpty
-                                                              ? Text(
-                                                                  cells[index],
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        20,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: cells[
-                                                                                index] ==
-                                                                            'X'
-                                                                        ? Colors
-                                                                            .red
-                                                                        : Colors
-                                                                            .blue,
-                                                                    height:
-                                                                        1.0, // Loại bỏ khoảng trống dư thừa
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                )
-                                                              : null,
+                                                  ],
+                                                ),
+                                                child: Center(
+                                                  child: AnimatedSwitcher(
+                                                    duration: const Duration(
+                                                        milliseconds: 500),
+                                                    transitionBuilder:
+                                                        (child, animation) {
+                                                      return FadeTransition(
+                                                        opacity: animation,
+                                                        child: ScaleTransition(
+                                                          scale: animation,
+                                                          child: child,
                                                         ),
-                                                      ))));
-                                            }),
+                                                      );
+                                                    },
+                                                    child: Center(
+                                                      child: cells[index]
+                                                              .isNotEmpty
+                                                          ? Text(
+                                                              cells[index],
+                                                              style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: cells[
+                                                                            index] ==
+                                                                        'X'
+                                                                    ? Colors.red
+                                                                    : Colors
+                                                                        .blue,
+                                                              ),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            )
+                                                          : null,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ],
                                     ),
                                   ),
