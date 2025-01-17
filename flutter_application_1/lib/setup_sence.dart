@@ -477,26 +477,29 @@ class PlayOnlineScreen extends StatelessWidget {
   final TextEditingController idRoom = TextEditingController();
 
   String privateIdRoom() {
-  final random = Random();
-  String letters = '';
-  String numbers = '';
-  
-  // Tạo 3 chữ cái viết hoa
-  for (int i = 0; i < 3; i++) {
-    letters += String.fromCharCode(random.nextInt(26) + 65); // 65 là mã ASCII của 'A'
+    final random = Random();
+    String letters = '';
+    String numbers = '';
+
+    // Tạo 3 chữ cái viết hoa
+    for (int i = 0; i < 3; i++) {
+      letters += String.fromCharCode(
+          random.nextInt(26) + 65); // 65 là mã ASCII của 'A'
+    }
+
+    // Tạo 3 số
+    for (int i = 0; i < 3; i++) {
+      numbers += random.nextInt(10).toString();
+    }
+
+    return letters + numbers;
   }
-  
-  // Tạo 3 số
-  for (int i = 0; i < 3; i++) {
-    numbers += random.nextInt(10).toString();
-  }
-  
-  return letters + numbers;
-}
 
   @override
   Widget build(BuildContext context) {
     final TextEditingController idRoom = TextEditingController();
+    final ScrollController scrollController = ScrollController();
+
     return Scaffold(
       body: FutureBuilder(
         future: callLoadRooms(),
@@ -603,33 +606,44 @@ class PlayOnlineScreen extends StatelessWidget {
                       // Nội dung cuộn với danh sách phòng
 
                       Expanded(
-                        child: GridView.builder(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, // Số container mỗi hàng
-                            crossAxisSpacing:
-                                16, // Khoảng cách ngang giữa các container
-                            mainAxisSpacing:
-                                16, // Khoảng cách dọc giữa các container
-                            childAspectRatio:
-                                1, // Tỉ lệ width : height của mỗi container (1 là vuông)
-                          ),
-                          itemCount: rooms.length, // Dựa trên số lượng phòng
-                          itemBuilder: (context, index) {
-                            final room = rooms[index];
-                            print(room.roomId);
-                            return buildPlayerCard(
+                        child: Scrollbar(
+                          thumbVisibility: true, // Hiển thị thanh cuộn
+                          controller:
+                              scrollController, // Liên kết với ScrollController
+                          child: GridView.builder(
+                            controller:
+                                scrollController, // Liên kết ScrollController với GridView
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 1, vertical: 16),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // Số container mỗi hàng
+                              crossAxisSpacing:
+                                  16, // Khoảng cách ngang giữa các container
+                              mainAxisSpacing:
+                                  16, // Khoảng cách dọc giữa các container
+                              childAspectRatio:
+                                  1, // Tỉ lệ width : height của mỗi container (1 là vuông)
+                            ),
+                            itemCount: rooms.length, // Dựa trên số lượng phòng
+                            itemBuilder: (context, index) {
+                              final room = rooms[index];
+                              print(room.roomId);
+                              return buildPlayerCard(
                                 context,
                                 index,
                                 room.roomType,
                                 room.playerRight != 'null' ? 2 : 1,
                                 2,
                                 room.roomId,
-                                avatar);
-                          },
+                                avatar,
+                              );
+                            },
+                          ),
                         ),
+                      ),
+                      const SizedBox(
+                        height: 280,
                       ),
                     ],
                   ),
@@ -1818,11 +1832,24 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           setState(() {
             statusMessage = data['message'];
             print(data);
-            indexWin = List<int>.from(
-                data['payload']); // Lưu các ô thắng
+            indexWin = List<int>.from(data['payload']); // Lưu các ô thắng
             print(indexWin);
           });
-          channel.sink.close(); 
+          mySymbol = data['symbol'];
+          print(mySymbol);
+
+          if (data['type'] == 'X wins!' && mySymbol == 'X') {
+            Future.delayed(Duration(milliseconds: winningCells.length * 2000),
+                () {
+              showVictoryDialog();
+            });
+          } else {
+            Future.delayed(Duration(milliseconds: winningCells.length * 2000),
+                () {
+              showLoseDialog();
+            });
+          }
+          channel.sink.close();
         } else if (data['type'] == 'time-update') {
           statusMessage = data['payload']['timeLeft'];
           currentPlayerNow = data['payload']['currentPlayer'];
@@ -1860,7 +1887,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       setState(() {
         isAnimating = true;
       });
-      print('index: ${index}');
+      print('index: $index');
 
       // Gửi nước đi qua WebSocket
       channel.sink.add(jsonEncode({
@@ -2410,6 +2437,168 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   void dispose() {
     channel.sink.close();
     super.dispose();
+  }
+
+  void showVictoryDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Không cho phép đóng khi nhấn ngoài dialog
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0), // Bo góc nếu cần
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: Material(
+              color: Colors.transparent, // Loại bỏ màu nền của AlertDialog
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Container 1: Hình ảnh và nội dung
+                  Container(
+                    height: 550,
+                    width: 350,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/khung.png'),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/images/win.png',
+                          height: 270,
+                          width: 270,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Nút Thoát
+                            Container(
+                              height: 80,
+                              width: 120,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/btn.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Đóng dialog
+                                  Navigator.of(context)
+                                      .pop(); // Quay về màn hình chính
+                                },
+                                child: const Text(
+                                  'EXIT',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 0, 0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Nút Reset
+                          ],
+                        ),
+                        const SizedBox(height: 170),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showLoseDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Không cho phép đóng khi nhấn ngoài dialog
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0), // Bo góc nếu cần
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: Material(
+              color: Colors.transparent, // Loại bỏ màu nền của AlertDialog
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Container 1: Hình ảnh và nội dung
+                  Container(
+                    height: 550,
+                    width: 350,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/khung.png'),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/images/lose.png',
+                          height: 270,
+                          width: 270,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Nút Thoát
+                            Container(
+                              height: 100,
+                              width: 250,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/btn.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Đóng dialog
+                                  Navigator.of(context)
+                                      .pop(); // Quay về màn hình chính
+                                },
+                                child: const Text(
+                                  'EXIT',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 0, 0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Nút Reset
+                          ],
+                        ),
+                        const SizedBox(height: 160),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 
