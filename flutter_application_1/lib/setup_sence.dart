@@ -1818,7 +1818,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
           data['players'].forEach((player) {
-            if(nameUser == player['username']){
+            if (nameUser == player['username']) {
               mySymbol = player['symbol'];
             }
             dataPlayers.add(player['username']);
@@ -1982,22 +1982,38 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                     Column(
                       children: [
                         const SizedBox(height: 35),
-                        Text(
-                          statusMessage,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(1.0, 1.0),
-                                blurRadius: 3.0,
-                                color: Colors.black,
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: 100,
+                              width: 180,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/khung.png'),
+                                  fit: BoxFit.fill,
+                                ),
                               ),
-                            ],
-                          ),
+                            ),
+                            Text(
+                              statusMessage,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(1.0, 1.0),
+                                    blurRadius: 3.0,
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
+
                         // Đẩy bảng caro lên sát avatar hơn
                         Expanded(
                           child: Padding(
