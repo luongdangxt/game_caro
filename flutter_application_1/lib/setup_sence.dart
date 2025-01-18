@@ -1976,10 +1976,28 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                   //   ),
                                   // ),
                                 ),
+                          )],
+                      ),
+                    ),
+                            Text(
+                              statusMessage,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(1.0, 1.0),
+                                    blurRadius: 3.0,
+                                    color: Colors.black,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
+
                         Column(
                           children: [
                             const SizedBox(height: 35),
@@ -2005,7 +2023,6 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     //horizontal: 5.0,
                                     vertical: 4.6), // Thêm khoảng cách hai bên
-
                                 child: LayoutBuilder(
                                   builder: (context, constraints) {
                                     double availableWidth =
