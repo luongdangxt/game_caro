@@ -1796,6 +1796,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   List<String> dataPlayers = []; // [username1, avatar1, username2, avatar2]
   List<String> cells = [];
   String statusMessage = 'ROOM ID ';
+  String? mySymbol;
   String currentPlayerNow = "X";
   List<int> indexWin = [];
 
@@ -1816,6 +1817,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           statusMessage = 'ROOM ID: ${widget.roomId}';
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
+          mySymbol = data['symbol'];
           data['players'].forEach((player) {
             dataPlayers.add(player['username']);
             dataPlayers.add(player['avatar']);
@@ -1831,6 +1833,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             indexWin = List<int>.from(data['payload']); // Lưu các ô thắng
             print(indexWin);
           });
+          print(mySymbol);
           if (data['message'] == 'X wins!') {
             if (data['symbol'] == 'X') {
               Future.delayed(Duration(milliseconds: winningCells.length * 2000),
