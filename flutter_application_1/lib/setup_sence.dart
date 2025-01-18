@@ -1819,7 +1819,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           statusMessage = data['message'];
           data['players'].forEach((player) {
             if(nameUser == player['username']){
-              mySymbol = data['players']['symbol'];
+              mySymbol = player['symbol'];
             }
             dataPlayers.add(player['username']);
             dataPlayers.add(player['avatar']);
