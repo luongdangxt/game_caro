@@ -2501,6 +2501,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                   Navigator.of(context).pop(); // Đóng dialog
                                   Navigator.of(context)
                                       .pop(); // Quay về màn hình chính
+                                  Navigator.of(context).pop();
                                 },
                                 child: const Text(
                                   'EXIT',
@@ -2582,6 +2583,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                   Navigator.of(context).pop(); // Đóng dialog
                                   Navigator.of(context)
                                       .pop(); // Quay về màn hình chính
+                                  Navigator.of(context).pop();
                                 },
                                 child: const Text(
                                   'EXIT',
