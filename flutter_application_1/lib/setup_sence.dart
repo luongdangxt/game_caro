@@ -1835,19 +1835,31 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             indexWin = List<int>.from(data['payload']); // Lưu các ô thắng
             print(indexWin);
           });
-          mySymbol = data['symbol'];
-          print(mySymbol);
 
-          if (data['type'] == 'X wins!' && mySymbol == 'X') {
-            Future.delayed(Duration(milliseconds: winningCells.length * 2000),
-                () {
-              showVictoryDialog();
-            });
+          if (data['message'] == 'X wins!') {
+            if (mySymbol == 'X') {
+              Future.delayed(Duration(milliseconds: winningCells.length * 2000),
+                  () {
+                showVictoryDialog();
+              });
+            } else {
+              Future.delayed(Duration(milliseconds: winningCells.length * 2000),
+                  () {
+                showLoseDialog();
+              });
+            }
           } else {
-            Future.delayed(Duration(milliseconds: winningCells.length * 2000),
-                () {
-              showLoseDialog();
-            });
+            if (mySymbol == 'O') {
+              Future.delayed(Duration(milliseconds: winningCells.length * 2000),
+                  () {
+                showVictoryDialog();
+              });
+            } else {
+              Future.delayed(Duration(milliseconds: winningCells.length * 2000),
+                  () {
+                showLoseDialog();
+              });
+            }
           }
           channel.sink.close();
         } else if (data['type'] == 'time-update') {
