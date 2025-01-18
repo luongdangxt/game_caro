@@ -1796,7 +1796,6 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   List<String> dataPlayers = []; // [username1, avatar1, username2, avatar2]
   List<String> cells = [];
   String statusMessage = 'ROOM ID ';
-  String? mySymbol;
   String currentPlayerNow = "X";
   List<int> indexWin = [];
 
@@ -1821,9 +1820,6 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             dataPlayers.add(player['username']);
             dataPlayers.add(player['avatar']);
           });
-        } else if (data['type'] == 'game-start') {
-          statusMessage = 'Game started! Your symbol: ${data['symbol']}';
-          mySymbol = data['symbol'];
         } else if (data['type'] == 'move') {
           final index = data['payload']['index'];
           final symbol = data['payload']['symbol'];
@@ -1835,9 +1831,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             indexWin = List<int>.from(data['payload']); // Lưu các ô thắng
             print(indexWin);
           });
-
           if (data['message'] == 'X wins!') {
-            if (mySymbol == 'X') {
+            if (data['symbol'] == 'X') {
               Future.delayed(Duration(milliseconds: winningCells.length * 2000),
                   () {
                 showVictoryDialog();
@@ -1849,7 +1844,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
               });
             }
           } else {
-            if (mySymbol == 'O') {
+            if (data['symbol'] == 'O') {
               Future.delayed(Duration(milliseconds: winningCells.length * 2000),
                   () {
                 showVictoryDialog();
