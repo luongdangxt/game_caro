@@ -1835,7 +1835,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           });
           print(mySymbol);
           if (data['message'] == 'X wins!') {
-            if (data['symbol'] == 'X') {
+            if (mySymbol == 'X') {
               Future.delayed(Duration(milliseconds: winningCells.length * 2000),
                   () {
                 showVictoryDialog();
@@ -1847,7 +1847,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
               });
             }
           } else {
-            if (data['symbol'] == 'O') {
+            if (mySymbol == 'O') {
               Future.delayed(Duration(milliseconds: winningCells.length * 2000),
                   () {
                 showVictoryDialog();
@@ -1897,8 +1897,6 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       setState(() {
         isAnimating = true;
       });
-      print('index: $index');
-
       // Gửi nước đi qua WebSocket
       channel.sink.add(jsonEncode({
         'type': 'move',
