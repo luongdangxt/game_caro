@@ -1817,8 +1817,12 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           statusMessage = 'ROOM ID: ${widget.roomId}';
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
-          mySymbol = data['players']['symbol'];
+          print(data['players']);
+          
           data['players'].forEach((player) {
+            if(nameUser == data['username']){
+              mySymbol = data['players']['symbol'];
+            }
             dataPlayers.add(player['username']);
             dataPlayers.add(player['avatar']);
           });
