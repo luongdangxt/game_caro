@@ -1817,10 +1817,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           statusMessage = 'ROOM ID: ${widget.roomId}';
         } else if (data['type'] == 'game-ready') {
           statusMessage = data['message'];
-          print(data['players']);
-          
           data['players'].forEach((player) {
-            if(nameUser == data['username']){
+            if(nameUser == player['username']){
               mySymbol = data['players']['symbol'];
             }
             dataPlayers.add(player['username']);
@@ -1833,9 +1831,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
         } else if (data['type'] == 'game-over') {
           setState(() {
             statusMessage = data['message'];
-            print(data);
             indexWin = List<int>.from(data['payload']); // Lưu các ô thắng
-            print(indexWin);
           });
           print(mySymbol);
           if (data['message'] == 'X wins!') {
