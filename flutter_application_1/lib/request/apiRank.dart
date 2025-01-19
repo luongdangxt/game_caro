@@ -24,7 +24,7 @@ class DataRank {
     }
   }
 
-  Future<Rank?> findRanks(String username) async {
+  Future<Rank> findRanks(String username) async {
     final url = Uri.parse(
         'https://api-gamecaro.onrender.com/api/rank/tictotoe/$username');
     final headers = {
@@ -35,16 +35,13 @@ class DataRank {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return Rank.fromJson(data);
-      } else if (response.statusCode == 404) {
-        print('Rank not found');
-        return null;
+        return Rank.fromJson(data[0]);
       } else {
-        throw Exception('Error: ${response.statusCode} - ${response.body}');
+        throw Exception('Failed to load ranks');
       }
     } catch (e) {
       print('Error: $e');
-      throw Exception('Error fetching rank details');
+      return throw Exception('Error fetching rank details');
     }
   }
 }
