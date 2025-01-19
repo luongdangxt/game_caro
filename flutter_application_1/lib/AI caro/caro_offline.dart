@@ -1,27 +1,37 @@
 import 'package:flutter/material.dart';
 import 'AI_hard.dart';
 import 'package:flutter_application_1/setup_sence.dart';
-
-void main() {
-  runApp(const CaroGame());
-}
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CaroGame extends StatelessWidget {
-  const CaroGame({super.key});
+  final String selectedIndex;
+  const CaroGame({super.key, required this.selectedIndex});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: GameBoard(),
-      ),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812), // Kích thước thiết kế của iPhone X
+      minTextAdapt: true, // Tự động điều chỉnh kích thước chữ
+      splitScreenMode: true, // Hỗ trợ chế độ chia đôi màn hình
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            body: GameBoard(
+              avatar:
+                  selectedIndex, // Truyền tham số selectedIndex vào GameBoard
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
 class GameBoard extends StatefulWidget {
-  const GameBoard({super.key});
+  final String avatar;
+
+  const GameBoard({super.key, required this.avatar});
 
   @override
   _GameBoardState createState() => _GameBoardState();
@@ -31,6 +41,7 @@ class _GameBoardState extends State<GameBoard> {
   static const int boardSize = 15;
   static const String player = 'X';
   static const String ai = 'O';
+
   List<List<int>> winningCells = [];
   List<List<int>> revealedCells = [];
 
@@ -42,6 +53,7 @@ class _GameBoardState extends State<GameBoard> {
   bool isPlayerTurn = true;
   bool gameEnded = false;
   String winner = '';
+  //String avatar = selectedIndex;
 
   late AI_hard aiHard;
 
@@ -103,8 +115,8 @@ class _GameBoardState extends State<GameBoard> {
                 children: [
                   // Container 1: Hình ảnh và nội dung
                   Container(
-                    height: 550,
-                    width: 350,
+                    height: 550.h,
+                    width: 350.w,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/images/khung.png'),
@@ -118,16 +130,16 @@ class _GameBoardState extends State<GameBoard> {
                           winner == 'Player'
                               ? 'assets/images/win.png'
                               : 'assets/images/lose.png',
-                          height: 270,
-                          width: 270,
+                          height: 270.h,
+                          width: 270.w,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // Nút Thoát
                             Container(
-                              height: 80,
-                              width: 120,
+                              height: 80.h,
+                              width: 120.w,
                               padding: const EdgeInsets.all(8.0),
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
@@ -154,8 +166,8 @@ class _GameBoardState extends State<GameBoard> {
                             const SizedBox(width: 40),
                             // Nút Reset
                             Container(
-                              height: 80,
-                              width: 120,
+                              height: 80.h,
+                              width: 120.w,
                               padding: const EdgeInsets.all(8.0),
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
@@ -168,19 +180,20 @@ class _GameBoardState extends State<GameBoard> {
                                   Navigator.of(context).pop(); // Đóng dialog
                                   resetGame(); // Gọi hàm reset game
                                 },
-                                child: const Text(
+                                child: Text(
                                   'Reset',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 20.sp,
                                     fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 0, 110, 255),
+                                    color:
+                                        const Color.fromARGB(255, 0, 110, 255),
                                   ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 170),
+                        SizedBox(height: 170.h),
                       ],
                     ),
                   ),
@@ -377,32 +390,7 @@ class _GameBoardState extends State<GameBoard> {
           ),
         ),
         const Column(
-          children: [
-            SizedBox(
-              height: 0,
-            ),
-            // Container(
-            //   alignment: Alignment.center,
-            //   height: 405,
-            //   decoration: BoxDecoration(
-            //     color: const Color.fromARGB(255, 144, 97, 80),
-            //     borderRadius: BorderRadius.circular(25),
-            //   ),
-            //   child: const Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [
-            //       Flexible(
-            //         child: Padding(
-            //           padding:
-            //               EdgeInsets.symmetric(horizontal: 8.0, vertical: 35),
-            //           // hiển thị thời gian mỗi lượt
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-          ],
+          children: [],
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -416,12 +404,12 @@ class _GameBoardState extends State<GameBoard> {
                   children: [
                     // Circle background
                     Container(
-                      width: 80, // Adjust the size to your needs
-                      height: 40,
+                      width: 45.w, // Adjust the size to your needs
+                      height: 40.h,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/images/btn_back.png'),
-                          fit: BoxFit.fitHeight,
+                          fit: BoxFit.fitWidth,
                         ),
                       ),
                     ),
@@ -431,8 +419,8 @@ class _GameBoardState extends State<GameBoard> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: 90,
-                          width: 90,
+                          height: 90.h,
+                          width: 90.w,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -464,17 +452,17 @@ class _GameBoardState extends State<GameBoard> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                const Text(
-                                                  "Bạn có muốn thoát không ?",
+                                                Text(
+                                                  "Do you want to exit?",
                                                   style: TextStyle(
-                                                    fontSize: 18,
+                                                    fontSize: 18.sp,
                                                     fontWeight: FontWeight.bold,
-                                                    color: Color.fromARGB(
+                                                    color: const Color.fromARGB(
                                                         255, 255, 255, 255),
                                                   ),
                                                 ),
-                                                const SizedBox(
-                                                  height: 20,
+                                                SizedBox(
+                                                  height: 20.h,
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
@@ -585,9 +573,9 @@ class _GameBoardState extends State<GameBoard> {
                                     },
                                   );
                                 },
-                                child: const SizedBox(
-                                  height: 200,
-                                  width: 63,
+                                child: SizedBox(
+                                  height: 200.h,
+                                  width: 63.w,
                                 ),
                               ),
                             ],
@@ -597,13 +585,13 @@ class _GameBoardState extends State<GameBoard> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  width: 50,
+                SizedBox(
+                  width: 10.w,
                 ),
                 Container(
                   alignment: Alignment.center,
-                  height: 90,
-                  width: 200,
+                  height: 90.h,
+                  width: 200.w,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/khung.png'),
@@ -618,30 +606,30 @@ class _GameBoardState extends State<GameBoard> {
                               winner == 'Draw'
                                   ? 'It\'s a Draw!'
                                   : '$winner Wins!',
-                              style: const TextStyle(
-                                fontSize: 30,
+                              style: TextStyle(
+                                fontSize: 30.h,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         )
-                      : const Text(
+                      : Text(
                           "GOMOKU",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20,
+                            fontSize: 20.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                 ),
-                const SizedBox(
-                  width: 100,
+                SizedBox(
+                  width: 75.w,
                 ),
               ],
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: 20.h,
             ),
             Column(
               children: [
@@ -740,63 +728,112 @@ class _GameBoardState extends State<GameBoard> {
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height *
-                      0.1, // Chiều cao là 10% chiều cao màn hình
+                      0.05, // Chiều cao là 10% chiều cao màn hình
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    player == 1
-                        ? const SizedBox(
-                            width: 20,
-                          )
-                        : Container(),
-                    player == 2
-                        ? const Text(
-                            'O',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          )
-                        : Container(),
-                    player == 2
-                        ? const SizedBox(
-                            width: 10,
-                          )
-                        : Container(),
-                    const Align(
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        width: 80,
-                        height: 80,
-                        // decoration: const BoxDecoration(
-                        //   shape: BoxShape.circle, // Avatar luôn hình tròn
-                        //   image: DecorationImage(
-                        //     image: AssetImage(stringAvatar),
-                        //     fit: BoxFit.cover,
-                        //   ),
-                        // ),
-                      ),
+                    SizedBox(
+                      width: 10.w,
                     ),
-                    player == 2
-                        ? const SizedBox(
-                            width: 20,
-                          )
-                        : Container(),
-                    player == 1
-                        ? const SizedBox(
-                            width: 10,
-                          )
-                        : Container(),
-                    player == 1
-                        ? const Text(
-                            'X',
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          )
-                        : Container()
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width *
+                              0.4, // Chiều rộng chiếm 80% màn hình
+                          height: MediaQuery.of(context).size.height *
+                              0.15, // Chiều cao chiếm 30% màn hình
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.05,
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                width: 80.w,
+                                height: 80.h,
+                                decoration: BoxDecoration(
+                                  shape:
+                                      BoxShape.circle, // Avatar luôn hình tròn
+                                  image: DecorationImage(
+                                    image: AssetImage(widget.avatar),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            const Text(
+                              'X',
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.05,
+                    ),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width *
+                              0.4, // Chiều rộng chiếm 80% màn hình
+                          height: MediaQuery.of(context).size.height *
+                              0.15, // Chiều cao chiếm 30% màn hình
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'O',
+                              style: TextStyle(
+                                  color:
+                                      const Color.fromARGB(255, 255, 255, 255),
+                                  fontSize: 20.sp,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                width: 80.w,
+                                height: 80.h,
+                                decoration: const BoxDecoration(
+                                  shape:
+                                      BoxShape.circle, // Avatar luôn hình tròn
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/avAI.png'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.05,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
                 SizedBox(
