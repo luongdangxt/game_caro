@@ -1915,396 +1915,242 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        designSize: const Size(390, 844), // Kích thước thiết kế ban đầu
-        builder: (context, child) {
-          return Scaffold(
-              appBar: null, // Xóa AppBar
-              body: SafeArea(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    // Chiều cao tổng cộng của màn hình
-                    final screenHeight = constraints.maxHeight;
-                    final avatarHeight = screenHeight *
-                        0.23; // Chiều cao tối đa cho phần avatar và dòng trạng thái
-                    final boardHeight =
-                        screenHeight * 0.7; // Chiều cao tối đa cho bảng caro
-                    return Stack(
-                      alignment: Alignment.topCenter,
+      designSize: const Size(390, 844), // Kích thước thiết kế ban đầu
+      builder: (context, child) {
+        return Scaffold(
+          appBar: null, // Xóa AppBar
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Chiều cao tổng cộng của màn hình
+                final screenHeight = constraints.maxHeight;
+                final avatarHeight = screenHeight *
+                    0.23; // Chiều cao tối đa cho phần avatar và dòng trạng thái
+                final boardHeight =
+                    screenHeight * 0.7; // Chiều cao tối đa cho bảng caro
+
+                return Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    // Nền giao diện
+                    Container(
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/back_game.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+
+                    Column(
                       children: [
-                        // Nền giao diện
-                        Container(
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/back_game.png'),
-                              fit: BoxFit.cover,
+                        const SizedBox(height: 35),
+                        Text(
+                          statusMessage,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                offset: Offset(1.0, 1.0),
+                                blurRadius: 3.0,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4.6), // Thêm khoảng cách hai bên
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                double availableWidth = constraints.maxWidth -
+                                    30; // Trừ khoảng padding hai bên
+                                double size =
+                                    availableWidth < constraints.maxHeight
+                                        ? availableWidth
+                                        : constraints.maxHeight;
+                                double cellSize = size / 15;
+
+                                return Center(
+                                  child: Container(
+                                    width: size,
+                                    height: size,
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
+                                      borderRadius: BorderRadius.circular(0),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Color.fromARGB(0, 0, 0, 0),
+                                          blurRadius: 5,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        CustomPaint(
+                                          size: Size(size, size),
+                                          painter: GridPainter(
+                                            boardSize: 15,
+                                            cellSize: cellSize,
+                                          ),
+                                        ),
+                                        GridView.builder(
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 15,
+                                            crossAxisSpacing: 0,
+                                            mainAxisSpacing: 0,
+                                            childAspectRatio: 1,
+                                          ),
+                                          itemCount: 15 * 15,
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemBuilder: (context, index) {
+                                            // Kiểm tra ô hiện tại có nằm trong danh sách ô chiến thắng không
+                                            bool isWinningCell =
+                                                indexWin.contains(index);
+
+                                            return GestureDetector(
+                                              onTap: () => makeMove(index),
+                                              child: AnimatedContainer(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                decoration: BoxDecoration(
+                                                  color: isWinningCell
+                                                      ? Colors.yellow
+                                                          .withOpacity(0.8)
+                                                      : const Color.fromARGB(
+                                                          0, 251, 168, 162),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  boxShadow: [
+                                                    if (isWinningCell)
+                                                      const BoxShadow(
+                                                        color: Colors.orange,
+                                                        blurRadius: 10,
+                                                        offset: Offset(0, 0),
+                                                      ),
+                                                  ],
+                                                ),
+                                                child: Center(
+                                                  child: AnimatedSwitcher(
+                                                    duration: const Duration(
+                                                        milliseconds: 500),
+                                                    transitionBuilder:
+                                                        (child, animation) {
+                                                      return FadeTransition(
+                                                        opacity: animation,
+                                                        child: ScaleTransition(
+                                                          scale: animation,
+                                                          child: child,
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: cells[index]
+                                                            .isNotEmpty
+                                                        ? Text(
+                                                            cells[index],
+                                                            style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  cells[index] ==
+                                                                          'X'
+                                                                      ? Colors
+                                                                          .red
+                                                                      : Colors
+                                                                          .blue,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          )
+                                                        : null,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
 
-                        Container(
-                          height: 405,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 144, 97, 80),
-                            borderRadius: BorderRadius.circular(25),
-                            // image: const DecorationImage(
-                            //   image: AssetImage('assets/images/back_game.png'),
-                            //   fit: BoxFit.cover,
-                            // ),
-                          ),
-                          child: const Row(
+                        // Khoảng trống nhỏ bên dưới
+                        SizedBox(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Flexible(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 8.0, vertical: 35),
-                                  // child: Text(
-                                  //   statusMessage,
-                                  //   textAlign: TextAlign.center,
-                                  //   style: const TextStyle(
-                                  //     fontSize: 16,
-                                  //     color: Colors.white,
-                                  //     fontWeight: FontWeight.bold,
-                                  //     shadows: [
-                                  //       Shadow(
-                                  //         offset: Offset(1.0, 1.0),
-                                  //         blurRadius: 3.0,
-                                  //         color: Colors.black,
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
-                                ),
-                          )],
-                      ),
-                    ),
-                            Text(
-                              statusMessage,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                shadows: [
-                                  Shadow(
-                                    offset: Offset(1.0, 1.0),
-                                    blurRadius: 3.0,
-                                    color: Colors.black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                              if (dataPlayers.isNotEmpty)
+                                playerWidget(1, dataPlayers[0], dataPlayers[1]),
+                              if (dataPlayers.isNotEmpty)
+                                playerWidget(2, dataPlayers[2], dataPlayers[3]),
+                            ],
+                          ),
                         ),
-
-                        Column(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .spaceEvenly, // Căn đều trong màn hình
                           children: [
-                            const SizedBox(height: 35),
-                            Text(
-                              statusMessage,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                shadows: [
-                                  Shadow(
-                                    offset: Offset(1.0, 1.0),
-                                    blurRadius: 3.0,
-                                    color: Colors.black,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Đẩy bảng caro lên sát avatar hơn
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    //horizontal: 5.0,
-                                    vertical: 4.6), // Thêm khoảng cách hai bên
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    double availableWidth =
-                                        constraints.maxWidth -
-                                            30; // Trừ khoảng padding hai bên
-                                    double size =
-                                        availableWidth < constraints.maxHeight
-                                            ? availableWidth
-                                            : constraints.maxHeight;
-
-                                    double cellSize = size / 15;
-
-                                    return Center(
-                                      child: Container(
-                                        width: size,
-                                        height: size,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 255, 255, 255),
-                                          borderRadius:
-                                              BorderRadius.circular(0),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color: Color.fromARGB(0, 0, 0, 0),
-                                              blurRadius: 5,
-                                              offset: Offset(0, 3),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Stack(
-                                          children: [
-                                            CustomPaint(
-                                              size: Size(size, size),
-                                              painter: GridPainter(
-                                                boardSize: 15,
-                                                cellSize: cellSize,
-                                              ),
-                                            ),
-                                            GridView.builder(
-                                              gridDelegate:
-                                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                                crossAxisCount: 15,
-                                                crossAxisSpacing: 0,
-                                                mainAxisSpacing: 0,
-                                                childAspectRatio: 1,
-                                              ),
-                                              itemCount: 15 * 15,
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              itemBuilder: (context, index) {
-                                                // Kiểm tra ô hiện tại có nằm trong danh sách ô chiến thắng không
-                                                bool isWinningCell =
-                                                    indexWin.contains(index);
-
-                                                return GestureDetector(
-                                                  onTap: () => makeMove(index),
-                                                  child: AnimatedContainer(
-                                                    duration: const Duration(
-                                                        milliseconds: 300),
-                                                    decoration: BoxDecoration(
-                                                      // Đổi màu nền nếu ô là ô chiến thắng
-                                                      color: isWinningCell
-                                                          ? Colors.yellow
-                                                              .withOpacity(
-                                                                  0.8) // Màu cho ô chiến thắng
-                                                          : const Color
-                                                              .fromARGB(
-                                                              0,
-                                                              251,
-                                                              168,
-                                                              162), // Màu mặc định
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      boxShadow: [
-                                                        if (isWinningCell)
-                                                          const BoxShadow(
-                                                            color: Colors
-                                                                .orange, // Hiệu ứng bóng cho ô chiến thắng
-                                                            blurRadius: 10,
-                                                            offset:
-                                                                Offset(0, 0),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                    child: Center(
-                                                      child: AnimatedSwitcher(
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    500),
-                                                        transitionBuilder:
-                                                            (child, animation) {
-                                                          return FadeTransition(
-                                                            opacity: animation,
-                                                            child:
-                                                                ScaleTransition(
-                                                              scale: animation,
-                                                              child: child,
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: Center(
-                                                          child: cells[index]
-                                                                  .isNotEmpty
-                                                              ? Text(
-                                                                  cells[index],
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        20,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: cells[
-                                                                                index] ==
-                                                                            'X'
-                                                                        ? Colors
-                                                                            .red
-                                                                        : Colors
-                                                                            .blue,
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                )
-                                                              : null,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-
-                            // Khoảng trống nhỏ bên dưới
-
-                            SizedBox(
-                              height: avatarHeight,
-                              // decoration: const BoxDecoration(
-                              //   image: DecorationImage(
-                              //     image: AssetImage(''),
-                              //     fit: BoxFit.cover,
-                              //   ),
-                              // ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  dataPlayers.isNotEmpty
-                                      ? playerWidget(
-                                          1, dataPlayers[0], dataPlayers[1])
-                                      : Container(),
-                                  dataPlayers.isNotEmpty
-                                      ? playerWidget(
-                                          2, dataPlayers[2], dataPlayers[3])
-                                      : Container(),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment
-                                  .spaceEvenly, // Căn đều trong màn hình
-                              children: [
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    // Circle background
-                                    Container(
-                                      width:
-                                          80, // Adjust the size to your needs
-                                      height: 80,
-                                      decoration: const BoxDecoration(
-                                        color:
-                                            Colors.white, // Outer circle color
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    // Inner circle
-                                    Container(
-                                      width:
-                                          70, // Slightly smaller than outer circle
-                                      height: 70,
-                                      decoration: const BoxDecoration(
-                                        color:
-                                            Colors.brown, // Inner circle color
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.play_arrow, // Play icon
-                                        color: Colors.white,
-                                        size: 44, // Icon size
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    // Circle background
-                                    Container(
-                                      width:
-                                          80, // Adjust the size to your needs
-                                      height: 80,
-                                      decoration: const BoxDecoration(
-                                        color:
-                                            Colors.white, // Outer circle color
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    // Inner circle
-                                    Container(
-                                      width:
-                                          70, // Slightly smaller than outer circle
-                                      height: 70,
-                                      decoration: const BoxDecoration(
-                                        color:
-                                            Colors.brown, // Inner circle color
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.pause, // Play icon
-                                        color: Colors.white,
-                                        size: 44, // Icon size
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    // Circle background
-                                    Container(
-                                      width:
-                                          80, // Adjust the size to your needs
-                                      height: 80,
-                                      decoration: const BoxDecoration(
-                                        color:
-                                            Colors.white, // Outer circle color
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    // Inner circle
-                                    Container(
-                                      width:
-                                          70, // Slightly smaller than outer circle
-                                      height: 70,
-                                      decoration: const BoxDecoration(
-                                        color:
-                                            Colors.brown, // Inner circle color
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.reply, // Play icon
-                                        color: Colors.white,
-                                        size: 44, // Icon size
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 80),
+                            _buildCircleIcon(Icons.play_arrow),
+                            _buildCircleIcon(Icons.pause),
+                            _buildCircleIcon(Icons.reply),
                           ],
                         ),
+                        const SizedBox(height: 80),
                       ],
-                    );
-                  },
-                ),
-              ));
-        });
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCircleIcon(IconData icon) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+          ),
+        ),
+        Container(
+          width: 70,
+          height: 70,
+          decoration: const BoxDecoration(
+            color: Colors.brown,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: 44,
+          ),
+        ),
+      ],
+    );
   }
 
   int currentPlayer = 1;
