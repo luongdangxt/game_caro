@@ -461,11 +461,22 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
   void initState() {
     super.initState();
     addRanksToList();
-    print('--------------------------');
-    getRankUser();
   }
 
+  Map<String, dynamic>? rankUser;
+  late Map<String, dynamic> userName;
   final List<Map<String, dynamic>> _rankList = [
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
     {'username': 'UserA', 'score': 10},
   ];
   final List<Map<String, dynamic>> list10 = [];
@@ -500,7 +511,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
       // Lấy dữ liệu từ API
       final dataRank = DataRank();
       List<Rank> ranks = await dataRank.loadRanks();
-      // final userName = await saveLogin().getUserData();
+      userName = await saveLogin().getUserData();
 
       // Chuyển đổi Rank thành Map<String, dynamic>
       final List<Map<String, dynamic>> newRanks = ranks.map((rank) {
@@ -509,25 +520,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
           'score': rank.score,
         };
       }).toList();
-
-      // Thêm vào danh sách _rankList
       _rankList.addAll(newRanks);
-
-      print('Dữ liệu đã được thêm vào _rankList:');
-      print(_rankList);
-    } catch (e) {
-      print('Lỗi khi thêm dữ liệu: $e');
-    }
-  }
-
-  Future<void> getRankUser() async {
-    try {
-      // Lấy dữ liệu từ API
-      final dataRank = DataRank();
-      final userName = await saveLogin().getUserData();
-      final rankUser = await dataRank.findRanks('nnduong');
-      print(await dataRank.findRanks('nnduong'));
-      print(userName['username']);
     } catch (e) {
       print('Lỗi khi thêm dữ liệu: $e');
     }
@@ -538,8 +531,19 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
     // Lấy tối đa 11 phần tử từ danh sách
     final sortedRankList = List<Map<String, dynamic>>.from(_rankList)
       ..sort((a, b) => b['score'].compareTo(a['score']));
+    for (var i = 0; i < sortedRankList.length; i++) {
+      if (sortedRankList[i]['username'] == userName['username']) {
+        rankUser = {
+          'rank': i,
+          'username': sortedRankList[i]['username'],
+          'score': sortedRankList[i]['score']
+        };
+      }
+    }
     final limitedRankList = sortedRankList.take(10).toList();
-    // limitedRankList.add(rankUser);
+    if (rankUser != null) {
+      limitedRankList.add(rankUser!);
+    }
 
     showModalBottomSheet(
       context: context,
@@ -555,7 +559,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Danh sách Rank',
+                'Leaderboard',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -573,23 +577,45 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                         const Divider(thickness: 2), // Dấu kẻ ở giữa
                       index == 10
                           ? Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  child: Text((rank['rank']).toString()),
+                              child: Container(
+                                // padding:
+                                //     const EdgeInsets.only(left: 30, right: 30),
+                                // decoration: const BoxDecoration(
+                                //   image: DecorationImage(
+                                //     image:
+                                //         AssetImage('assets/images/khung.png'),
+                                //     fit: BoxFit.cover,
+                                //   ),
+                                // ),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    child: Text((rank['rank'] + 1).toString()),
+                                  ),
+                                  title: Text(rank['username']),
+                                  subtitle: Text('Score: ${rank['score']}'),
                                 ),
-                                title: Text(rank['username']),
-                                subtitle: Text('Score: ${rank['score']}'),
                               ),
                             )
                           : Card(
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  child: Text((index + 1).toString()),
+                              child: Container(
+                                // padding:
+                                //     const EdgeInsets.only(left: 30, right: 30),
+                                // decoration: const BoxDecoration(
+                                //   image: DecorationImage(
+                                //     image:
+                                //         AssetImage('assets/images/khung.png'),
+                                //     fit: BoxFit.cover,
+                                //   ),
+                                // ),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    child: Text((index + 1).toString()),
+                                  ),
+                                  title: Text(rank['username']),
+                                  subtitle: Text('Score: ${rank['score']}'),
                                 ),
-                                title: Text(rank['username']),
-                                subtitle: Text('Score: ${rank['score']}'),
                               ),
-                            ),
+                            )
                     ],
                   );
                 },
