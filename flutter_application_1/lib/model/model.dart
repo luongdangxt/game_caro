@@ -1,4 +1,4 @@
-class itemBox{
+class itemBox {
   final String name;
   final String description;
   final String urlImg;
@@ -9,7 +9,7 @@ class itemBox{
   });
 }
 
-class itemBGame{
+class itemBGame {
   final String name;
   final String description;
   final String urlImg;
@@ -89,5 +89,33 @@ class User {
   @override
   String toString() {
     return 'User(id: $id, Username: $username, Email: $email, Time: $time, __v: $v)';
+  }
+}
+
+class Rank {
+  final String id;
+  final String username;
+  final String game;
+  final int score;
+  final int v;
+  Rank(
+      {required this.id,
+      required this.username,
+      required this.game,
+      required this.score,
+      required this.v});
+  factory Rank.fromJson(Map<String, dynamic> json) {
+    return Rank(
+      id: json['_id'],
+      username: json['username'],
+      game: json['game'],
+      score: json['score'],
+      v: json['__v'],
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Rank(id: $id, Username: $username, Game: $game, Score: $score, __v: $v)';
   }
 }
