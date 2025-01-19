@@ -8,6 +8,7 @@ import 'package:flutter_application_1/UI/login.dart';
 import 'package:flutter_application_1/UI/register.dart';
 import 'package:flutter_application_1/model/model.dart';
 import 'package:flutter_application_1/online.dart';
+import 'package:flutter_application_1/request/apiRank.dart';
 import 'package:flutter_application_1/request/apiRoom.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -448,24 +449,27 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // Thêm màn hình "Play Online"
-class PlayOnlineScreen extends StatelessWidget {
+class PlayOnlineScreen extends StatefulWidget {
+  final String avatar;
+  const PlayOnlineScreen({super.key, required this.avatar});
+
+  @override
+  State<PlayOnlineScreen> createState() => _PlayOnlineScreenState();
+}
+
+class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
+  @override
+  void initState() {
+    super.initState();
+    addRanksToList();
+    print('--------------------------');
+    getRankUser();
+  }
+
   final List<Map<String, dynamic>> _rankList = [
     {'username': 'UserA', 'score': 10},
-    {'username': 'UserB', 'score': 9},
-    {'username': 'UserC', 'score': 8},
-    {'username': 'UserC', 'score': 7},
-    {'username': 'UserC', 'score': 6},
-    {'username': 'UserE', 'score': 5},
-    {'username': 'UserA', 'score': 4},
-    {'username': 'UserB', 'score': 3},
-    {'username': 'UserC', 'score': 2},
-    {'username': 'UserC', 'score': 1},
-    {'username': 'UserC', 'score': 0},
-    {'username': 'UserE', 'score': 900},
   ];
-  final String avatar;
-  PlayOnlineScreen({super.key, required this.avatar});
-
+  final List<Map<String, dynamic>> list10 = [];
   Future<List<Room>> callLoadRooms() async {
     final dataFetcher = DataRoom();
     return await dataFetcher.loadRooms();
@@ -492,12 +496,51 @@ class PlayOnlineScreen extends StatelessWidget {
     return letters + numbers;
   }
 
+  Future<void> addRanksToList() async {
+    try {
+      // Lấy dữ liệu từ API
+      final dataRank = DataRank();
+      List<Rank> ranks = await dataRank.loadRanks();
+      // final userName = await saveLogin().getUserData();
+
+      // Chuyển đổi Rank thành Map<String, dynamic>
+      final List<Map<String, dynamic>> newRanks = ranks.map((rank) {
+        return {
+          'username': rank.username,
+          'score': rank.score,
+        };
+      }).toList();
+
+      // Thêm vào danh sách _rankList
+      _rankList.addAll(newRanks);
+
+      print('Dữ liệu đã được thêm vào _rankList:');
+      print(_rankList);
+    } catch (e) {
+      print('Lỗi khi thêm dữ liệu: $e');
+    }
+  }
+
+  Future<void> getRankUser() async {
+    try {
+      // Lấy dữ liệu từ API
+      final dataRank = DataRank();
+      final userName = await saveLogin().getUserData();
+      final rankUser = await dataRank.findRanks('nnduong');
+      print(await dataRank.findRanks('nnduong'));
+      print(userName['username']);
+    } catch (e) {
+      print('Lỗi khi thêm dữ liệu: $e');
+    }
+  }
+
   // Hàm hiển thị Modal Bottom Sheet
   void _showRankList(BuildContext context) {
     // Lấy tối đa 11 phần tử từ danh sách
     final sortedRankList = List<Map<String, dynamic>>.from(_rankList)
       ..sort((a, b) => b['score'].compareTo(a['score']));
-    final limitedRankList = sortedRankList.take(11).toList();
+    final limitedRankList = sortedRankList.take(10).toList();
+    // limitedRankList.add(rankUser);
 
     showModalBottomSheet(
       context: context,
@@ -527,13 +570,13 @@ class PlayOnlineScreen extends StatelessWidget {
                   final rank = limitedRankList[index];
                   return Column(
                     children: [
-                      if (index == 10 && rank['username'] == 'test')
+                      if (index == 10)
                         const Divider(thickness: 2), // Dấu kẻ ở giữa
-                      rank['username'] == 'test'
+                      index == 10
                           ? Card(
                               child: ListTile(
                                 leading: CircleAvatar(
-                                  child: Text((2).toString()),
+                                  child: Text((rank['rank']).toString()),
                                 ),
                                 title: Text(rank['username']),
                                 subtitle: Text('Score: ${rank['score']}'),
@@ -563,7 +606,6 @@ class PlayOnlineScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController idRoom = TextEditingController();
     final ScrollController scrollController = ScrollController();
-
     return Scaffold(
       body: FutureBuilder(
         future: callLoadRooms(),
@@ -767,7 +809,7 @@ class PlayOnlineScreen extends StatelessWidget {
                                             builder: (context) =>
                                                 CaroGameScreen(
                                               roomId: joinRoomId,
-                                              avatar: avatar,
+                                              avatar: widget.avatar,
                                             ),
                                           ));
                                     },
@@ -905,8 +947,8 @@ class PlayOnlineScreen extends StatelessWidget {
                                                                           CaroGameScreen(
                                                                     roomId:
                                                                         newRoomId,
-                                                                    avatar:
-                                                                        avatar,
+                                                                    avatar: widget
+                                                                        .avatar,
                                                                   ),
                                                                 ),
                                                               ).then(
@@ -971,8 +1013,8 @@ class PlayOnlineScreen extends StatelessWidget {
                                                                             CaroGameScreen(
                                                                       roomId:
                                                                           privateIdRoom(),
-                                                                      avatar:
-                                                                          avatar,
+                                                                      avatar: widget
+                                                                          .avatar,
                                                                     ),
                                                                   ));
                                                             },
@@ -1167,7 +1209,7 @@ class PlayOnlineScreen extends StatelessWidget {
                                 room.playerRight != 'null' ? 2 : 1,
                                 2,
                                 room.roomId,
-                                avatar,
+                                widget.avatar,
                               );
                             },
                           ),
@@ -1254,7 +1296,7 @@ class PlayOnlineScreen extends StatelessWidget {
                                             builder: (context) =>
                                                 CaroGameScreen(
                                               roomId: joinRoomId,
-                                              avatar: avatar,
+                                              avatar: widget.avatar,
                                             ),
                                           ));
                                     },
@@ -1392,8 +1434,8 @@ class PlayOnlineScreen extends StatelessWidget {
                                                                           CaroGameScreen(
                                                                     roomId:
                                                                         newRoomId,
-                                                                    avatar:
-                                                                        avatar,
+                                                                    avatar: widget
+                                                                        .avatar,
                                                                   ),
                                                                 ),
                                                               ).then(
@@ -1458,8 +1500,8 @@ class PlayOnlineScreen extends StatelessWidget {
                                                                             CaroGameScreen(
                                                                       roomId:
                                                                           privateIdRoom(),
-                                                                      avatar:
-                                                                          avatar,
+                                                                      avatar: widget
+                                                                          .avatar,
                                                                     ),
                                                                   ));
                                                             },
