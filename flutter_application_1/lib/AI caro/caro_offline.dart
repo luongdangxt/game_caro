@@ -376,70 +376,269 @@ class _GameBoardState extends State<GameBoard> {
             ),
           ),
         ),
-        Column(
+        const Column(
           children: [
-            const SizedBox(
+            SizedBox(
               height: 0,
             ),
-            Container(
-              alignment: Alignment.center,
-              height: 405,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 144, 97, 80),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Flexible(
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 35),
-                      // hiển thị thời gian mỗi lượt
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Container(
+            //   alignment: Alignment.center,
+            //   height: 405,
+            //   decoration: BoxDecoration(
+            //     color: const Color.fromARGB(255, 144, 97, 80),
+            //     borderRadius: BorderRadius.circular(25),
+            //   ),
+            //   child: const Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Flexible(
+            //         child: Padding(
+            //           padding:
+            //               EdgeInsets.symmetric(horizontal: 8.0, vertical: 35),
+            //           // hiển thị thời gian mỗi lượt
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              alignment: Alignment.center,
-              height: 100,
-              width: 250,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/khung.png'),
-                  fit: BoxFit.fill,
-                ),
-              ),
-              child: gameEnded
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Circle background
+                    Container(
+                      width: 80, // Adjust the size to your needs
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/btn_back.png'),
+                          fit: BoxFit.fitHeight,
+                        ),
+                      ),
+                    ),
+                    // Inner circle
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          winner == 'Draw' ? 'It\'s a Draw!' : '$winner Wins!',
-                          style: const TextStyle(
-                            fontSize: 30,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                        SizedBox(
+                          height: 90,
+                          width: 90,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor: const Color.fromARGB(
+                                            0, 255, 255, 255),
+                                        content: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.4,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.28,
+                                            decoration: const BoxDecoration(
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    'assets/images/khung.png'),
+                                                fit: BoxFit.fill,
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Text(
+                                                  "Bạn có muốn thoát không ?",
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color.fromARGB(
+                                                        255, 255, 255, 255),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.09,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.145,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          image:
+                                                              DecorationImage(
+                                                            image: AssetImage(
+                                                                'assets/images/btn.png'),
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          "NO",
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    255,
+                                                                    255,
+                                                                    255),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.03,
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const HomeScreen(),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.09,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.145,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          image:
+                                                              DecorationImage(
+                                                            image: AssetImage(
+                                                                'assets/images/btn.png'),
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          "YES",
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    255,
+                                                                    255,
+                                                                    255),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            )),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const SizedBox(
+                                  height: 200,
+                                  width: 63,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
-                    )
-                  : const Text(
-                      "GOMOKU",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 50,
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  height: 90,
+                  width: 200,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/khung.png'),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  child: gameEnded
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              winner == 'Draw'
+                                  ? 'It\'s a Draw!'
+                                  : '$winner Wins!',
+                              style: const TextStyle(
+                                fontSize: 30,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : const Text(
+                          "GOMOKU",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+                const SizedBox(
+                  width: 100,
+                ),
+              ],
             ),
             const SizedBox(
               height: 20,
@@ -544,419 +743,60 @@ class _GameBoardState extends State<GameBoard> {
                       0.1, // Chiều cao là 10% chiều cao màn hình
                 ),
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceEvenly, // Căn đều trong màn hình
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Stack(
+                    player == 1
+                        ? const SizedBox(
+                            width: 20,
+                          )
+                        : Container(),
+                    player == 2
+                        ? const Text(
+                            'O',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          )
+                        : Container(),
+                    player == 2
+                        ? const SizedBox(
+                            width: 10,
+                          )
+                        : Container(),
+                    const Align(
                       alignment: Alignment.center,
-                      children: [
-                        // Circle background
-                        Container(
-                          width: 80, // Adjust the size to your needs
-                          height: 80,
-                          decoration: const BoxDecoration(
-                            color: Colors.white, // Outer circle color
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-
-                        // Inner circle
-                        Container(
-                          width: 70, // Slightly smaller than outer circle
-                          height: 70,
-                          decoration: const BoxDecoration(
-                            color: Colors.brown, // Inner circle color
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.play_arrow, // Play icon
-                            color: Colors.white,
-                            size: 44, // Icon size
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 90,
-                              width: 90,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    0, 255, 255, 255),
-                                            content: Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.4,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.28,
-                                              decoration: const BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/images/khung.png'),
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      resetGame();
-                                                    },
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.09,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.145,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
-                                                              'assets/images/btn.png'),
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      ),
-                                                      child: const Text(
-                                                        "Continue",
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.03,
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.pushReplacement(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const HomeScreen(),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.09,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.145,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
-                                                              'assets/images/btn.png'),
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      ),
-                                                      child: const Text(
-                                                        "Exit",
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: const SizedBox(
-                                      height: 200,
-                                      width: 63,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                      child: SizedBox(
+                        width: 80,
+                        height: 80,
+                        // decoration: const BoxDecoration(
+                        //   shape: BoxShape.circle, // Avatar luôn hình tròn
+                        //   image: DecorationImage(
+                        //     image: AssetImage(stringAvatar),
+                        //     fit: BoxFit.cover,
+                        //   ),
+                        // ),
+                      ),
                     ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Circle background
-                        Container(
-                          width: 80, // Adjust the size to your needs
-                          height: 80,
-                          decoration: const BoxDecoration(
-                            color: Colors.white, // Outer circle color
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        // Inner circle
-                        Container(
-                          width: 70, // Slightly smaller than outer circle
-                          height: 70,
-                          decoration: const BoxDecoration(
-                            color: Colors.brown, // Inner circle color
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.refresh, // Play icon
-                            color: Colors.white,
-                            size: 44, // Icon size
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 90,
-                              width: 90,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const CaroGame(),
-                                        ),
-                                      );
-                                    },
-                                    child: const SizedBox(
-                                      height: 200,
-                                      width: 63,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Circle background
-                        Container(
-                          width: 80, // Adjust the size to your needs
-                          height: 80,
-                          decoration: const BoxDecoration(
-                            color: Colors.white, // Outer circle color
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        // Inner circle
-                        Container(
-                          width: 70, // Slightly smaller than outer circle
-                          height: 70,
-                          decoration: const BoxDecoration(
-                            color: Colors.brown, // Inner circle color
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.reply, // Play icon
-                            color: Colors.white,
-                            size: 44, // Icon size
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 90,
-                              width: 90,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    0, 255, 255, 255),
-                                            content: Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.4,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.28,
-                                              decoration: const BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/images/khung.png'),
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.09,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.145,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
-                                                              'assets/images/btn.png'),
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      ),
-                                                      child: const Text(
-                                                        "NO",
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.03,
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const HomeScreen(),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.09,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.145,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
-                                                              'assets/images/btn.png'),
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      ),
-                                                      child: const Text(
-                                                        "YES",
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: const SizedBox(
-                                      height: 200,
-                                      width: 63,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    player == 2
+                        ? const SizedBox(
+                            width: 20,
+                          )
+                        : Container(),
+                    player == 1
+                        ? const SizedBox(
+                            width: 10,
+                          )
+                        : Container(),
+                    player == 1
+                        ? const Text(
+                            'X',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          )
+                        : Container()
                   ],
                 ),
                 SizedBox(
