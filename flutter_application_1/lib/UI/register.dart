@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/UI/loading.dart';
 import 'package:flutter_application_1/UI/login.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/request/apiUser.dart';
-import 'package:flutter_application_1/setup_sence.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class registerScreen extends StatelessWidget {
@@ -126,8 +126,7 @@ class registerScreen extends StatelessWidget {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HomeScreen(),
+                                        builder: (context) => const MyAppMain(),
                                       ),
                                     );
                                     print('Register successful: $response');

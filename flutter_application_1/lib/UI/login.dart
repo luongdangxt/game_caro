@@ -2,23 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/UI/forgotpass.dart';
 import 'package:flutter_application_1/UI/loading.dart';
 import 'package:flutter_application_1/UI/register.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/request/apiUser.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
-import 'package:flutter_application_1/setup_sence.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    routes: {
-      '/login': (context) => const loginScreen(),
-      '/register': (context) => registerScreen(),
-    },
-    home: const loginScreen(),
-  ));
-}
 
 class loginScreen extends StatefulWidget {
   const loginScreen({super.key});
@@ -40,7 +27,7 @@ class _loginScreenState extends State<loginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) => const MyAppMain(),
         ),
       );
     }
@@ -152,7 +139,7 @@ class _loginScreenState extends State<loginScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const HomeScreen()),
+                                                const MyAppMain()),
                                         (Route<dynamic> route) => false,
                                       );
                                     } else {

@@ -365,8 +365,7 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Stack(
+    return Stack(
       children: [
         Container(
           decoration: const BoxDecoration(
@@ -522,12 +521,12 @@ class _GameBoardState extends State<GameBoard> {
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: isRevealedWinningCell
-                                            ? Colors.yellow
+                                            ? Colors
+                                                .yellow // Màu ký hiệu sau khi hiện
                                             : (board[row][col] == player
                                                 ? Colors.blue
                                                 : Colors.red),
                                       ),
-                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                 );
@@ -968,7 +967,7 @@ class _GameBoardState extends State<GameBoard> {
           ],
         ),
       ],
-    ));
+    );
   }
 }
 
