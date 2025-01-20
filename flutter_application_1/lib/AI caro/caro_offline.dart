@@ -389,13 +389,83 @@ class _GameBoardState extends State<GameBoard> {
             ),
           ),
         ),
-        const Column(
-          children: [],
-        ),
         Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.065,
+            ),
+            Container(
+              alignment: Alignment.topCenter,
+              //width: MediaQuery.of(context).size.width.w,
+              height: MediaQuery.of(context).size.height * 0.28,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/18.png'),
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.048,
+            ),
+            Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                ),
+                Container(
+                  alignment: Alignment.topCenter,
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/19.png'),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.48,
+            ),
+            Row(
+              children: [
+                Container(
+                  alignment: Alignment.topCenter,
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/20.png'),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                ),
+              ],
+            ),
+          ],
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -585,9 +655,6 @@ class _GameBoardState extends State<GameBoard> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 10.w,
-                ),
                 Container(
                   alignment: Alignment.center,
                   height: 90.h,
@@ -624,12 +691,25 @@ class _GameBoardState extends State<GameBoard> {
                         ),
                 ),
                 SizedBox(
-                  width: 75.w,
+                  width: MediaQuery.of(context).size.width * 0.05,
+                ),
+                Container(
+                  height: 50,
+                  width: 50,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/btn_audio.png'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.01,
                 ),
               ],
             ),
             SizedBox(
-              height: 20.h,
+              height: MediaQuery.of(context).size.height * 0.05,
             ),
             Column(
               children: [
@@ -644,84 +724,99 @@ class _GameBoardState extends State<GameBoard> {
                       double cellSize =
                           size / 15; // Kích thước mỗi ô trong lưới
 
-                      return Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10.0), // Lùi 16px mỗi bên
-                        width: size, // Đảm bảo container là hình vuông
-                        height: size - 20,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              BorderRadius.circular(0), // Không bo góc
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26, // Màu đổ bóng
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            width: size,
+                            height: size - 10,
+                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(255, 253, 213, 80),
                             ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            // Lớp vẽ lưới
-                            CustomPaint(
-                              size: Size(size, size - 20),
-                              painter: GridPainter(
-                                boardSize: 15,
-                                cellSize: cellSize,
-                              ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10.0), // Lùi 16px mỗi bên
+                            width: size, // Đảm bảo container là hình vuông
+                            height: size - 20,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.circular(0), // Không bo góc
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26, // Màu đổ bóng
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
                             ),
-                            // Lớp hiển thị và tương tác với các ô
-                            GridView.builder(
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 15,
-                                crossAxisSpacing: 1,
-                                mainAxisSpacing: 1,
-                                childAspectRatio: 1,
-                              ),
-                              itemCount: 15 * 15,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                int row = index ~/ 15;
-                                int col = index % 15;
-                                bool isRevealedWinningCell = revealedCells.any(
-                                    (cell) => cell[0] == row && cell[1] == col);
-
-                                return GestureDetector(
-                                  onTap: () {
-                                    if (isPlayerTurn) {
-                                      handleTap(row, col);
-                                    }
-                                  },
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 300),
-                                    margin: const EdgeInsets.all(1.0),
-                                    color: isRevealedWinningCell
-                                        ? Colors
-                                            .green // Màu nền các ô chiến thắng sau khi hiện
-                                        : Colors.transparent,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      board[row][col],
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: isRevealedWinningCell
-                                            ? Colors.yellow
-                                            : (board[row][col] == player
-                                                ? Colors.blue
-                                                : Colors.red),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
+                            child: Stack(
+                              children: [
+                                // Lớp vẽ lưới
+                                CustomPaint(
+                                  size: Size(size, size - 20),
+                                  painter: GridPainter(
+                                    boardSize: 15,
+                                    cellSize: cellSize,
                                   ),
-                                );
-                              },
+                                ),
+                                // Lớp hiển thị và tương tác với các ô
+                                GridView.builder(
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 15,
+                                    crossAxisSpacing: 1,
+                                    mainAxisSpacing: 1,
+                                    childAspectRatio: 1,
+                                  ),
+                                  itemCount: 15 * 15,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    int row = index ~/ 15;
+                                    int col = index % 15;
+                                    bool isRevealedWinningCell =
+                                        revealedCells.any((cell) =>
+                                            cell[0] == row && cell[1] == col);
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        if (isPlayerTurn) {
+                                          handleTap(row, col);
+                                        }
+                                      },
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.all(1.0),
+                                        color: isRevealedWinningCell
+                                            ? Colors
+                                                .green // Màu nền các ô chiến thắng sau khi hiện
+                                            : Colors.transparent,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          board[row][col],
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: isRevealedWinningCell
+                                                ? Colors.yellow
+                                                : (board[row][col] == player
+                                                    ? Colors.blue
+                                                    : Colors.red),
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -734,14 +829,14 @@ class _GameBoardState extends State<GameBoard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 10.w,
+                      height: MediaQuery.of(context).size.height * 0.02,
                     ),
                     Stack(
                       alignment: Alignment.center,
                       children: [
                         Container(
                           width: MediaQuery.of(context).size.width *
-                              0.4, // Chiều rộng chiếm 80% màn hình
+                              0.45, // Chiều rộng chiếm 80% màn hình
                           height: MediaQuery.of(context).size.height *
                               0.15, // Chiều cao chiếm 30% màn hình
                           decoration: BoxDecoration(
@@ -784,14 +879,14 @@ class _GameBoardState extends State<GameBoard> {
                       ],
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.05,
+                      width: MediaQuery.of(context).size.width * 0.03,
                     ),
                     Stack(
                       alignment: Alignment.center,
                       children: [
                         Container(
                           width: MediaQuery.of(context).size.width *
-                              0.4, // Chiều rộng chiếm 80% màn hình
+                              0.45, // Chiều rộng chiếm 80% màn hình
                           height: MediaQuery.of(context).size.height *
                               0.15, // Chiều cao chiếm 30% màn hình
                           decoration: BoxDecoration(
