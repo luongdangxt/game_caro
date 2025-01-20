@@ -4,7 +4,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
-import 'package:flutter_application_1/UI/login.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/UI/register.dart';
 import 'package:flutter_application_1/model/model.dart';
 import 'package:flutter_application_1/online.dart';
