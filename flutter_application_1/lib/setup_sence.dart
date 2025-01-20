@@ -579,15 +579,15 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                       index == 10
                           ? Card(
                               child: Container(
-                                // padding:
-                                //     const EdgeInsets.only(left: 30, right: 30),
-                                // decoration: const BoxDecoration(
-                                //   image: DecorationImage(
-                                //     image:
-                                //         AssetImage('assets/images/khung.png'),
-                                //     fit: BoxFit.cover,
-                                //   ),
-                                // ),
+                                padding:
+                                    const EdgeInsets.only(left: 30, right: 30),
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/khung.png'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                                 child: ListTile(
                                   leading: CircleAvatar(
                                     child: Text((rank['rank'] + 1).toString()),
@@ -599,15 +599,15 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                             )
                           : Card(
                               child: Container(
-                                // padding:
-                                //     const EdgeInsets.only(left: 30, right: 30),
-                                // decoration: const BoxDecoration(
-                                //   image: DecorationImage(
-                                //     image:
-                                //         AssetImage('assets/images/khung.png'),
-                                //     fit: BoxFit.cover,
-                                //   ),
-                                // ),
+                                padding:
+                                    const EdgeInsets.only(left: 30, right: 30),
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/khung.png'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                                 child: ListTile(
                                   leading: CircleAvatar(
                                     child: Text((index + 1).toString()),
@@ -721,12 +721,12 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                 GestureDetector(
                                   onTap: () => _showRankList(context),
                                   child: Container(
-                                    height: 60,
-                                    width: 60,
+                                    height: 90,
+                                    width: 100,
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
-                                            'assets/images/rank.jpg'),
+                                            'assets/images/rank.png'),
                                         fit: BoxFit.fitHeight,
                                       ),
                                     ),
@@ -947,6 +947,28 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                       ),
                                                       const SizedBox(
                                                         height: 20,
+                                                      ),
+                                                      const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "Choose type room",
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      255,
+                                                                      255,
+                                                                      255),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                       Row(
                                                         mainAxisAlignment:
@@ -1432,8 +1454,30 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                           ),
                                                         ],
                                                       ),
+                                                      const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            "Choose type room",
+                                                            style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      255,
+                                                                      255,
+                                                                      255),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                       const SizedBox(
-                                                        height: 20,
+                                                        height: 15,
                                                       ),
                                                       Row(
                                                         mainAxisAlignment:
@@ -1855,244 +1899,6 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
         },
       ),
     ),
-  );
-}
-
-void _showCreateRoomDialog(BuildContext context) {
-  String roomName = ""; // Tên phòng
-  String roomType = "Public"; // Loại phòng (mặc định Public)
-  int turnTime = 30; // Thời gian mỗi lượt (mặc định 30 giây)
-  String errorMessage = ""; // Thông báo lỗi
-
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Center(
-                    child: Text(
-                      "Tạo Phòng Chơi",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Roboto',
-                        color: Colors.indigo,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Khoảng trống cố định cho thông báo lỗi
-                  SizedBox(
-                    height: 20,
-                    child: errorMessage.isNotEmpty
-                        ? Text(
-                            errorMessage,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.red,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        : null,
-                  ),
-
-                  // Nhập Tên Phòng
-                  const Text(
-                    "Tên Phòng:",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: "Nhập tên phòng...",
-                      hintStyle: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onChanged: (value) => roomName = value,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Loại Phòng
-                  const Text(
-                    "Loại Phòng:",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Giữ không gian cố định cho các nút
-                  SizedBox(
-                    height: 50,
-                    child: Row(
-                      children: [
-                        _buildFixedOptionButton(
-                          label: "Public",
-                          isSelected: roomType == "Public",
-                          onTap: () {
-                            setState(() => roomType = "Public");
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        _buildFixedOptionButton(
-                          label: "Private",
-                          isSelected: roomType == "Private",
-                          onTap: () {
-                            setState(() => roomType = "Private");
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Kích Thước Bàn Chơi
-                  const Text(
-                    "Kích Thước Bàn Chơi:",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Thời Gian Mỗi Lượt
-                  const Text(
-                    "Thời Gian Mỗi Lượt (giây):",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      hintText: "Nhập thời gian mỗi lượt...",
-                      hintStyle: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onChanged: (value) {
-                      if (int.tryParse(value) != null) {
-                        turnTime = int.parse(value);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Nút Tạo Phòng và Hủy
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                        ),
-                        child: const Text(
-                          "Hủy",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (roomName.isEmpty || turnTime <= 0) {
-                            setState(() {
-                              errorMessage = "Vui lòng nhập đầy đủ thông tin!";
-                            });
-                          } else {
-                            try {
-                              // Gọi API để tạo phòng và lấy roomId
-                              final newRoomId = await DataRoom().createRoom(
-                                roomName,
-                                roomType,
-                                "test11@gmail.com",
-                                turnTime,
-                              );
-
-                              if (newRoomId.startsWith('Error:')) {
-                                setState(() {
-                                  errorMessage =
-                                      "Không thể tạo phòng: $newRoomId";
-                                });
-                              } else {
-                                print(newRoomId);
-                                // Điều hướng đến màn hình CaroGameScreen
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         CaroGameScreen(roomId: newRoomId, avatar: av,),
-                                //   ),
-                                // ).then((result) async {
-                                //   if (result != null) {
-                                //     // Có dữ liệu trả về
-                                //   }
-                                //   // Xóa phòng sau khi quay lại từ CaroGameScreen
-                                //   final deleteResult =
-                                //       await DataRoom().deleteRoom(newRoomId);
-                                //   print(deleteResult);
-                                // });
-                              }
-                            } catch (e) {
-                              setState(() {
-                                errorMessage = "Đã xảy ra lỗi: $e";
-                              });
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                        ),
-                        child: const Text(
-                          "Tạo Phòng",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    },
   );
 }
 
