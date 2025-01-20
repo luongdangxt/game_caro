@@ -46,8 +46,10 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       final data = jsonDecode(message);
       setState(() {
         if (data['type'] == 'waiting') {
+          print('waiting');
           statusMessage = 'ROOM ID: ${widget.roomId}';
         } else if (data['type'] == 'game-ready') {
+          print('game-ready');
           statusMessage = data['message'];
           data['players'].forEach((player) {
             if (nameUser == player['username']) {
@@ -57,16 +59,15 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             dataPlayers.add(player['avatar']);
           });
         } else if (data['type'] == 'move') {
+          print('move');
           final index = data['payload']['index'];
           final symbol = data['payload']['symbol'];
           cells[index] = symbol;
         } else if (data['type'] == 'game-over') {
-          setState(() {
+          print('game-over');
+          if (data['message'] == 'X wins!') {
             statusMessage = data['message'];
             indexWin = List<int>.from(data['payload']); // Lưu các ô thắng
-          });
-          print(mySymbol);
-          if (data['message'] == 'X wins!') {
             if (mySymbol == 'X') {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
                   () {
@@ -78,7 +79,9 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                 showLoseDialog();
               });
             }
-          } else {
+          } else if (data['message'] == 'O wins!') {
+            statusMessage = data['message'];
+            indexWin = List<int>.from(data['payload']); // Lưu các ô thắng
             if (mySymbol == 'O') {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
                   () {
@@ -90,12 +93,27 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                 showLoseDialog();
               });
             }
+          } else if (data['message'] == "Opponent disconnected!") {
+            statusMessage = data['message'];
+            if (mySymbol == data['symbol']) {
+              Future.delayed(
+                  Duration(milliseconds: winningCells.length * 33000), () {
+                showVictoryDialog();
+              });
+            } else {
+              Future.delayed(Duration(milliseconds: winningCells.length * 3000),
+                  () {
+                showLoseDialog();
+              });
+            }
           }
           channel.sink.close();
         } else if (data['type'] == 'time-update') {
+          print('time-update');
           statusMessage = data['payload']['timeLeft'];
           currentPlayerNow = data['payload']['currentPlayer'];
         } else if (data['type'] == 'timeout') {
+          print('timeout');
           statusMessage = data['message'];
         }
       });
