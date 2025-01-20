@@ -7,7 +7,10 @@ import 'package:flutter_application_1/setup_sence.dart';
 import 'dart:async';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:audioplayers/audioplayers.dart' as audioplayers;
+import 'package:just_audio/just_audio.dart' as just_audio;
 
 class CaroGameScreen extends StatefulWidget {
   final String roomId;
@@ -61,9 +64,16 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           });
         } else if (data['type'] == 'move') {
           print('move');
+
           final index = data['payload']['index'];
           final symbol = data['payload']['symbol'];
           cells[index] = symbol;
+
+          // Phát âm thanh trực tiếp với audioplayers
+          // final player = audioplayers.AudioPlayer(); // Sử dụng prefix
+          // player.play(audioplayers.AssetSource('tik.mp3')).catchError((e) {
+          //   print('Error playing sound: $e');
+          // });
         } else if (data['type'] == 'game-over') {
           print('game-over');
           if (data['message'] == 'X wins!') {
@@ -148,6 +158,13 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       setState(() {
         isAnimating = true;
       });
+      final player = audioplayers.AudioPlayer(); // Sử dụng prefix
+      player
+          .play(audioplayers.AssetSource('assets/audio/tik.wav'))
+          .catchError((e) {
+        print('Error playing sound: $e');
+      });
+
       // Gửi nước đi qua WebSocket
       channel.sink.add(jsonEncode({
         'type': 'move',
