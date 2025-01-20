@@ -528,8 +528,8 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
   }
 
   // Hàm hiển thị Modal Bottom Sheet
+
   void _showRankList(BuildContext context) {
-    // Lấy tối đa 11 phần tử từ danh sách
     final sortedRankList = List<Map<String, dynamic>>.from(_rankList)
       ..sort((a, b) => b['score'].compareTo(a['score']));
     for (var i = 0; i < sortedRankList.length; i++) {
@@ -546,87 +546,132 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
       limitedRankList.add(rankUser!);
     }
 
-    showModalBottomSheet(
+    showGeneralDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Leaderboard',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: limitedRankList.length,
-                itemBuilder: (context, index) {
-                  final rank = limitedRankList[index];
-                  return Column(
-                    children: [
-                      if (index == 10)
-                        const Divider(thickness: 2), // Dấu kẻ ở giữa
-                      index == 10
-                          ? Card(
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.only(left: 30, right: 30),
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/khung.png'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Text((rank['rank'] + 1).toString()),
-                                  ),
-                                  title: Text(rank['username']),
-                                  subtitle: Text('Score: ${rank['score']}'),
-                                ),
-                              ),
-                            )
-                          : Card(
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.only(left: 30, right: 30),
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/khung.png'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Text((index + 1).toString()),
-                                  ),
-                                  title: Text(rank['username']),
-                                  subtitle: Text('Score: ${rank['score']}'),
-                                ),
-                              ),
-                            )
-                    ],
-                  );
-                },
-              ),
-            ],
-          ),
+      barrierDismissible: true,
+      barrierLabel: '',
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return ScaleDialog(
+          rankList: limitedRankList,
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = 0.8;
+        const end = 1.0;
+        const curve = Curves.easeOutBack;
+        final tween = Tween<double>(begin: begin, end: end)
+            .chain(CurveTween(curve: curve));
+        final scaleAnimation = animation.drive(tween);
+
+        return ScaleTransition(
+          scale: scaleAnimation,
+          child: child,
         );
       },
     );
   }
+
+  // void _showRankList(BuildContext context) {
+  //   // Lấy tối đa 11 phần tử từ danh sách
+  //   final sortedRankList = List<Map<String, dynamic>>.from(_rankList)
+  //     ..sort((a, b) => b['score'].compareTo(a['score']));
+  //   for (var i = 0; i < sortedRankList.length; i++) {
+  //     if (sortedRankList[i]['username'] == userName['username']) {
+  //       rankUser = {
+  //         'rank': i,
+  //         'username': sortedRankList[i]['username'],
+  //         'score': sortedRankList[i]['score']
+  //       };
+  //     }
+  //   }
+  //   final limitedRankList = sortedRankList.take(10).toList();
+  //   if (rankUser != null) {
+  //     limitedRankList.add(rankUser!);
+  //   }
+
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: true, // Cho phép đóng khi nhấn ra ngoài
+  //     builder: (BuildContext context) {
+  //       return Dialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(20.0),
+  //         ),
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(16.0),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               const Text(
+  //                 'Leaderboard',
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 10),
+  //               ListView.builder(
+  //                 shrinkWrap: true,
+  //                 itemCount: limitedRankList.length,
+  //                 itemBuilder: (context, index) {
+  //                   final rank = limitedRankList[index];
+  //                   return Column(
+  //                     children: [
+  //                       if (index == 10)
+  //                         const Divider(thickness: 2), // Dấu kẻ ở giữa
+  //                       index == 10
+  //                           ? Card(
+  //                               child: Container(
+  //                                 padding: const EdgeInsets.only(
+  //                                     left: 30, right: 30),
+  //                                 decoration: const BoxDecoration(
+  //                                   image: DecorationImage(
+  //                                     image:
+  //                                         AssetImage('assets/images/khung.png'),
+  //                                     fit: BoxFit.cover,
+  //                                   ),
+  //                                 ),
+  //                                 child: ListTile(
+  //                                   leading: CircleAvatar(
+  //                                     child:
+  //                                         Text((rank['rank'] + 1).toString()),
+  //                                   ),
+  //                                   title: Text(rank['username']),
+  //                                   subtitle: Text('Score: ${rank['score']}'),
+  //                                 ),
+  //                               ),
+  //                             )
+  //                           : Card(
+  //                               child: Container(
+  //                                 padding: const EdgeInsets.only(
+  //                                     left: 30, right: 30),
+  //                                 decoration: const BoxDecoration(
+  //                                   image: DecorationImage(
+  //                                     image:
+  //                                         AssetImage('assets/images/khung.png'),
+  //                                     fit: BoxFit.cover,
+  //                                   ),
+  //                                 ),
+  //                                 child: ListTile(
+  //                                   leading: CircleAvatar(
+  //                                     child: Text((index + 1).toString()),
+  //                                   ),
+  //                                   title: Text(rank['username']),
+  //                                   subtitle: Text('Score: ${rank['score']}'),
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                     ],
+  //                   );
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1218,7 +1263,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
-                                            'assets/images/rank.jpg'),
+                                            'assets/images/rank.png'),
                                         fit: BoxFit.fitHeight,
                                       ),
                                     ),
@@ -2078,6 +2123,118 @@ class _AnimatedBackgroundLoaderState extends State<AnimatedBackgroundLoader>
             ),
           ),
       ],
+    );
+  }
+}
+
+class ScaleDialog extends StatefulWidget {
+  final List<Map<String, dynamic>> rankList;
+
+  const ScaleDialog({super.key, required this.rankList});
+
+  @override
+  _ScaleDialogState createState() => _ScaleDialogState();
+}
+
+class _ScaleDialogState extends State<ScaleDialog>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: Container(
+        margin: const EdgeInsets.all(
+            30), // Thêm khoảng cách lùi vào toàn bộ các cạnh
+        padding:
+            const EdgeInsets.only(top: 50, bottom: 50, left: 30, right: 30),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/21.png'),
+            fit: BoxFit.fill,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 85),
+              SizedBox(
+                height: 580,
+                width: 450,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics:
+                            const NeverScrollableScrollPhysics(), // Không cho phép cuộn của ListView riêng biệt
+                        itemCount: widget.rankList.length,
+                        itemBuilder: (context, index) {
+                          final rank = widget.rankList[index];
+                          return Column(
+                            children: [
+                              if (index == 10) const Divider(thickness: 2),
+                              Card(
+                                color: Colors.transparent,
+                                elevation: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.only(
+                                      left: 30, right: 30),
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/bang_rank.png'),
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      child: Text((index == 10
+                                              ? rank['rank'] + 1
+                                              : index + 1)
+                                          .toString()),
+                                    ),
+                                    title: Text(rank['username']),
+                                    subtitle: Text('Score: ${rank['score']}'),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
