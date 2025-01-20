@@ -1126,7 +1126,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                       const SizedBox(height: 15),
                       Row(
                         mainAxisAlignment: MainAxisAlignment
-                            .spaceBetween, // Đặt khoảng cách đều
+                            .spaceAround, // Đặt khoảng cách đều
                         children: [
                           SizedBox(
                             height: 50,
@@ -1184,7 +1184,27 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(width: 70),
+                          SizedBox(
+                            height: 60,
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => _showRankList(context),
+                                  child: Container(
+                                    height: 60,
+                                    width: 60,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/rank.jpg'),
+                                        fit: BoxFit.fitHeight,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
 
