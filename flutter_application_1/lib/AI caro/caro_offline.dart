@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'AI_hard.dart';
 import 'package:flutter_application_1/setup_sence.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class CaroGame extends StatelessWidget {
   final String selectedIndex;
