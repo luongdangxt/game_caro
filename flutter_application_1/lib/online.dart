@@ -112,7 +112,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             }
           } else if (data['message'] == "Opponent disconnected!") {
             statusMessage = data['message'];
-            if (mySymbol == data['symbol']) {
+            print('disconnect ' + data['symbol']);
+            if (mySymbol != data['symbol']) {
               Future.delayed(
                   Duration(milliseconds: winningCells.length * 33000), () {
                 showVictoryDialog();
