@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/request/apiRank.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,105 +10,52 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Hiển thị List Rank',
-      home: RankScreen(),
+    return const MaterialApp(
+      home: TestAPI(),
     );
   }
 }
 
-class RankScreen extends StatelessWidget {
-  // Danh sách rank
-  final List<Map<String, dynamic>> _rankList = [
-    {'stt': 1, 'username': 'UserA', 'score': 1200},
-    {'stt': 2, 'username': 'UserB', 'score': 1100},
-    {'stt': 3, 'username': 'UserC', 'score': 1050},
-    {'stt': 4, 'username': 'UserD', 'score': 950},
-    {'stt': 5, 'username': 'UserE', 'score': 900},
-    {'stt': 1, 'username': 'UserA', 'score': 1200},
-    {'stt': 2, 'username': 'UserB', 'score': 1100},
-    {'stt': 3, 'username': 'UserC', 'score': 1050},
-    {'stt': 4, 'username': 'UserD', 'score': 950},
-    {'stt': 5, 'username': 'UserE', 'score': 900},
-    {'stt': 5, 'username': 'UserE', 'score': 900},
-    {'stt': 5, 'username': 'UserE', 'score': 900},
-    {'stt': 5, 'username': 'UserE', 'score': 900},
-    {'stt': 1, 'username': 'UserA', 'score': 1200},
-    {'stt': 2, 'username': 'UserB', 'score': 1100},
-    {'stt': 3, 'username': 'UserC', 'score': 1050},
-    {'stt': 4, 'username': 'UserD', 'score': 950},
-    {'stt': 5, 'username': 'UserE', 'score': 900},
-    {'stt': 5, 'username': 'UserE', 'score': 900},
-  ];
+class TestAPI extends StatefulWidget {
+  const TestAPI({super.key});
 
-  RankScreen({super.key});
+  @override
+  State<TestAPI> createState() => _TestAPIState();
+}
 
-  // Hàm hiển thị Modal Bottom Sheet
-  void _showRankList(BuildContext context) {
-    // Lấy tối đa 11 phần tử từ danh sách
-    final limitedRankList = _rankList.take(11).toList();
+class _TestAPIState extends State<TestAPI> {
+  String status = "Đang tải...";
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Danh sách Rank',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: limitedRankList.length,
-                itemBuilder: (context, index) {
-                  final rank = limitedRankList[index];
+  @override
+  void initState() {
+    super.initState();
+    test();
+  }
 
-                  return Column(
-                    children: [
-                      if (index == 10)
-                        const Divider(thickness: 2), // Dấu kẻ ở giữa
-                      Card(
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            child: Text(rank['stt'].toString()),
-                          ),
-                          title: Text(rank['username']),
-                          subtitle: Text('Score: ${rank['score']}'),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  Future<void> test() async {
+    try {
+      // Gọi API updateScore
+      await DataRank().updateScore('nnduong', 10);
+      setState(() {
+        status = "Cập nhật điểm thành công!";
+      });
+    } catch (e) {
+      setState(() {
+        status = "Lỗi khi cập nhật điểm: $e";
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hiển thị List Rank'),
+        title: const Text('Test API'),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () => _showRankList(context),
-          child: const Text('Hiển thị danh sách Rank'),
+        child: Text(
+          status,
+          style: const TextStyle(fontSize: 18),
         ),
       ),
     );

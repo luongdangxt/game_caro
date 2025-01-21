@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
+import 'package:flutter_application_1/request/apiRank.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:flutter_application_1/setup_sence.dart';
 import 'dart:async';
@@ -46,6 +47,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     channel.stream.listen((message) {
       final data = jsonDecode(message);
       setState(() {
+        DataRank dataRank = DataRank();
         if (data['type'] == 'waiting') {
           print('waiting');
           statusMessage = 'ROOM ID: ${widget.roomId}';
@@ -73,12 +75,14 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
                   () {
                 showVictoryDialog();
+                dataRank.updateScore(nameUser!, 10);
               });
             } else {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
                   () {
                 showLoseDialog();
               });
+              dataRank.updateScore(nameUser!, -5);
             }
           } else if (data['message'] == 'O wins!') {
             statusMessage = data['message'];
@@ -87,11 +91,13 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
                   () {
                 showVictoryDialog();
+                dataRank.updateScore(nameUser!, 10);
               });
             } else {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
                   () {
                 showLoseDialog();
+                dataRank.updateScore(nameUser!, -5);
               });
             }
           } else if (data['message'] == "Opponent disconnected!") {
@@ -100,11 +106,13 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
               Future.delayed(
                   Duration(milliseconds: winningCells.length * 33000), () {
                 showVictoryDialog();
+                dataRank.updateScore(nameUser!, 10);
               });
             } else {
               Future.delayed(Duration(milliseconds: winningCells.length * 3000),
                   () {
                 showLoseDialog();
+                dataRank.updateScore(nameUser!, -5);
               });
             }
           }
