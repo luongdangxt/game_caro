@@ -118,12 +118,12 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                   Duration(milliseconds: winningCells.length * 33000), () {
                 showVictoryDialog();
                 dataRank.updateScore(nameUser!, 10);
+                dataRank.updateScore(dataPlayers[2], -5);
               });
             } else {
               Future.delayed(Duration(milliseconds: winningCells.length * 3000),
                   () {
                 showLoseDialog();
-                dataRank.updateScore(nameUser!, -5);
               });
             }
           }
