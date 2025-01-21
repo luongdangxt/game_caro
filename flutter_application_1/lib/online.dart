@@ -945,7 +945,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                             // Nút Reset
                           ],
                         ),
-                        const SizedBox(height: 170),
+                        const SizedBox(height: 160),
                       ],
                     ),
                   ),
