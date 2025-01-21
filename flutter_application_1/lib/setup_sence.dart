@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //     context); // Quay lại màn hình trước đó
                               },
                               child: const Text(
-                                'MENU GAME',
+                                'GOMOKU',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 25,
@@ -216,42 +216,42 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 25),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment
-                          .spaceEvenly, // Các phần tử cách đều nhau
-                      children: [
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/btn_how.png'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/btn_home.png'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/btn_audio.png'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // const Row(
+                    //   mainAxisAlignment: MainAxisAlignment
+                    //       .spaceEvenly, // Các phần tử cách đều nhau
+                    //   children: [
+                    //     SizedBox(
+                    //       height: 50,
+                    //       width: 50,
+                    //       // decoration: const BoxDecoration(
+                    //       //   image: DecorationImage(
+                    //       //     image: AssetImage('assets/images/btn_how.png'),
+                    //       //     fit: BoxFit.cover,
+                    //       //   ),
+                    //       // ),
+                    //     ),
+                    //     SizedBox(
+                    //       height: 50,
+                    //       width: 50,
+                    //       // decoration: const BoxDecoration(
+                    //       //   image: DecorationImage(
+                    //       //     image: AssetImage('assets/images/btn_home.png'),
+                    //       //     fit: BoxFit.cover,
+                    //       //   ),
+                    //       // ),
+                    //     ),
+                    //     SizedBox(
+                    //       height: 50,
+                    //       width: 50,
+                    //       // decoration: const BoxDecoration(
+                    //       //   image: DecorationImage(
+                    //       //     image: AssetImage('assets/images/btn_audio.png'),
+                    //       //     fit: BoxFit.cover,
+                    //       //   ),
+                    //       // ),
+                    //     ),
+                    //   ],
+                    // ),
                     const SizedBox(
                       height: 40,
                     ),
@@ -880,8 +880,10 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(
-                                  height: 150,
-                                  width: 300,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.15,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.3,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -895,8 +897,14 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                     const Color.fromARGB(
                                                         0, 255, 255, 255),
                                                 content: Container(
-                                                  width: 400,
-                                                  height: 280,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.4,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.28,
                                                   decoration:
                                                       const BoxDecoration(
                                                     image: DecorationImage(
@@ -1420,18 +1428,25 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
+                                                alignment: Alignment.center,
                                                 backgroundColor:
                                                     const Color.fromARGB(
                                                         0, 255, 255, 255),
                                                 content: Container(
-                                                  width: 400,
-                                                  height: 280,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.28,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.9,
                                                   decoration:
                                                       const BoxDecoration(
                                                     image: DecorationImage(
                                                       image: AssetImage(
                                                           'assets/images/khung.png'),
-                                                      fit: BoxFit.fitHeight,
+                                                      fit: BoxFit.fill,
                                                     ),
                                                   ),
                                                   child: Column(
@@ -1496,8 +1511,12 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                           ),
                                                         ],
                                                       ),
-                                                      const SizedBox(
-                                                        height: 15,
+                                                      SizedBox(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.015,
                                                       ),
                                                       Row(
                                                         mainAxisAlignment:

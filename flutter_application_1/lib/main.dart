@@ -82,13 +82,16 @@ class _loginScreenState extends State<loginScreen> {
                   const Padding(
                     padding: EdgeInsets.only(top: 23, bottom: 20.0),
                     child: Text(
-                      'Select account type',
+                      'Gomoku Online',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 27,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 30,
                   ),
                   Center(
                     child: Padding(
