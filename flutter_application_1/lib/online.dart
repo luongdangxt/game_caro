@@ -112,17 +112,18 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             }
           } else if (data['message'] == "Opponent disconnected!") {
             statusMessage = data['message'];
-            if (mySymbol == data['symbol']) {
+            print('disconnect ' + data['symbol']);
+            if (mySymbol != data['symbol']) {
               Future.delayed(
                   Duration(milliseconds: winningCells.length * 33000), () {
                 showVictoryDialog();
                 dataRank.updateScore(nameUser!, 10);
+                dataRank.updateScore(dataPlayers[2], -5);
               });
             } else {
               Future.delayed(Duration(milliseconds: winningCells.length * 3000),
                   () {
                 showLoseDialog();
-                dataRank.updateScore(nameUser!, -5);
               });
             }
           }
