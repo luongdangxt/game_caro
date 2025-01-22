@@ -546,83 +546,26 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
       limitedRankList.add(rankUser!);
     }
 
-    showModalBottomSheet(
+    showGeneralDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Leaderboard',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: limitedRankList.length,
-                itemBuilder: (context, index) {
-                  final rank = limitedRankList[index];
-                  return Column(
-                    children: [
-                      if (index == 10)
-                        const Divider(thickness: 2), // Dấu kẻ ở giữa
-                      index == 10
-                          ? Card(
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.only(left: 30, right: 30),
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/khung.png'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Text((rank['rank'] + 1).toString()),
-                                  ),
-                                  title: Text(rank['username']),
-                                  subtitle: Text('Score: ${rank['score']}'),
-                                ),
-                              ),
-                            )
-                          : Card(
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.only(left: 30, right: 30),
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/khung.png'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Text((index + 1).toString()),
-                                  ),
-                                  title: Text(rank['username']),
-                                  subtitle: Text('Score: ${rank['score']}'),
-                                ),
-                              ),
-                            )
-                    ],
-                  );
-                },
-              ),
-            ],
-          ),
+      barrierDismissible: true,
+      barrierLabel: '',
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return ScaleDialog(
+          rankList: limitedRankList,
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = 0.8;
+        const end = 1.0;
+        const curve = Curves.easeOutBack;
+        final tween = Tween<double>(begin: begin, end: end)
+            .chain(CurveTween(curve: curve));
+        final scaleAnimation = animation.drive(tween);
+
+        return ScaleTransition(
+          scale: scaleAnimation,
+          child: child,
         );
       },
     );
@@ -716,23 +659,18 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                           ),
                           SizedBox(
                             height: 60,
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () => _showRankList(context),
-                                  child: Container(
-                                    height: 90,
-                                    width: 100,
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/rank.png'),
-                                        fit: BoxFit.fitHeight,
-                                      ),
-                                    ),
+                            child: GestureDetector(
+                              onTap: () => _showRankList(context),
+                              child: Container(
+                                height: 90,
+                                width: 100,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/rank.png'),
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ],
@@ -1226,7 +1164,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
-                                            'assets/images/rank.jpg'),
+                                            'assets/images/rank.png'),
                                         fit: BoxFit.fitHeight,
                                       ),
                                     ),
@@ -2231,7 +2169,7 @@ class _ScaleDialogState extends State<ScaleDialog>
                                   fit: BoxFit.fill,
                                 ),
                               ),
-                              child: widget.rankList[10] != true
+                              child: widget.rankList.length > 10
                                   ? ListTile(
                                       leading: CircleAvatar(
                                         child: Text(
