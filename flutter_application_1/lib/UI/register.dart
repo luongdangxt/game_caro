@@ -1,197 +1,142 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/UI/loading.dart';
 import 'package:flutter_application_1/main.dart';
-import 'package:flutter_application_1/request/apiUser.dart';
-import 'package:flutter_application_1/setup_sence.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class registerScreen extends StatelessWidget {
   registerScreen({super.key});
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/images/back_login.png'), // Đường dẫn đến hình ảnh
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
-            height: 500,
-            width: 500,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/images/khung_login.png'), // Đường dẫn đến hình ảnh
-                fit: BoxFit.fitHeight,
-              ),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Dòng text trên cùng (tên màn hình)
-                  const Padding(
-                    padding: EdgeInsets.only(
-                        top: 1.0, bottom: 16, left: 50, right: 50),
-                    child: Text(
-                      'SIGN - UP',
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+    return ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true, // Điều chỉnh kích thước text tự động
+        splitScreenMode: true,
+        builder: (context, child) {
+          return Scaffold(
+            body: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/back_login.png'),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  // Đăng kí tài khoản
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 1.0, bottom: 16, left: 50, right: 50),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          TextField(
-                            controller: usernameController,
-                            decoration: const InputDecoration(
-                              labelText: 'Username',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.person),
-                              filled: true, // Bật tính năng nền màu
-                              fillColor: Color.fromARGB(
-                                  255, 255, 255, 255), // Chọn màu nền bạn muốn
+                ),
+                Container(
+                  height: 400.h, // Thích ứng chiều cao
+                  width: 420.w, // Thích ứng chiều rộng
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/khung_login.png'),
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          child: Text(
+                            'SIGN - UP',
+                            style: TextStyle(
+                              fontSize: 40.sp, // Điều chỉnh kích thước văn bản
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
-                            keyboardType: TextInputType.emailAddress,
                           ),
-                          const SizedBox(height: 16),
-                          TextField(
-                            controller: passwordController,
-                            decoration: const InputDecoration(
-                              labelText: 'Password',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.lock),
-                              filled: true, // Bật tính năng nền màu
-                              fillColor: Color.fromARGB(
-                                  255, 255, 255, 255), // Chọn màu nền bạn muốn
-                            ),
-                            obscureText: true,
-                          ),
-                          const SizedBox(height: 16),
-                          TextField(
-                            controller: confirmController,
-                            decoration: const InputDecoration(
-                                labelText: 'Confirm password',
-                                border: OutlineInputBorder(),
-                                filled: true, // Bật tính năng nền màu
-                                fillColor: Color.fromARGB(255, 255, 255, 255)),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton(
-                              onPressed: () async {
-                                final username = usernameController.text;
-                                final password = passwordController.text;
-                                final confirm = confirmController.text;
-                                // Xử lý đăng kí tại đây
-                                if (username.isNotEmpty &&
-                                    password.isNotEmpty &&
-                                    password == confirm) {
-                                  try {
-                                    // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const myLoading(
-                                            isLoading: true,
-                                            errorMessage: null,
-                                            backScreen: '/register'),
-                                      ),
-                                    );
-                                    final response = await DataUser()
-                                        .register(username, password);
-                                    final prefs =
-                                        await SharedPreferences.getInstance();
-                                    await prefs.setString('username', username);
-                                    await prefs.setString('avatar',
-                                        'assets/images/defaultAvatar.jpg');
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HomeScreen(),
-                                      ),
-                                    );
-                                    print('Register successful: $response');
-                                  } catch (e) {
-                                    // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const myLoading(
-                                            isLoading: true,
-                                            errorMessage: 'Register failed',
-                                            backScreen: '/register'),
-                                      ),
-                                    );
-                                  }
-                                }
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.only(top: 12, bottom: 12),
-                                child: Text(
-                                  'Sign - up',
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 0, 0, 0),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 50.w),
+                          child: Column(
+                            children: [
+                              TextField(
+                                controller: usernameController,
+                                decoration: InputDecoration(
+                                  labelText: 'Username',
+                                  border: const OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.person, size: 20.sp),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                              SizedBox(height: 16.h),
+                              TextField(
+                                controller: passwordController,
+                                decoration: InputDecoration(
+                                  labelText: 'Password',
+                                  border: const OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.lock, size: 20.sp),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                                obscureText: true,
+                              ),
+                              SizedBox(height: 16.h),
+                              TextField(
+                                controller: confirmController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Confirm password',
+                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 24.h),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  // Xử lý sự kiện
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                                  child: Text(
+                                    'Sign - up',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              )),
-                        ],
-                      ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 300.w,
+                          height: 50.h,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const loginScreen(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Back to login',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  // Dòng kẻ ngăn cách
-
-                  // Dòng chữ tạo tài khoản mới
-
-                  // Ô cuối cùng (tách biệt)
-                  SizedBox(
-                    width: 300,
-                    height: 50,
-                    child: TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const loginScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Back to login',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 }
