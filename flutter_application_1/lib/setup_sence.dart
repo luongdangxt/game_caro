@@ -2100,3 +2100,169 @@ class _AnimatedBackgroundLoaderState extends State<AnimatedBackgroundLoader>
     );
   }
 }
+<<<<<<< Updated upstream
+=======
+
+class ScaleDialog extends StatefulWidget {
+  final List<Map<String, dynamic>> rankList;
+
+  const ScaleDialog({super.key, required this.rankList});
+
+  @override
+  _ScaleDialogState createState() => _ScaleDialogState();
+}
+
+class _ScaleDialogState extends State<ScaleDialog>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true, // Điều chỉnh kích thước text tự động
+        splitScreenMode: true,
+        builder: (context, child) {
+          return ScaleTransition(
+            scale: _scaleAnimation,
+            child: Container(
+              margin: EdgeInsets.only(
+                  top: 30.h,
+                  bottom: 30.h,
+                  left: 30.w,
+                  right: 30.w), // Thêm khoảng cách lùi vào toàn bộ các cạnh
+              padding: EdgeInsets.only(
+                  top: 50.h, bottom: 50.h, left: 30.w, right: 30.w),
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/21.png'),
+                  fit: BoxFit.fill,
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: 16.h, bottom: 16.h, left: 16.h, right: 16.h),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 85.h),
+                    SizedBox(
+                      height: 470.h,
+                      width: 450.w,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // Không cho phép cuộn của ListView riêng biệt
+                              itemCount: widget.rankList.length,
+                              itemBuilder: (context, index) {
+                                final rank = widget.rankList[index];
+                                return Column(
+                                  children: [
+                                    if (index < 10)
+                                      Card(
+                                        color: Colors.transparent,
+                                        elevation: 0,
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              left: 30.w, right: 30.w),
+                                          decoration: const BoxDecoration(
+                                            image: DecorationImage(
+                                              image: AssetImage(
+                                                  'assets/images/22.png'),
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                          child: ListTile(
+                                            leading: CircleAvatar(
+                                              child:
+                                                  Text((index + 1).toString()),
+                                            ),
+                                            title: Text(rank['username']),
+                                            subtitle:
+                                                Text('Score: ${rank['score']}'),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Divider(
+                      thickness: 5,
+                      color: Colors.green,
+                    ),
+                    Stack(
+                      children: [
+                        Positioned(
+                          child: Card(
+                            color: Colors.transparent,
+                            elevation: 0,
+                            child: Container(
+                              padding: EdgeInsets.only(left: 30.w, right: 30.w),
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/22.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: widget.rankList[10] != true
+                                  ? ListTile(
+                                      leading: CircleAvatar(
+                                        child: Text(
+                                            (widget.rankList[10]['rank'] + 1)
+                                                .toString()),
+                                      ),
+                                      title:
+                                          Text(widget.rankList[10]['username']),
+                                      subtitle: Text(
+                                          'Score: ${widget.rankList[10]['score']}'),
+                                    )
+                                  : const ListTile(
+                                      leading: CircleAvatar(
+                                        child: Text('---'),
+                                      ),
+                                      title: Text('---'),
+                                      subtitle: Text('Score: ---'),
+                                    ),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+}
+>>>>>>> Stashed changes
