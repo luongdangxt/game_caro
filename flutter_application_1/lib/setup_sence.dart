@@ -2100,8 +2100,6 @@ class _AnimatedBackgroundLoaderState extends State<AnimatedBackgroundLoader>
     );
   }
 }
-<<<<<<< Updated upstream
-=======
 
 class ScaleDialog extends StatefulWidget {
   final List<Map<String, dynamic>> rankList;
@@ -2265,4 +2263,3 @@ class _ScaleDialogState extends State<ScaleDialog>
         });
   }
 }
->>>>>>> Stashed changes
