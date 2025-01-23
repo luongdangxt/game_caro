@@ -749,7 +749,7 @@ class _GameBoardState extends State<GameBoard> {
                 Center(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      // Lấy kích thước nhỏ nhất giữa chiều rộng và chiều cao
+                      //Lấy kích thước nhỏ nhất giữa chiều rộng và chiều cao
                       // double size = constraints.maxWidth < constraints.maxHeight
                       //     ? constraints.maxWidth
                       //     : constraints.maxHeight;
@@ -777,7 +777,7 @@ class _GameBoardState extends State<GameBoard> {
                         children: [
                           Container(
                             width: size + 10,
-                            height: size - 10,
+                            height: size + 10,
                             margin: const EdgeInsets.symmetric(horizontal: 5.0),
                             decoration: const BoxDecoration(
                               color: Color.fromARGB(255, 253, 213, 80),
@@ -815,8 +815,10 @@ class _GameBoardState extends State<GameBoard> {
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 15,
-                                    crossAxisSpacing: 0,
-                                    mainAxisSpacing: 0,
+                                    crossAxisSpacing:
+                                        0, // Loại bỏ khoảng cách giữa các ô để khớp với lưới
+                                    mainAxisSpacing:
+                                        0, // Loại bỏ khoảng cách giữa các ô để khớp với lưới
                                   ),
                                   itemCount: 15 * 15,
                                   shrinkWrap: true,
@@ -836,32 +838,34 @@ class _GameBoardState extends State<GameBoard> {
                                         }
                                       },
                                       child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                          margin: const EdgeInsets.all(1.0),
-                                          color: isRevealedWinningCell
-                                              ? Colors
-                                                  .green // Màu nền các ô chiến thắng sau khi hiện
-                                              : Colors.transparent,
-                                          alignment: Alignment.center,
-                                          child: Center(
-                                            child: Text(
-                                              board[row][col],
-                                              style: TextStyle(
-                                                fontSize: 18.sp,
-                                                fontWeight: FontWeight.bold,
-                                                color: isRevealedWinningCell
-                                                    ? Colors.yellow
-                                                    : (board[row][col] == player
-                                                        ? Colors.blue
-                                                        : Colors.red),
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          )),
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.all(
+                                            1), // Đảm bảo ô không tràn viền lưới
+                                        alignment: Alignment.center,
+                                        color: isRevealedWinningCell
+                                            ? Colors
+                                                .green // Màu nền các ô chiến thắng
+                                            : const Color.fromARGB(
+                                                0, 255, 8, 8),
+                                        child: Text(
+                                          board[row][col],
+                                          style: TextStyle(
+                                            fontSize: cellSize *
+                                                0.7, // Tự động điều chỉnh kích thước chữ theo cellSize
+                                            fontWeight: FontWeight.bold,
+                                            color: isRevealedWinningCell
+                                                ? Colors.yellow
+                                                : (board[row][col] == player
+                                                    ? Colors.blue
+                                                    : Colors.red),
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                     );
                                   },
-                                ),
+                                )
                               ],
                             ),
                           ),
@@ -1009,9 +1013,9 @@ class GridPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round; // Bo tròn đầu các đường kẻ
 
     // Tính toán chiều cao và chiều rộng của mỗi ô (dựa trên kích thước khung chứa)
-    double cellHeight = size.height / boardSize; // Tính chiều cao của mỗi ô
+    //double cellHeight = size.height / boardSize; // Tính chiều cao của mỗi ô
     double cellWidth = size.width / boardSize; // Tính chiều rộng của mỗi ô
-
+    double cellHeight = cellWidth;
     // Vẽ các đường ngang (dựa trên chiều cao của khung)
     for (int i = 1; i < boardSize; i++) {
       double y = i * cellHeight; // Vị trí vẽ đường ngang

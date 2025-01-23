@@ -209,6 +209,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isTablet = MediaQuery.of(context).size.width > 500;
     return ScreenUtilInit(
       designSize: const Size(390, 844), // Kích thước thiết kế ban đầu
       builder: (context, child) {
@@ -586,12 +587,11 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
 
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4.6), // Thêm khoảng cách hai bên
+                            padding: const EdgeInsets.symmetric(vertical: 4.6),
                             child: LayoutBuilder(
                               builder: (context, constraints) {
                                 double availableWidth = constraints.maxWidth -
-                                    30; // Trừ khoảng padding hai bên
+                                    30; // Trừ padding hai bên
                                 double size =
                                     availableWidth < constraints.maxHeight
                                         ? availableWidth
@@ -601,16 +601,18 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                 return Stack(
                                   alignment: Alignment.center,
                                   children: [
+                                    // Nền lưới ngoài
                                     Container(
                                       width: size + 10,
-                                      height: size + 10,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 5.0),
+                                      height: (size + 10),
+                                      // margin: const EdgeInsets.symmetric(
+                                      //     horizontal: 5.0),
                                       decoration: const BoxDecoration(
                                         color:
                                             Color.fromARGB(255, 253, 213, 80),
                                       ),
                                     ),
+                                    // Lưới bên trong
                                     Container(
                                       width: size,
                                       height: size,
@@ -628,6 +630,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                       ),
                                       child: Stack(
                                         children: [
+                                          // Vẽ lưới
                                           CustomPaint(
                                             size: Size(size, size),
                                             painter: GridPainter(
@@ -635,6 +638,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                               cellSize: cellSize,
                                             ),
                                           ),
+                                          // Lưới và các phần tử
                                           GridView.builder(
                                             gridDelegate:
                                                 const SliverGridDelegateWithFixedCrossAxisCount(
@@ -678,43 +682,43 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                                         ),
                                                     ],
                                                   ),
-                                                  child: Center(
-                                                    child: AnimatedSwitcher(
-                                                      duration: const Duration(
-                                                          milliseconds: 500),
-                                                      transitionBuilder:
-                                                          (child, animation) {
-                                                        return FadeTransition(
-                                                          opacity: animation,
-                                                          child:
-                                                              ScaleTransition(
-                                                            scale: animation,
-                                                            child: child,
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: cells[index]
-                                                              .isNotEmpty
-                                                          ? Text(
-                                                              cells[index],
-                                                              style: TextStyle(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: cells[
-                                                                            index] ==
-                                                                        'X'
-                                                                    ? Colors.red
-                                                                    : Colors
-                                                                        .blue,
-                                                              ),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                            )
-                                                          : null,
-                                                    ),
+                                                  alignment: Alignment
+                                                      .center, // Căn giữa nội dung
+                                                  child: AnimatedSwitcher(
+                                                    duration: const Duration(
+                                                        milliseconds: 500),
+                                                    transitionBuilder:
+                                                        (child, animation) {
+                                                      return FadeTransition(
+                                                        opacity: animation,
+                                                        child: ScaleTransition(
+                                                          scale: animation,
+                                                          child: child,
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: cells[index]
+                                                            .isNotEmpty
+                                                        ? Text(
+                                                            cells[index],
+                                                            style: TextStyle(
+                                                              fontSize: cellSize *
+                                                                  0.7, // Tự động điều chỉnh kích thước chữ
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  cells[index] ==
+                                                                          'X'
+                                                                      ? Colors
+                                                                          .red
+                                                                      : Colors
+                                                                          .blue,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center, // Căn giữa chữ
+                                                          )
+                                                        : null,
                                                   ),
                                                 ),
                                               );
