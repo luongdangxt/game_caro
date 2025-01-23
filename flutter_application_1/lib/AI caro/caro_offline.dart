@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'AI_hard.dart';
 import 'package:flutter_application_1/setup_sence.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 class CaroGame extends StatelessWidget {
   final String selectedIndex;
@@ -68,18 +68,26 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose(); // Giải phóng tài nguyên
+    _audioPlayer.dispose();
     super.dispose();
   }
 
   void _playerMove() async {
-    // Phát file WAV từ assets
-    await _audioPlayer.play(AssetSource('audio/pop.wav'));
+    try {
+      await _audioPlayer.setAsset('audio/pop.wav');
+      await _audioPlayer.play();
+    } catch (e) {
+      print('Error playing audio: $e');
+    }
   }
 
   void _aiMove() async {
-    // Phát file WAV từ assets
-    await _audioPlayer.play(AssetSource('audio/tik.wav'));
+    try {
+      await _audioPlayer.setAsset('audio/tik.wav');
+      await _audioPlayer.play();
+    } catch (e) {
+      print('Error playing audio: $e');
+    }
   }
 
   void handleTap(int row, int col) {
