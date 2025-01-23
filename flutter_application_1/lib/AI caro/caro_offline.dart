@@ -74,12 +74,12 @@ class _GameBoardState extends State<GameBoard> {
 
   void _playerMove() async {
     // Phát file WAV từ assets
-    await _audioPlayer.play(AssetSource('assets/audio/pop.wav'));
+    await _audioPlayer.play(AssetSource('audio/pop.wav'));
   }
 
   void _aiMove() async {
     // Phát file WAV từ assets
-    await _audioPlayer.play(AssetSource('assets/audio/tik.wav'));
+    await _audioPlayer.play(AssetSource('audio/tik.wav'));
   }
 
   void handleTap(int row, int col) {
