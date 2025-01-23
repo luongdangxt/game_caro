@@ -64,6 +64,24 @@ class _GameBoardState extends State<GameBoard> {
     aiHard = AI_hard(board, boardSize, ai);
   }
 
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose(); // Giải phóng tài nguyên
+    super.dispose();
+  }
+
+  void _playerMove() async {
+    // Phát file WAV từ assets
+    await _audioPlayer.play(AssetSource('assets/audio/pop.wav'));
+  }
+
+  void _aiMove() async {
+    // Phát file WAV từ assets
+    await _audioPlayer.play(AssetSource('assets/audio/tik.wav'));
+  }
+
   void handleTap(int row, int col) {
     if (gameEnded || board[row][col].isNotEmpty) return;
 
@@ -217,6 +235,7 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   void performAIMove() {
+    _aiMove();
     aiHard.aiMove(); // Logic AI di chuyển từ file AI_hard.dart
     setState(() {
       if (checkAIWin()) {
@@ -504,6 +523,7 @@ class _GameBoardState extends State<GameBoard> {
                                         backgroundColor: const Color.fromARGB(
                                             0, 255, 255, 255),
                                         content: Container(
+                                            padding: const EdgeInsets.all(15),
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .height *
@@ -550,12 +570,12 @@ class _GameBoardState extends State<GameBoard> {
                                                                     context)
                                                                 .size
                                                                 .height *
-                                                            0.09,
+                                                            0.06,
                                                         width: MediaQuery.of(
                                                                     context)
                                                                 .size
                                                                 .height *
-                                                            0.145,
+                                                            0.1,
                                                         decoration:
                                                             const BoxDecoration(
                                                           image:
@@ -582,11 +602,11 @@ class _GameBoardState extends State<GameBoard> {
                                                       ),
                                                     ),
                                                     SizedBox(
-                                                      height:
+                                                      width:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .height *
-                                                              0.03,
+                                                              0.02,
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
@@ -605,12 +625,12 @@ class _GameBoardState extends State<GameBoard> {
                                                                     context)
                                                                 .size
                                                                 .height *
-                                                            0.09,
+                                                            0.06,
                                                         width: MediaQuery.of(
                                                                     context)
                                                                 .size
                                                                 .height *
-                                                            0.145,
+                                                            0.1,
                                                         decoration:
                                                             const BoxDecoration(
                                                           image:
@@ -786,6 +806,7 @@ class _GameBoardState extends State<GameBoard> {
                                       onTap: () {
                                         if (isPlayerTurn) {
                                           handleTap(row, col);
+                                          _playerMove();
                                         }
                                       },
                                       child: AnimatedContainer(
