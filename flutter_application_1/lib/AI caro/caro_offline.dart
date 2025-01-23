@@ -74,7 +74,7 @@ class _GameBoardState extends State<GameBoard> {
 
   void _playerMove() async {
     try {
-      await _audioPlayer.setAsset('audio/pop.wav');
+      await _audioPlayer.setAsset('assets/audio/pop.wav');
       await _audioPlayer.play();
     } catch (e) {
       print('Error playing audio: $e');
@@ -83,7 +83,7 @@ class _GameBoardState extends State<GameBoard> {
 
   void _aiMove() async {
     try {
-      await _audioPlayer.setAsset('audio/tik.wav');
+      await _audioPlayer.setAsset('assets/audio/tik.wav');
       await _audioPlayer.play();
     } catch (e) {
       print('Error playing audio: $e');
@@ -118,7 +118,9 @@ class _GameBoardState extends State<GameBoard> {
         winner = 'Draw';
         showVictoryDialog();
       } else {
-        performAIMove();
+        Future.delayed(const Duration(seconds: 2), () {
+          performAIMove();
+        });
       }
     });
   }

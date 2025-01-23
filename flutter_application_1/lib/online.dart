@@ -8,6 +8,7 @@ import 'package:flutter_application_1/setup_sence.dart';
 import 'dart:async';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:just_audio/just_audio.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -71,11 +72,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           final symbol = data['payload']['symbol'];
           cells[index] = symbol;
 
-          // Phát âm thanh trực tiếp với audioplayers
-          // final player = audioplayers.AudioPlayer(); // Sử dụng prefix
-          // player.play(audioplayers.AssetSource('tik.mp3')).catchError((e) {
-          //   print('Error playing sound: $e');
-          // });
+          _playerRight();
         } else if (data['type'] == 'game-over') {
           print('game-over');
           if (data['message'] == 'X wins!') {
@@ -187,6 +184,26 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           isAnimating = false;
         });
       });
+    }
+  }
+
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  void _playerLeft() async {
+    try {
+      await _audioPlayer.setAsset('assets/audio/pop.wav');
+      await _audioPlayer.play();
+    } catch (e) {
+      print('Error playing audio: $e');
+    }
+  }
+
+  void _playerRight() async {
+    try {
+      await _audioPlayer.setAsset('assets/audio/tik.wav');
+      await _audioPlayer.play();
+    } catch (e) {
+      print('Error playing audio: $e');
     }
   }
 
@@ -636,7 +653,10 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                                   indexWin.contains(index);
 
                                               return GestureDetector(
-                                                onTap: () => makeMove(index),
+                                                onTap: () {
+                                                  makeMove(index);
+                                                  _playerLeft();
+                                                },
                                                 child: AnimatedContainer(
                                                   duration: const Duration(
                                                       milliseconds: 300),
@@ -873,6 +893,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
 
   @override
   void dispose() {
+    _audioPlayer.dispose();
     channel.sink.close();
     super.dispose();
   }
