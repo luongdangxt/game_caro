@@ -123,8 +123,12 @@ class _loginScreenState extends State<loginScreen> {
                                 controller: usernameController,
                                 decoration: InputDecoration(
                                   labelText: 'Username',
-                                  prefixIcon: const Icon(Icons.person,
-                                      color: Colors.grey),
+                                  prefixIcon: Icon(
+                                    Icons.person,
+                                    size: 24.sp,
+                                    color: Colors.grey,
+                                  ),
+
                                   labelStyle: TextStyle(
                                     color: Colors.grey, // Màu label
                                     fontSize: 16.sp,
@@ -177,7 +181,8 @@ class _loginScreenState extends State<loginScreen> {
                                       width: 2, // Độ dày viền khi focus
                                     ),
                                   ),
-                                  prefixIcon: const Icon(Icons.lock,
+                                  prefixIcon: Icon(Icons.lock,
+                                      size: 24.sp,
                                       color: Colors.grey), // Biểu tượng ổ khóa
                                   filled: true,
                                   fillColor: Colors.white, // Màu nền
