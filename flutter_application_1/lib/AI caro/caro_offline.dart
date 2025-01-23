@@ -398,6 +398,8 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return SafeArea(
         child: Stack(
       children: [
@@ -499,7 +501,7 @@ class _GameBoardState extends State<GameBoard> {
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/images/btn_back.png'),
-                          fit: BoxFit.fitWidth,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     ),
@@ -715,12 +717,12 @@ class _GameBoardState extends State<GameBoard> {
                   width: MediaQuery.of(context).size.width * 0.05,
                 ),
                 Container(
-                  height: 50,
-                  width: 50,
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  width: MediaQuery.of(context).size.width * 0.1,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/btn_audio.png'),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitWidth,
                     ),
                   ),
                 ),
@@ -738,9 +740,24 @@ class _GameBoardState extends State<GameBoard> {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       // Lấy kích thước nhỏ nhất giữa chiều rộng và chiều cao
-                      double size = constraints.maxWidth < constraints.maxHeight
-                          ? constraints.maxWidth
-                          : constraints.maxHeight;
+                      // double size = constraints.maxWidth < constraints.maxHeight
+                      //     ? constraints.maxWidth
+                      //     : constraints.maxHeight;
+
+                      // Xác định xem đây có phải là tablet hay không
+                      final isTablet = screenWidth >
+                          600; // Điều kiện màn hình rộng > 600 là tablet
+
+                      // Lấy kích thước bàn cờ
+                      double size = (screenWidth < screenHeight
+                              ? screenWidth
+                              : screenHeight) *
+                          0.9;
+
+                      // Nếu là tablet, tăng kích thước bàn cờ lên 10% nữa
+                      if (isTablet) {
+                        size *= 0.85; // Tăng thêm 10% kích thước
+                      }
 
                       double cellSize =
                           size / 15; // Kích thước mỗi ô trong lưới
@@ -749,7 +766,7 @@ class _GameBoardState extends State<GameBoard> {
                         alignment: Alignment.center,
                         children: [
                           Container(
-                            width: size,
+                            width: size + 10,
                             height: size - 10,
                             margin: const EdgeInsets.symmetric(horizontal: 5.0),
                             decoration: const BoxDecoration(
@@ -760,7 +777,7 @@ class _GameBoardState extends State<GameBoard> {
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 10.0), // Lùi 16px mỗi bên
                             width: size, // Đảm bảo container là hình vuông
-                            height: size - 20,
+                            height: size,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius:
@@ -777,7 +794,7 @@ class _GameBoardState extends State<GameBoard> {
                               children: [
                                 // Lớp vẽ lưới
                                 CustomPaint(
-                                  size: Size(size, size - 20),
+                                  size: Size(size, size),
                                   painter: GridPainter(
                                     boardSize: 15,
                                     cellSize: cellSize,
@@ -788,9 +805,8 @@ class _GameBoardState extends State<GameBoard> {
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 15,
-                                    crossAxisSpacing: 1,
-                                    mainAxisSpacing: 1,
-                                    childAspectRatio: 1,
+                                    crossAxisSpacing: 0,
+                                    mainAxisSpacing: 0,
                                   ),
                                   itemCount: 15 * 15,
                                   shrinkWrap: true,
@@ -810,28 +826,29 @@ class _GameBoardState extends State<GameBoard> {
                                         }
                                       },
                                       child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        margin: const EdgeInsets.all(1.0),
-                                        color: isRevealedWinningCell
-                                            ? Colors
-                                                .green // Màu nền các ô chiến thắng sau khi hiện
-                                            : Colors.transparent,
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          board[row][col],
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: isRevealedWinningCell
-                                                ? Colors.yellow
-                                                : (board[row][col] == player
-                                                    ? Colors.blue
-                                                    : Colors.red),
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          margin: const EdgeInsets.all(1.0),
+                                          color: isRevealedWinningCell
+                                              ? Colors
+                                                  .green // Màu nền các ô chiến thắng sau khi hiện
+                                              : Colors.transparent,
+                                          alignment: Alignment.center,
+                                          child: Center(
+                                            child: Text(
+                                              board[row][col],
+                                              style: TextStyle(
+                                                fontSize: 18.sp,
+                                                fontWeight: FontWeight.bold,
+                                                color: isRevealedWinningCell
+                                                    ? Colors.yellow
+                                                    : (board[row][col] == player
+                                                        ? Colors.blue
+                                                        : Colors.red),
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          )),
                                     );
                                   },
                                 ),
@@ -889,11 +906,12 @@ class _GameBoardState extends State<GameBoard> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.04,
                             ),
-                            const Text(
+                            Text(
                               'X',
                               style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                  fontSize: 20,
+                                  color:
+                                      const Color.fromARGB(255, 255, 255, 255),
+                                  fontSize: 20.sp,
                                   fontWeight: FontWeight.bold),
                             ),
                           ],
