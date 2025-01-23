@@ -49,30 +49,47 @@ class _loginScreenState extends State<loginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Kiểm tra nếu là tablet dựa vào chiều rộng màn hình
+    bool isTablet = MediaQuery.of(context).size.width > 500;
+    bool istabletH = MediaQuery.of(context).size.height > 650;
+    bool istabletH_1 = MediaQuery.of(context).size.height > 800;
+
     return ScreenUtilInit(
-        designSize: const Size(390, 844),
-        minTextAdapt: true, // Điều chỉnh kích thước text tự động
-        splitScreenMode: true,
-        builder: (context, child) {
-          return Scaffold(
-            body: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/back_login.png'),
-                      fit: BoxFit.cover,
-                    ),
+      designSize: const Size(390, 844),
+      minTextAdapt: true, // Điều chỉnh kích thước text tự động
+      splitScreenMode: true,
+      builder: (context, child) {
+        return Scaffold(
+          body: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/back_login.png'),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Container(
-                  height: 400.h,
-                  width: 400.w,
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 30.w, right: 30.w),
+                child: Container(
+                  height: istabletH_1
+                      ? (istabletH
+                          ? (isTablet ? 430.h : 360.h)
+                          : (isTablet ? 500.h : 450.h))
+                      : (istabletH
+                          ? (isTablet ? 500.h : 400.h)
+                          : (isTablet
+                              ? 500.h
+                              : 450.h)), // Điều chỉnh width cho tablet
+                  //istabletH ? 350.h : 500.h, // Điều chỉnh width cho tablet
+                  width:
+                      isTablet ? 380.w : 350.w, // Điều chỉnh width cho tablet
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/khung_login.png'),
-                      fit: BoxFit.fitHeight,
+                      fit: BoxFit.fill,
                     ),
                   ),
                   child: Center(
@@ -81,9 +98,10 @@ class _loginScreenState extends State<loginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(top: 10.h, bottom: 5.h),
+                          padding: EdgeInsets.only(
+                              top: 10.h, bottom: 5.h, left: 10.w, right: 10.w),
                           child: Text(
-                            'Gomoku Online',
+                            'Caro Challenge',
                             style: TextStyle(
                               fontSize: 27.sp,
                               fontWeight: FontWeight.bold,
@@ -93,33 +111,89 @@ class _loginScreenState extends State<loginScreen> {
                         ),
                         SizedBox(height: 30.h),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 50.w),
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                isTablet ? 50.w : 50.w, // Điều chỉnh padding
+                          ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               TextField(
                                 controller: usernameController,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   labelText: 'Username',
-                                  border: OutlineInputBorder(),
-                                  prefixIcon: Icon(Icons.person),
+                                  prefixIcon: Icon(
+                                    Icons.person,
+                                    size: 24.sp,
+                                    color: Colors.grey,
+                                  ),
+
+                                  labelStyle: TextStyle(
+                                    color: Colors.grey, // Màu label
+                                    fontSize: 16.sp,
+                                  ),
+                                  floatingLabelBehavior: FloatingLabelBehavior
+                                      .never, // Không đẩy label lên
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 2,
+                                    ),
+                                  ),
                                   filled: true,
                                   fillColor: Colors.white,
                                 ),
-                                keyboardType: TextInputType.emailAddress,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16.sp,
+                                ),
+                                cursorColor: Colors.blue,
                               ),
                               SizedBox(height: 16.h),
                               TextField(
                                 controller: passwordController,
-                                decoration: const InputDecoration(
+                                focusNode: FocusNode()
+                                  ..addListener(() {
+                                    // Nếu bạn muốn có logic thêm khi focus, thêm tại đây.
+                                  }),
+                                decoration: InputDecoration(
                                   labelText: 'Password',
-                                  border: OutlineInputBorder(),
-                                  prefixIcon: Icon(Icons.lock),
+                                  labelStyle: TextStyle(
+                                    color: Colors.grey
+                                        .withOpacity(0.7), // Màu chữ mờ
+                                    fontSize: 16.sp,
+                                  ),
+                                  floatingLabelBehavior: FloatingLabelBehavior
+                                      .never, // Giữ nguyên labelText
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        12), // Bo tròn góc
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 2, // Độ dày viền khi focus
+                                    ),
+                                  ),
+                                  prefixIcon: Icon(Icons.lock,
+                                      size: 24.sp,
+                                      color: Colors.grey), // Biểu tượng ổ khóa
                                   filled: true,
-                                  fillColor: Colors.white,
+                                  fillColor: Colors.white, // Màu nền
                                 ),
-                                obscureText: true,
+                                style: TextStyle(
+                                  color:
+                                      Colors.black, // Màu text trong TextField
+                                  fontSize: 16.sp,
+                                ),
+                                cursorColor: Colors.blue, // Màu con trỏ
+                                obscureText: true, // Hiển thị dạng mật khẩu
                               ),
                               SizedBox(height: 24.h),
                               ElevatedButton(
@@ -228,15 +302,17 @@ class _loginScreenState extends State<loginScreen> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 20.h),
+                        SizedBox(height: 10.h),
                       ],
                     ),
                   ),
                 ),
-              ],
-            ),
-          );
-        });
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void showError(String err) {

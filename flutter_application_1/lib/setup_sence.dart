@@ -216,42 +216,42 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 25),
-                    // const Row(
-                    //   mainAxisAlignment: MainAxisAlignment
-                    //       .spaceEvenly, // Các phần tử cách đều nhau
-                    //   children: [
-                    //     SizedBox(
-                    //       height: 50,
-                    //       width: 50,
-                    //       // decoration: const BoxDecoration(
-                    //       //   image: DecorationImage(
-                    //       //     image: AssetImage('assets/images/btn_how.png'),
-                    //       //     fit: BoxFit.cover,
-                    //       //   ),
-                    //       // ),
-                    //     ),
-                    //     SizedBox(
-                    //       height: 50,
-                    //       width: 50,
-                    //       // decoration: const BoxDecoration(
-                    //       //   image: DecorationImage(
-                    //       //     image: AssetImage('assets/images/btn_home.png'),
-                    //       //     fit: BoxFit.cover,
-                    //       //   ),
-                    //       // ),
-                    //     ),
-                    //     SizedBox(
-                    //       height: 50,
-                    //       width: 50,
-                    //       // decoration: const BoxDecoration(
-                    //       //   image: DecorationImage(
-                    //       //     image: AssetImage('assets/images/btn_audio.png'),
-                    //       //     fit: BoxFit.cover,
-                    //       //   ),
-                    //       // ),
-                    //     ),
-                    //   ],
-                    // ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceEvenly, // Các phần tử cách đều nhau
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn_how.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn_home.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn_audio.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(
                       height: 40,
                     ),
@@ -529,6 +529,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
 
   // Hàm hiển thị Modal Bottom Sheet
   void _showRankList(BuildContext context) {
+    // Lấy tối đa 11 phần tử từ danh sách
     final sortedRankList = List<Map<String, dynamic>>.from(_rankList)
       ..sort((a, b) => b['score'].compareTo(a['score']));
     for (var i = 0; i < sortedRankList.length; i++) {
@@ -658,23 +659,18 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                           ),
                           SizedBox(
                             height: 60,
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () => _showRankList(context),
-                                  child: Container(
-                                    height: 90,
-                                    width: 100,
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        image:
-                                            AssetImage('assets/images/17.png'),
-                                        fit: BoxFit.fitHeight,
-                                      ),
-                                    ),
+                            child: GestureDetector(
+                              onTap: () => _showRankList(context),
+                              child: Container(
+                                height: 90,
+                                width: 100,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/rank.png'),
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ],
@@ -1167,8 +1163,8 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                     width: 60,
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
-                                        image:
-                                            AssetImage('assets/images/17.png'),
+                                        image: AssetImage(
+                                            'assets/images/rank.png'),
                                         fit: BoxFit.fitHeight,
                                       ),
                                     ),
@@ -2173,7 +2169,7 @@ class _ScaleDialogState extends State<ScaleDialog>
                                   fit: BoxFit.fill,
                                 ),
                               ),
-                              child: widget.rankList[10] != true
+                              child: widget.rankList.length > 10
                                   ? ListTile(
                                       leading: CircleAvatar(
                                         child: Text(
