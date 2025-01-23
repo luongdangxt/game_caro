@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_application_1/CaroGame.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/UI/register.dart';
@@ -220,33 +222,62 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment
                           .spaceEvenly, // Các phần tử cách đều nhau
                       children: [
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/btn_how.png'),
-                              fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: () {
+                            // Đóng ứng dụng
+                            if (Platform.isAndroid || Platform.isIOS) {
+                              SystemNavigator.pop(); // Dùng cho Android và iOS
+                            } else {
+                              exit(0); // Dùng cho các nền tảng khác
+                            }
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn_how.png'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/btn_home.png'),
-                              fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const loginScreen(),
+                              ),
+                              (Route<dynamic> route) => false,
+                            );
+                            saveLogin().logout();
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn_home.png'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/btn_audio.png'),
-                              fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: () {
+                            // Thêm hành động khi nhấn nút "audio"
+                            print("Button 'audio' pressed!");
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image:
+                                    AssetImage('assets/images/btn_audio.png'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
