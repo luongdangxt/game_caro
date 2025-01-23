@@ -17,7 +17,6 @@ class myLoading extends StatefulWidget {
 class _myLoadingState extends State<myLoading> {
   @override
   Widget build(BuildContext context) {
-    if (!widget.isLoading) return const SizedBox.shrink();
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,

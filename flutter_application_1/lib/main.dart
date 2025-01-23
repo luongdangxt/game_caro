@@ -207,12 +207,8 @@ class _loginScreenState extends State<loginScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const myLoading(
-                                            isLoading: true,
-                                            errorMessage: null,
-                                            backScreen: '/login',
-                                          ),
-                                        ),
+                                            builder: (context) =>
+                                                const AnimatedBackgroundLoader()),
                                       );
                                       final response = await DataUser().login(
                                         username,
@@ -232,43 +228,40 @@ class _loginScreenState extends State<loginScreen> {
                                           (Route<dynamic> route) => false,
                                         );
                                       } else {
-                                        Navigator.push(
+                                        Navigator.pushAndRemoveUntil(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                const myLoading(
-                                              isLoading: true,
-                                              errorMessage:
-                                                  'Invalid username or password',
-                                              backScreen: '/login',
-                                            ),
+                                                const loginScreen(),
                                           ),
+                                          (Route<dynamic> route) => false,
                                         );
+                                        showError(
+                                            'Something went wrong on the server');
                                       }
                                     } catch (e) {
-                                      Navigator.push(
+                                      Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const myLoading(
-                                            isLoading: true,
-                                            errorMessage: 'Login failed',
-                                            backScreen: '/login',
-                                          ),
+                                          builder: (context) =>
+                                              const loginScreen(),
                                         ),
+                                        (Route<dynamic> route) => false,
                                       );
+                                      showError(
+                                          'Login failed\nIncorrect account or password');
                                     }
                                   } else {
-                                    Navigator.push(
+                                    Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const myLoading(
-                                          isLoading: true,
-                                          errorMessage:
-                                              'Please enter username and password!',
-                                          backScreen: '/login',
-                                        ),
+                                        builder: (context) =>
+                                            const loginScreen(),
                                       ),
+                                      (Route<dynamic> route) => false,
                                     );
+                                    showError(
+                                        'Please enter username and password!');
                                   }
                                 },
                                 child: Padding(
@@ -316,6 +309,93 @@ class _loginScreenState extends State<loginScreen> {
                 ),
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  void showError(String err) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Không cho phép đóng khi nhấn ngoài dialog
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0), // Bo góc nếu cần
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: Material(
+              color: Colors.transparent, // Loại bỏ màu nền của AlertDialog
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Container 1: Hình ảnh và nội dung
+                  Container(
+                    height: 550,
+                    width: 350,
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/khung.png'),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 200,
+                        ),
+                        Text(
+                          err,
+                          style: const TextStyle(
+                              fontSize: 20, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Nút Thoát
+                            Container(
+                              height: 70,
+                              width: 150,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/btn.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Quay về màn hình chính
+                                },
+                                child: const Text(
+                                  'Close',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 0, 0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Nút Reset
+                          ],
+                        ),
+                        const SizedBox(height: 160),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },
