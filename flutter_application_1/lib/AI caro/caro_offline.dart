@@ -3,6 +3,7 @@ import 'package:just_audio/just_audio.dart';
 import 'AI_hard.dart';
 import 'package:flutter_application_1/setup_sence.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CaroGame extends StatelessWidget {
   final String selectedIndex;
@@ -29,6 +30,16 @@ class CaroGame extends StatelessWidget {
   }
 }
 
+Future<void> saveTurnPreference(bool isPlayer) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('isPlayerTurn', isPlayer);
+}
+
+Future<bool> getTurnPreference() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('isPlayerTurn') ?? true; // Mặc định người chơi đi trước
+}
+
 class GameBoard extends StatefulWidget {
   final String avatar;
 
@@ -45,13 +56,13 @@ class _GameBoardState extends State<GameBoard> {
 
   List<List<int>> winningCells = [];
   List<List<int>> revealedCells = [];
+  late bool isPlayerTurn; // Không khởi tạo giá trị mặc định
 
   List<List<String>> board = List.generate(
     boardSize,
     (_) => List.generate(boardSize, (_) => ''),
   );
 
-  bool isPlayerTurn = true;
   bool gameEnded = false;
   String winner = '';
   //String avatar = selectedIndex;
@@ -62,6 +73,16 @@ class _GameBoardState extends State<GameBoard> {
   void initState() {
     super.initState();
     aiHard = AI_hard(board, boardSize, ai);
+
+    // Kiểm tra trạng thái lượt đầu tiên từ SharedPreferences
+    getTurnPreference().then((value) {
+      setState(() {
+        isPlayerTurn = value;
+        if (!isPlayerTurn) {
+          performAIMove(); // AI đi trước nếu trạng thái là false
+        }
+      });
+    });
   }
 
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -245,13 +266,11 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   void performAIMove() {
-    _aiMove();
     aiHard.aiMove(); // Logic AI di chuyển từ file AI_hard.dart
     setState(() {
       if (checkAIWin()) {
         gameEnded = true;
         winner = 'AI';
-        // Hiệu ứng hiện từng ô
         for (int i = 0; i < winningCells.length; i++) {
           Future.delayed(Duration(milliseconds: i * 300), () {
             setState(() {
@@ -259,7 +278,6 @@ class _GameBoardState extends State<GameBoard> {
             });
           });
         }
-
         Future.delayed(Duration(milliseconds: winningCells.length * 500), () {
           showVictoryDialog();
         });
@@ -267,11 +285,8 @@ class _GameBoardState extends State<GameBoard> {
         gameEnded = true;
         winner = 'Draw';
         showVictoryDialog();
-      } else if (isBoardFull()) {
-        gameEnded = true;
-        winner = 'Draw';
       }
-      isPlayerTurn = true;
+      isPlayerTurn = true; // Chuyển lượt lại cho người chơi sau khi AI đi
     });
   }
 
@@ -392,17 +407,29 @@ class _GameBoardState extends State<GameBoard> {
 
   void resetGame() {
     setState(() {
+      if (winner == 'Player') {
+        isPlayerTurn = false; // AI đi trước
+        saveTurnPreference(false);
+      } else if (winner == 'AI') {
+        isPlayerTurn = true; // Người chơi đi trước
+        saveTurnPreference(true);
+      }
+
+      // Reset game state
       board = List.generate(
         boardSize,
         (_) => List.generate(boardSize, (_) => ''),
       );
-      isPlayerTurn = true;
       gameEnded = false;
       winner = '';
       winningCells = [];
       revealedCells = [];
 
+      // Khởi tạo lại AI và thực hiện nước đi nếu AI đi trước
       aiHard = AI_hard(board, boardSize, ai);
+      if (!isPlayerTurn) {
+        performAIMove();
+      }
     });
   }
 
