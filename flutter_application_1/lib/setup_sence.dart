@@ -216,42 +216,42 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 25),
-                    // const Row(
-                    //   mainAxisAlignment: MainAxisAlignment
-                    //       .spaceEvenly, // Các phần tử cách đều nhau
-                    //   children: [
-                    //     SizedBox(
-                    //       height: 50,
-                    //       width: 50,
-                    //       // decoration: const BoxDecoration(
-                    //       //   image: DecorationImage(
-                    //       //     image: AssetImage('assets/images/btn_how.png'),
-                    //       //     fit: BoxFit.cover,
-                    //       //   ),
-                    //       // ),
-                    //     ),
-                    //     SizedBox(
-                    //       height: 50,
-                    //       width: 50,
-                    //       // decoration: const BoxDecoration(
-                    //       //   image: DecorationImage(
-                    //       //     image: AssetImage('assets/images/btn_home.png'),
-                    //       //     fit: BoxFit.cover,
-                    //       //   ),
-                    //       // ),
-                    //     ),
-                    //     SizedBox(
-                    //       height: 50,
-                    //       width: 50,
-                    //       // decoration: const BoxDecoration(
-                    //       //   image: DecorationImage(
-                    //       //     image: AssetImage('assets/images/btn_audio.png'),
-                    //       //     fit: BoxFit.cover,
-                    //       //   ),
-                    //       // ),
-                    //     ),
-                    //   ],
-                    // ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceEvenly, // Các phần tử cách đều nhau
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn_how.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn_home.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/btn_audio.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(
                       height: 40,
                     ),
