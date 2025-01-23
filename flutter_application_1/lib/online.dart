@@ -547,11 +547,11 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                 Text(
                                   statusMessage,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 16,
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
-                                    shadows: [
+                                    shadows: const [
                                       Shadow(
                                         offset: Offset(1.0, 1.0),
                                         blurRadius: 3.0,
@@ -566,8 +566,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                               width: MediaQuery.of(context).size.width * 0.05,
                             ),
                             Container(
-                              height: 50,
-                              width: 50,
+                              height: MediaQuery.of(context).size.width * 0.1,
+                              width: MediaQuery.of(context).size.width * 0.1,
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
                                   image:

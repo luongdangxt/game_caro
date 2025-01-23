@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //     context); // Quay lại màn hình trước đó
                               },
                               child: const Text(
-                                'GOMOKU',
+                                'Caro Challenge',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 25,
@@ -650,8 +650,10 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                     // Hoặc điều hướng, logic khác ở đây
                                   },
                                   child: Container(
-                                    height: 35,
-                                    width: 70,
+                                    height:
+                                        MediaQuery.of(context).size.width * 0.1,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.1,
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
@@ -668,8 +670,9 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                             alignment: Alignment.center,
                             children: [
                               Container(
-                                height: 80,
-                                width: 200,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.1,
+                                width: MediaQuery.of(context).size.width * 0.2,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image:
@@ -1145,8 +1148,10 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                     // Hoặc điều hướng, logic khác ở đây
                                   },
                                   child: Container(
-                                    height: 35,
-                                    width: 70,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.15,
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
@@ -1163,8 +1168,9 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                             alignment: Alignment.center,
                             children: [
                               Container(
-                                height: 80,
-                                width: 200,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.12,
+                                width: MediaQuery.of(context).size.width * 0.5,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image:
@@ -1176,7 +1182,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                               const Text(
                                 "Play Online",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 255, 255, 255),
                                 ),
@@ -1190,8 +1196,10 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                 GestureDetector(
                                   onTap: () => _showRankList(context),
                                   child: Container(
-                                    height: 60,
-                                    width: 60,
+                                    height: MediaQuery.of(context).size.width *
+                                        0.11,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.11,
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
