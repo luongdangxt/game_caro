@@ -405,8 +405,18 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                                               children: [
                                                                 GestureDetector(
                                                                   onTap: () {
-                                                                    Navigator.pop(
-                                                                        context);
+                                                                    Navigator
+                                                                        .pushAndRemoveUntil(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                const HomeScreen(),
+                                                                      ),
+                                                                      (Route<dynamic>
+                                                                              route) =>
+                                                                          false,
+                                                                    );
                                                                   },
                                                                   child:
                                                                       Container(
@@ -802,9 +812,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
         currentPlayer == player; // Kiểm tra người chơi hiện tại
     bool isLeftSide = player == 1; // Xác định vị trí avatar (trái hoặc phải)
     return SizedBox(
-      width: 150, // Chiều rộng cố định để đảm bảo bố cục không thay đổi
-      height: 130, // Chiều cao cố định
-
+      width: 150.w,
+      height: 100.h,
       child: Stack(
         children: [
           Container(
@@ -847,8 +856,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                   Align(
                     alignment: Alignment.center,
                     child: Container(
-                      width: 80,
-                      height: 80,
+                      width: 50.w,
+                      height: 50.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle, // Avatar luôn hình tròn
                         image: DecorationImage(
@@ -953,10 +962,13 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                               ),
                               child: TextButton(
                                 onPressed: () {
-                                  Navigator.of(context).pop(); // Đóng dialog
-                                  Navigator.of(context)
-                                      .pop(); // Quay về màn hình chính
-                                  Navigator.of(context).pop();
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const HomeScreen(),
+                                    ),
+                                    (Route<dynamic> route) => false,
+                                  );
                                 },
                                 child: const Text(
                                   'EXIT',
@@ -1035,10 +1047,13 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                               ),
                               child: TextButton(
                                 onPressed: () {
-                                  Navigator.of(context).pop(); // Đóng dialog
-                                  Navigator.of(context)
-                                      .pop(); // Quay về màn hình chính
-                                  Navigator.of(context).pop();
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const HomeScreen(),
+                                    ),
+                                    (Route<dynamic> route) => false,
+                                  );
                                 },
                                 child: const Text(
                                   'EXIT',

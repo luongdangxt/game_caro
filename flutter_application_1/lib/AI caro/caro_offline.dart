@@ -433,6 +433,11 @@ class _GameBoardState extends State<GameBoard> {
     });
   }
 
+  Color right = const Color.fromARGB(255, 153, 190, 189);
+  Color rightSelect = const Color.fromARGB(255, 13, 199, 190);
+  Color left = const Color.fromARGB(255, 197, 156, 156);
+  Color leftSelect = const Color.fromARGB(255, 202, 19, 19);
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -742,7 +747,7 @@ class _GameBoardState extends State<GameBoard> {
                           ],
                         )
                       : Text(
-                          "GOMOKU",
+                          "Caro challenge",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.sp,
@@ -908,19 +913,14 @@ class _GameBoardState extends State<GameBoard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
                     Stack(
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width *
-                              0.45, // Chiều rộng chiếm 80% màn hình
-                          height: MediaQuery.of(context).size.height *
-                              0.15, // Chiều cao chiếm 30% màn hình
+                          width: 150.w,
+                          height: 80.h,
                           decoration: BoxDecoration(
-                            color: Colors.red,
+                            color: isPlayerTurn ? leftSelect : left,
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
@@ -932,11 +932,10 @@ class _GameBoardState extends State<GameBoard> {
                             Align(
                               alignment: Alignment.center,
                               child: Container(
-                                width: 80.w,
-                                height: 80.h,
+                                width: 50.w,
+                                height: 50.h,
                                 decoration: BoxDecoration(
-                                  shape:
-                                      BoxShape.circle, // Avatar luôn hình tròn
+                                  shape: BoxShape.circle,
                                   image: DecorationImage(
                                     image: AssetImage(widget.avatar),
                                     fit: BoxFit.cover,
@@ -950,10 +949,10 @@ class _GameBoardState extends State<GameBoard> {
                             Text(
                               'X',
                               style: TextStyle(
-                                  color:
-                                      const Color.fromARGB(255, 255, 255, 255),
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.bold),
+                                color: Colors.white,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -966,12 +965,10 @@ class _GameBoardState extends State<GameBoard> {
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width *
-                              0.45, // Chiều rộng chiếm 80% màn hình
-                          height: MediaQuery.of(context).size.height *
-                              0.15, // Chiều cao chiếm 30% màn hình
+                          width: 150.w,
+                          height: 80.h,
                           decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: isPlayerTurn ? right : rightSelect,
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
@@ -980,10 +977,10 @@ class _GameBoardState extends State<GameBoard> {
                             Text(
                               'O',
                               style: TextStyle(
-                                  color:
-                                      const Color.fromARGB(255, 255, 255, 255),
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.bold),
+                                color: Colors.white,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.04,
@@ -991,11 +988,10 @@ class _GameBoardState extends State<GameBoard> {
                             Align(
                               alignment: Alignment.center,
                               child: Container(
-                                width: 80.w,
-                                height: 80.h,
+                                width: 50.w,
+                                height: 50.h,
                                 decoration: const BoxDecoration(
-                                  shape:
-                                      BoxShape.circle, // Avatar luôn hình tròn
+                                  shape: BoxShape.circle,
                                   image: DecorationImage(
                                     image: AssetImage('assets/images/avAI.png'),
                                     fit: BoxFit.cover,
