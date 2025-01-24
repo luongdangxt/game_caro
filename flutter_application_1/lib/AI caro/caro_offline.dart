@@ -759,12 +759,16 @@ class _GameBoardState extends State<GameBoard> {
                   width: MediaQuery.of(context).size.width * 0.05,
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  width: MediaQuery.of(context).size.width * 0.1,
+                  height: screenWidth > 500
+                      ? screenHeight * 0.08
+                      : screenHeight * 0.065,
+                  width: screenWidth > 500
+                      ? screenWidth * 0.1
+                      : screenWidth * 0.153,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/btn_audio.png'),
-                      fit: BoxFit.fitWidth,
+                      fit: BoxFit.fitHeight,
                     ),
                   ),
                 ),
