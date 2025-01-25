@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/CaroGame.dart';
+import 'package:flutter_application_1/UI/AudioService.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/UI/register.dart';
 import 'package:flutter_application_1/model/model.dart';
@@ -14,15 +15,19 @@ import 'package:flutter_application_1/request/apiRank.dart';
 import 'package:flutter_application_1/request/apiRoom.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'CaroGame.dart';
 import 'AI caro/caro_offline.dart';
 import 'package:flutter/widgets.dart' as flutter;
 import 'package:rive/rive.dart' as rive;
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  // Tải trước nhạc nền
+  final audioService = AudioService();
+  await audioService.preloadMusic('assets/audio/str1.wav');
+  audioService.playMusic();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     routes: {
@@ -42,12 +47,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  //late AudioPlayer _audioPlayer; // Khởi tạo biến AudioPlayer
   bool showImage = false; // Biến trạng thái để kiểm soát hiển thị hình ảnh
 
   @override
   void initState() {
     super.initState();
     _startTransition();
+  }
+
+  @override
+  void dispose() {
+    final audioService = AudioService();
+    audioService.stopMusic(); // Dừng nhạc trước khi dispose nếu cần.
+    audioService.dispose();
+    super.dispose();
   }
 
   // Hàm đặt lại trạng thái và bắt đầu chuyển đổi
