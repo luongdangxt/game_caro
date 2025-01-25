@@ -67,431 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _startTransition(); // Đảm bảo hộp xanh xuất hiện khi quay lại màn hình
-  }
-
-  String selectedIndex = 'assets/images/av1.png';
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/back_setup.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          // Hai nút với màu khác nhau
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 50),
-                    Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            height: 132,
-                            width: 350,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/btn.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.transparent, // Để nền nút trong suốt
-                                shadowColor:
-                                    Colors.transparent, // Bỏ hiệu ứng bóng
-                              ),
-                              onPressed: () {
-                                // Navigator.pop(
-                                //     context); // Quay lại màn hình trước đó
-                              },
-                              child: const Text(
-                                'GOMOKU',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 25),
-                    Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            height: 100,
-                            width: 300,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/btn.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.transparent, // Để nền nút trong suốt
-                                shadowColor:
-                                    Colors.transparent, // Bỏ hiệu ứng bóng
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PlayOnlineScreen(
-                                      avatar: selectedIndex,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'Play Online',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 25),
-                    Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            height: 100,
-                            width: 300,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/btn.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Colors.transparent, // Để nền nút trong suốt
-                                shadowColor:
-                                    Colors.transparent, // Bỏ hiệu ứng bóng
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        CaroGame(selectedIndex: selectedIndex),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'Play Offline',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 25),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment
-                          .spaceEvenly, // Các phần tử cách đều nhau
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            // Đóng ứng dụng
-                            if (Platform.isAndroid || Platform.isIOS) {
-                              SystemNavigator.pop(); // Dùng cho Android và iOS
-                            } else {
-                              exit(0); // Dùng cho các nền tảng khác
-                            }
-                          },
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/btn_how.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const loginScreen(),
-                              ),
-                              (Route<dynamic> route) => false,
-                            );
-                            saveLogin().logout();
-                          },
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/btn_home.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            // Thêm hành động khi nhấn nút "audio"
-                            print("Button 'audio' pressed!");
-                          },
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image:
-                                    AssetImage('assets/images/btn_audio.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                  ],
-                ),
-              ),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    child: Container(
-                      color: const Color.fromARGB(255, 160, 87, 39),
-                      height: 50,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                    child: Text(
-                      'SELECT YOUR AVATAR',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 28,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex =
-                            'assets/images/av1.png'; // Gán chỉ số nút được chọn
-                      });
-                    },
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av1.png'
-                            ? Border.all(
-                                color: const Color.fromARGB(255, 47, 240, 175),
-                                width: 5) // Tô viền màu xanh
-                            : null, // Không viền nếu không được chọn
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/av1.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex =
-                            'assets/images/av2.png'; // Gán chỉ số nút được chọn
-                      });
-                    },
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av2.png'
-                            ? Border.all(
-                                color: const Color.fromARGB(255, 47, 240, 175),
-                                width: 5)
-                            : null,
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/av2.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex =
-                            'assets/images/av3.png'; // Gán chỉ số nút được chọn
-                      });
-                    },
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av3.png'
-                            ? Border.all(
-                                color: const Color.fromARGB(255, 47, 240, 175),
-                                width: 5)
-                            : null,
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/av3.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 22,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex =
-                            'assets/images/av4.png'; // Gán chỉ số nút được chọn
-                      });
-                    },
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av4.png'
-                            ? Border.all(
-                                color: const Color.fromARGB(255, 47, 240, 175),
-                                width: 5)
-                            : null,
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/av4.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex =
-                            'assets/images/av5.png'; // Gán chỉ số nút được chọn
-                      });
-                    },
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av5.png'
-                            ? Border.all(
-                                color: const Color.fromARGB(255, 47, 240, 175),
-                                width: 5)
-                            : null,
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/av5.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex =
-                            'assets/images/av6.png'; // Gán chỉ số nút được chọn
-                      });
-                    },
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: selectedIndex == 'assets/images/av6.png'
-                            ? Border.all(
-                                color: const Color.fromARGB(255, 47, 240, 175),
-                                width: 5)
-                            : null,
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/av6.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Thêm màn hình "Play Online"
-class PlayOnlineScreen extends StatefulWidget {
-  final String avatar;
-  const PlayOnlineScreen({super.key, required this.avatar});
-
-  @override
-  State<PlayOnlineScreen> createState() => _PlayOnlineScreenState();
-}
-
-class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
-  @override
-  void initState() {
-    super.initState();
     addRanksToList();
   }
 
@@ -602,10 +177,600 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
     );
   }
 
+  String selectedIndex = 'assets/images/av1.png';
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/back_setup.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Hai nút với màu khác nhau
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 50),
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            height: screenWidth > 500
+                                ? screenHeight * 0.135
+                                : screenHeight * 0.12,
+                            width: screenWidth > 500
+                                ? screenWidth * 0.6
+                                : screenWidth * 0.7,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn.png'),
+                                fit: BoxFit.fitHeight,
+                              ),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.transparent, // Để nền nút trong suốt
+                                shadowColor:
+                                    Colors.transparent, // Bỏ hiệu ứng bóng
+                              ),
+                              onPressed: () {
+                                // Navigator.pop(
+                                //     context); // Quay lại màn hình trước đó
+                              },
+                              child: Text(
+                                'Caro Challenge',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: screenWidth > 500
+                                      ? screenWidth * 0.05
+                                      : screenWidth * 0.06,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: screenHeight * 0.012),
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            height: screenWidth > 500
+                                ? screenHeight * 0.115
+                                : screenHeight * 0.10,
+                            width: screenWidth > 500
+                                ? screenWidth * 0.6
+                                : screenWidth * 0.7,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn.png'),
+                                fit: BoxFit.fitHeight,
+                              ),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.transparent, // Để nền nút trong suốt
+                                shadowColor:
+                                    Colors.transparent, // Bỏ hiệu ứng bóng
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlayOnlineScreen(
+                                      avatar: selectedIndex,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Play Online',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: screenWidth > 500
+                                      ? screenWidth * 0.04
+                                      : screenWidth * 0.055,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: screenHeight * 0.012),
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            height: screenWidth > 500
+                                ? screenHeight * 0.115
+                                : screenHeight * 0.10,
+                            width: screenWidth > 500
+                                ? screenWidth * 0.6
+                                : screenWidth * 0.7,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn.png'),
+                                fit: BoxFit.fitHeight,
+                              ),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.transparent, // Để nền nút trong suốt
+                                shadowColor:
+                                    Colors.transparent, // Bỏ hiệu ứng bóng
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CaroGame(selectedIndex: selectedIndex),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Play Offline',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: screenWidth > 500
+                                      ? screenWidth * 0.04
+                                      : screenWidth * 0.055,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: screenHeight * 0.012),
+                    SizedBox(
+                      height: screenWidth > 500
+                          ? screenHeight * 0.115
+                          : screenHeight * 0.10,
+                      width: screenWidth > 500
+                          ? screenWidth * 0.6
+                          : screenWidth * 0.7,
+                      child: GestureDetector(
+                          onTap: () => _showRankList(context),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                height: screenWidth > 500
+                                    ? screenHeight * 0.115
+                                    : screenHeight * 0.10,
+                                width: screenWidth > 500
+                                    ? screenWidth * 0.6
+                                    : screenWidth * 0.7,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/btn.png'),
+                                    fit: BoxFit.fitHeight,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                'Rank',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: screenWidth > 500
+                                      ? screenWidth * 0.04
+                                      : screenWidth * 0.055,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
+                    SizedBox(height: screenHeight * 0.012),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceEvenly, // Các phần tử cách đều nhau
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            // Đóng ứng dụng
+                            if (Platform.isAndroid || Platform.isIOS) {
+                              SystemNavigator.pop(); // Dùng cho Android và iOS
+                            } else {
+                              exit(0); // Dùng cho các nền tảng khác
+                            }
+                          },
+                          child: Container(
+                            height: screenWidth > 500
+                                ? screenHeight * 0.08
+                                : screenHeight * 0.08,
+                            width: screenWidth > 500
+                                ? screenWidth * 0.1
+                                : screenWidth * 0.153,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn_how.png'),
+                                fit: BoxFit.fitHeight,
+                              ),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const loginScreen(),
+                              ),
+                              (Route<dynamic> route) => false,
+                            );
+                            saveLogin().logout();
+                          },
+                          child: Container(
+                            height: screenWidth > 500
+                                ? screenHeight * 0.08
+                                : screenHeight * 0.08,
+                            width: screenWidth > 500
+                                ? screenWidth * 0.1
+                                : screenWidth * 0.153,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/btn_home.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Thêm hành động khi nhấn nút "audio"
+                            print("Button 'audio' pressed!");
+                          },
+                          child: Container(
+                            height: screenWidth > 500
+                                ? screenHeight * 0.08
+                                : screenHeight * 0.08,
+                            width: screenWidth > 500
+                                ? screenWidth * 0.1
+                                : screenWidth * 0.153,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image:
+                                    AssetImage('assets/images/btn_audio.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: screenHeight * 0.03),
+                  ],
+                ),
+              ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    child: Container(
+                      color: const Color.fromARGB(255, 160, 87, 39),
+                      height: screenWidth > 500
+                          ? screenHeight * 0.055
+                          : screenHeight * 0.055,
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenWidth > 500
+                        ? screenHeight * 0.044
+                        : screenHeight * 0.04,
+                    child: Text(
+                      'SELECT YOUR AVATAR',
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        fontSize: screenWidth > 500
+                            ? screenWidth * 0.04
+                            : screenWidth * 0.05,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.01),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex =
+                            'assets/images/av1.png'; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: screenWidth > 500
+                          ? screenHeight * 0.08
+                          : screenHeight * 0.11,
+                      width: screenWidth > 500
+                          ? screenWidth * 0.1
+                          : screenWidth * 0.2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 'assets/images/av1.png'
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5) // Tô viền màu xanh
+                            : null, // Không viền nếu không được chọn
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av1.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex =
+                            'assets/images/av2.png'; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: screenWidth > 500
+                          ? screenHeight * 0.08
+                          : screenHeight * 0.11,
+                      width: screenWidth > 500
+                          ? screenWidth * 0.1
+                          : screenWidth * 0.2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 'assets/images/av2.png'
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av2.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex =
+                            'assets/images/av3.png'; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: screenWidth > 500
+                          ? screenHeight * 0.08
+                          : screenHeight * 0.11,
+                      width: screenWidth > 500
+                          ? screenWidth * 0.1
+                          : screenWidth * 0.2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 'assets/images/av3.png'
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av3.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.01),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex =
+                            'assets/images/av4.png'; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: screenWidth > 500
+                          ? screenHeight * 0.08
+                          : screenHeight * 0.11,
+                      width: screenWidth > 500
+                          ? screenWidth * 0.1
+                          : screenWidth * 0.2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 'assets/images/av4.png'
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av4.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex =
+                            'assets/images/av5.png'; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: screenWidth > 500
+                          ? screenHeight * 0.08
+                          : screenHeight * 0.11,
+                      width: screenWidth > 500
+                          ? screenWidth * 0.1
+                          : screenWidth * 0.2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 'assets/images/av5.png'
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av5.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex =
+                            'assets/images/av6.png'; // Gán chỉ số nút được chọn
+                      });
+                    },
+                    child: Container(
+                      height: screenWidth > 500
+                          ? screenHeight * 0.08
+                          : screenHeight * 0.11,
+                      width: screenWidth > 500
+                          ? screenWidth * 0.1
+                          : screenWidth * 0.2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selectedIndex == 'assets/images/av6.png'
+                            ? Border.all(
+                                color: const Color.fromARGB(255, 47, 240, 175),
+                                width: 5)
+                            : null,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/av6.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Thêm màn hình "Play Online"
+class PlayOnlineScreen extends StatefulWidget {
+  final String avatar;
+  const PlayOnlineScreen({super.key, required this.avatar});
+
+  @override
+  State<PlayOnlineScreen> createState() => _PlayOnlineScreenState();
+}
+
+class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
+  @override
+  void initState() {
+    super.initState();
+    addRanksToList();
+  }
+
+  Map<String, dynamic>? rankUser;
+  late Map<String, dynamic> userName;
+  final List<Map<String, dynamic>> rankList = [
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+    {'username': 'UserA', 'score': 10},
+  ];
+  final List<Map<String, dynamic>> list10 = [];
+  Future<List<Room>> callLoadRooms() async {
+    final dataFetcher = DataRoom();
+    return await dataFetcher.loadRooms();
+  }
+
+  final TextEditingController idRoom = TextEditingController();
+
+  String privateIdRoom() {
+    final random = Random();
+    String letters = '';
+    String numbers = '';
+
+    // Tạo 3 chữ cái viết hoa
+    for (int i = 0; i < 3; i++) {
+      letters += String.fromCharCode(
+          random.nextInt(26) + 65); // 65 là mã ASCII của 'A'
+    }
+
+    // Tạo 3 số
+    for (int i = 0; i < 3; i++) {
+      numbers += random.nextInt(10).toString();
+    }
+
+    return letters + numbers;
+  }
+
+  Future<void> addRanksToList() async {
+    try {
+      // Lấy dữ liệu từ API
+      final dataRank = DataRank();
+      List<Rank> ranks = await dataRank.loadRanks();
+      userName = await saveLogin().getUserData();
+
+      // Chuyển đổi Rank thành Map<String, dynamic>
+      final List<Map<String, dynamic>> newRanks = ranks.map((rank) {
+        return {
+          'username': rank.username,
+          'score': rank.score,
+        };
+      }).toList();
+      rankList.addAll(newRanks);
+    } catch (e) {
+      print('Lỗi khi thêm dữ liệu: $e');
+    }
+  }
+
+  // Hàm hiển thị Modal Bottom Sheet
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController idRoom = TextEditingController();
     final ScrollController scrollController = ScrollController();
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: FutureBuilder(
         future: callLoadRooms(),
@@ -650,8 +815,12 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                     // Hoặc điều hướng, logic khác ở đây
                                   },
                                   child: Container(
-                                    height: 35,
-                                    width: 70,
+                                    height: screenWidth > 500
+                                        ? screenHeight * 0.1
+                                        : screenHeight * 0.05,
+                                    width: screenWidth > 500
+                                        ? screenWidth * 0.23
+                                        : screenWidth * 0.2,
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
@@ -668,8 +837,12 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                             alignment: Alignment.center,
                             children: [
                               Container(
-                                height: 80,
-                                width: 200,
+                                height: screenWidth > 500
+                                    ? screenHeight * 0.12
+                                    : screenHeight * 0.12,
+                                width: screenWidth > 500
+                                    ? screenWidth * 0.35
+                                    : screenWidth * 0.5,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image:
@@ -678,31 +851,29 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                   ),
                                 ),
                               ),
-                              const Text(
+                              Text(
                                 "Play Online",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: screenWidth > 500
+                                      ? screenWidth * 0.05
+                                      : screenWidth * 0.06,
                                   fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 255, 255, 255),
+                                  color:
+                                      const Color.fromARGB(255, 255, 255, 255),
                                 ),
                               ),
                             ],
                           ),
                           SizedBox(
+                            height: screenWidth > 500
+                                ? screenHeight * 0.1
+                                : screenHeight * 0.05,
+                            width: screenWidth > 500
+                                ? screenWidth * 0.13
+                                : screenWidth * 0.13,
+                          ),
+                          const SizedBox(
                             height: 60,
-                            child: GestureDetector(
-                              onTap: () => _showRankList(context),
-                              child: Container(
-                                height: 90,
-                                width: 100,
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage('assets/images/rank.png'),
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              ),
-                            ),
                           ),
                         ],
                       ),
@@ -747,8 +918,12 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: 100,
-                          width: 400,
+                          height: screenWidth > 500
+                              ? screenHeight * 0.05
+                              : screenHeight * 0.07,
+                          width: screenWidth > 500
+                              ? screenWidth * 0.8
+                              : screenWidth * 0.9,
                           child: Row(
                             children: [
                               Expanded(
@@ -786,8 +961,12 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                               ),
                               Container(
                                   alignment: Alignment.center,
-                                  height: 65,
-                                  width: 110,
+                                  height: screenWidth > 500
+                                      ? screenHeight * 0.2
+                                      : screenHeight * 0.14,
+                                  width: screenWidth > 500
+                                      ? screenWidth * 0.15
+                                      : screenWidth * 0.2,
                                   decoration: const BoxDecoration(
                                     image: DecorationImage(
                                       image:
@@ -826,22 +1005,29 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                           children: [
                             Container(
                                 alignment: Alignment.center,
-                                height: 120,
-                                width: 300,
+                                height: screenWidth > 500
+                                    ? screenHeight * 0.125
+                                    : screenHeight * 0.13,
+                                width: screenWidth > 500
+                                    ? screenWidth * 0.44
+                                    : screenWidth * 0.9,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image: AssetImage('assets/images/btn.png'),
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.fitHeight,
                                   ),
                                 ),
                                 child: TextButton(
                                   onPressed: () {},
-                                  child: const Text(
+                                  child: Text(
                                     "CREATE ROOM",
                                     style: TextStyle(
-                                      fontSize: 25,
+                                      fontSize: screenWidth > 500
+                                          ? screenWidth * 0.04
+                                          : screenWidth * 0.06,
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
                                     ),
                                   ),
                                 )),
@@ -852,7 +1038,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.15,
                                   width:
-                                      MediaQuery.of(context).size.width * 0.3,
+                                      MediaQuery.of(context).size.width * 0.85,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -866,14 +1052,12 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                     const Color.fromARGB(
                                                         0, 255, 255, 255),
                                                 content: Container(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.4,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.28,
+                                                  height: screenWidth > 500
+                                                      ? screenHeight * 0.42
+                                                      : screenHeight * 0.29,
+                                                  width: screenWidth > 500
+                                                      ? screenWidth * 0.9
+                                                      : screenWidth * 0.8,
                                                   decoration:
                                                       const BoxDecoration(
                                                     image: DecorationImage(
@@ -894,7 +1078,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                                 const EdgeInsets
                                                                     .symmetric(
                                                                     horizontal:
-                                                                        32.0), // Thêm padding cho hai bên
+                                                                        20.0), // Thêm padding cho hai bên
                                                             child:
                                                                 GestureDetector(
                                                               onTap: () {
@@ -905,8 +1089,17 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                                 // Hoặc điều hướng, logic khác ở đây
                                                               },
                                                               child: Container(
-                                                                height: 35,
-                                                                width: 70,
+                                                                height: screenWidth >
+                                                                        500
+                                                                    ? screenHeight *
+                                                                        0.08
+                                                                    : screenHeight *
+                                                                        0.053,
+                                                                width: screenWidth > 500
+                                                                    ? screenWidth *
+                                                                        0.2
+                                                                    : screenWidth *
+                                                                        0.16,
                                                                 decoration:
                                                                     const BoxDecoration(
                                                                   image:
@@ -925,7 +1118,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                       const SizedBox(
                                                         height: 20,
                                                       ),
-                                                      const Row(
+                                                      Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .center,
@@ -933,19 +1126,31 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                           Text(
                                                             "Choose type room",
                                                             style: TextStyle(
-                                                              fontSize: 18,
+                                                              fontSize: screenWidth >
+                                                                      500
+                                                                  ? screenWidth *
+                                                                      0.04
+                                                                  : screenWidth *
+                                                                      0.05,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              color: Color
+                                                              color: const Color
                                                                   .fromARGB(
-                                                                      255,
-                                                                      255,
-                                                                      255,
-                                                                      255),
+                                                                  255,
+                                                                  255,
+                                                                  255,
+                                                                  255),
                                                             ),
                                                           ),
                                                         ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: screenWidth >
+                                                                500
+                                                            ? screenWidth * 0.04
+                                                            : screenWidth *
+                                                                0.01,
                                                       ),
                                                       Row(
                                                         mainAxisAlignment:
@@ -995,8 +1200,17 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                               alignment:
                                                                   Alignment
                                                                       .center,
-                                                              height: 70,
-                                                              width: 100,
+                                                              height: screenWidth > 500
+                                                                  ? screenHeight *
+                                                                      0.1
+                                                                  : screenHeight *
+                                                                      0.1,
+                                                              width: screenWidth >
+                                                                      500
+                                                                  ? screenWidth *
+                                                                      0.25
+                                                                  : screenWidth *
+                                                                      0.25,
                                                               decoration:
                                                                   const BoxDecoration(
                                                                 image:
@@ -1007,20 +1221,25 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                                       .fill,
                                                                 ),
                                                               ),
-                                                              child: const Text(
+                                                              child: Text(
                                                                 "Public",
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 18,
+                                                                  fontSize: screenWidth >
+                                                                          500
+                                                                      ? screenWidth *
+                                                                          0.04
+                                                                      : screenWidth *
+                                                                          0.05,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
+                                                                  color: const Color
                                                                       .fromARGB(
-                                                                          255,
-                                                                          255,
-                                                                          255,
-                                                                          255),
+                                                                      255,
+                                                                      255,
+                                                                      255,
+                                                                      255),
                                                                 ),
                                                               ),
                                                             ),
@@ -1047,8 +1266,17 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                               alignment:
                                                                   Alignment
                                                                       .center,
-                                                              height: 70,
-                                                              width: 100,
+                                                              height: screenWidth > 500
+                                                                  ? screenHeight *
+                                                                      0.1
+                                                                  : screenHeight *
+                                                                      0.1,
+                                                              width: screenWidth >
+                                                                      500
+                                                                  ? screenWidth *
+                                                                      0.25
+                                                                  : screenWidth *
+                                                                      0.25,
                                                               decoration:
                                                                   const BoxDecoration(
                                                                 image:
@@ -1059,20 +1287,25 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                                                       .fill,
                                                                 ),
                                                               ),
-                                                              child: const Text(
+                                                              child: Text(
                                                                 "Private",
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 18,
+                                                                  fontSize: screenWidth >
+                                                                          500
+                                                                      ? screenWidth *
+                                                                          0.04
+                                                                      : screenWidth *
+                                                                          0.05,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  color: Color
+                                                                  color: const Color
                                                                       .fromARGB(
-                                                                          255,
-                                                                          255,
-                                                                          255,
-                                                                          255),
+                                                                      255,
+                                                                      255,
+                                                                      255,
+                                                                      255),
                                                                 ),
                                                               ),
                                                             ),
@@ -1145,8 +1378,12 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                     // Hoặc điều hướng, logic khác ở đây
                                   },
                                   child: Container(
-                                    height: 35,
-                                    width: 70,
+                                    height: screenWidth > 500
+                                        ? screenHeight * 0.1
+                                        : screenHeight * 0.05,
+                                    width: screenWidth > 500
+                                        ? screenWidth * 0.13
+                                        : screenWidth * 0.2,
                                     decoration: const BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
@@ -1163,8 +1400,12 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                             alignment: Alignment.center,
                             children: [
                               Container(
-                                height: 80,
-                                width: 200,
+                                height: screenWidth > 500
+                                    ? screenHeight * 0.1
+                                    : screenHeight * 0.03,
+                                width: screenWidth > 500
+                                    ? screenWidth * 0.13
+                                    : screenWidth * 0.2,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image:
@@ -1176,33 +1417,15 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                               const Text(
                                 "Play Online",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 255, 255, 255),
                                 ),
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 60,
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () => _showRankList(context),
-                                  child: Container(
-                                    height: 60,
-                                    width: 60,
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/rank.png'),
-                                        fit: BoxFit.fitHeight,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
                         ],
                       ),
@@ -1364,21 +1587,22 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                             Container(
                                 alignment: Alignment.center,
                                 height: 120,
-                                width: 300,
+                                width: 280,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
                                     image: AssetImage('assets/images/btn.png'),
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.fitHeight,
                                   ),
                                 ),
                                 child: TextButton(
                                   onPressed: () {},
-                                  child: const Text(
+                                  child: Text(
                                     "CREATE ROOM",
                                     style: TextStyle(
-                                      fontSize: 25,
+                                      fontSize: 22.sp,
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
                                     ),
                                   ),
                                 )),
@@ -1386,8 +1610,10 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(
-                                  height: 150,
-                                  width: 300,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.28,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -1989,7 +2215,7 @@ class AnimatedBackgroundLoader extends StatefulWidget {
 
 class _AnimatedBackgroundLoaderState extends State<AnimatedBackgroundLoader>
     with SingleTickerProviderStateMixin {
-  final List<String> _loadingImages = [
+  final List<String> loadingImages = [
     'assets/images/loading/6.png',
     'assets/images/loading/5.png',
     'assets/images/loading/4.png',
@@ -1997,49 +2223,49 @@ class _AnimatedBackgroundLoaderState extends State<AnimatedBackgroundLoader>
     'assets/images/loading/2.png',
     'assets/images/loading/1.png',
   ];
-  int _currentImageIndex = 0;
-  int _nextImageIndex = 1;
-  bool _isFirstImageDisplayed = true; // Cờ để xác định ảnh đầu tiên
-  late AnimationController _animationController;
-  late Animation<double> _opacityAnimation;
-  Timer? _timer;
+  int currentImageIndex = 0;
+  int nextImageIndex = 1;
+  bool isFirstImageDisplayed = true; // Cờ để xác định ảnh đầu tiên
+  late AnimationController animationController;
+  late Animation<double> opacityAnimation;
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+    animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    _opacityAnimation =
-        Tween<double>(begin: 1.0, end: 0.0).animate(_animationController);
+    opacityAnimation =
+        Tween<double>(begin: 1.0, end: 0.0).animate(animationController);
 
-    _startImageRotation();
+    startImageRotation();
   }
 
-  void _startImageRotation() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (_isFirstImageDisplayed) {
+  void startImageRotation() {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (isFirstImageDisplayed) {
         // Bỏ qua hiệu ứng cho ảnh đầu tiên
         setState(() {
-          _isFirstImageDisplayed = false;
+          isFirstImageDisplayed = false;
         });
         return;
       }
 
-      await _animationController.forward(); // Hiệu ứng mờ dần
+      await animationController.forward(); // Hiệu ứng mờ dần
       setState(() {
-        _currentImageIndex = _nextImageIndex;
-        _nextImageIndex = (_nextImageIndex + 1) % _loadingImages.length;
+        currentImageIndex = nextImageIndex;
+        nextImageIndex = (nextImageIndex + 1) % loadingImages.length;
       });
-      _animationController.reset(); // Reset để chuẩn bị cho lần tiếp theo
+      animationController.reset(); // Reset để chuẩn bị cho lần tiếp theo
     });
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
-    _animationController.dispose();
+    timer?.cancel();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -2049,17 +2275,17 @@ class _AnimatedBackgroundLoaderState extends State<AnimatedBackgroundLoader>
       children: [
         // Ảnh hiện tại
         flutter.Image.asset(
-          _loadingImages[_currentImageIndex],
+          loadingImages[currentImageIndex],
           fit: BoxFit.cover,
           width: double.infinity,
           height: double.infinity,
         ),
         // Hiệu ứng fade chỉ áp dụng từ ảnh thứ hai trở đi
-        if (!_isFirstImageDisplayed)
+        if (!isFirstImageDisplayed)
           FadeTransition(
-            opacity: _opacityAnimation,
+            opacity: opacityAnimation,
             child: flutter.Image.asset(
-              _loadingImages[_nextImageIndex],
+              loadingImages[nextImageIndex],
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
@@ -2081,38 +2307,39 @@ class ScaleDialog extends StatefulWidget {
 
 class _ScaleDialogState extends State<ScaleDialog>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
+  late AnimationController controller;
+  late Animation<double> scaleAnimation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    controller = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = CurvedAnimation(
-      parent: _controller,
+    scaleAnimation = CurvedAnimation(
+      parent: controller,
       curve: Curves.easeOutBack,
     );
-    _controller.forward();
+    controller.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return ScreenUtilInit(
         designSize: const Size(390, 844),
         minTextAdapt: true, // Điều chỉnh kích thước text tự động
         splitScreenMode: true,
         builder: (context, child) {
           return ScaleTransition(
-            scale: _scaleAnimation,
+            scale: scaleAnimation,
             child: Container(
               margin: EdgeInsets.only(
                   top: 30.h,
@@ -2135,7 +2362,7 @@ class _ScaleDialogState extends State<ScaleDialog>
                   children: [
                     SizedBox(height: 85.h),
                     SizedBox(
-                      height: 470.h,
+                      height: screenHeight < 700 ? 420.h : 470.h,
                       width: 450.w,
                       child: SingleChildScrollView(
                         child: Column(

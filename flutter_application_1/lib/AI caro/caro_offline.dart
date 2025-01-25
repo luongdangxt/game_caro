@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'AI_hard.dart';
 import 'package:flutter_application_1/setup_sence.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CaroGame extends StatelessWidget {
   final String selectedIndex;
@@ -31,6 +32,16 @@ class CaroGame extends StatelessWidget {
   }
 }
 
+Future<void> saveTurnPreference(bool isPlayer) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('isPlayerTurn', isPlayer);
+}
+
+Future<bool> getTurnPreference() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('isPlayerTurn') ?? true; // Mặc định người chơi đi trước
+}
+
 class GameBoard extends StatefulWidget {
   final String avatar;
 
@@ -47,13 +58,13 @@ class _GameBoardState extends State<GameBoard> {
 
   List<List<int>> winningCells = [];
   List<List<int>> revealedCells = [];
+  late bool isPlayerTurn; // Không khởi tạo giá trị mặc định
 
   List<List<String>> board = List.generate(
     boardSize,
     (_) => List.generate(boardSize, (_) => ''),
   );
 
-  bool isPlayerTurn = true;
   bool gameEnded = false;
   String winner = '';
   //String avatar = selectedIndex;
@@ -66,6 +77,7 @@ class _GameBoardState extends State<GameBoard> {
     super.initState();
     aiHard = AI_hard(board, boardSize, ai);
 
+
     // Hiệu ứng nhấp nháy
     Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (!mounted) {
@@ -75,6 +87,15 @@ class _GameBoardState extends State<GameBoard> {
           blink = !blink;
         });
       }
+      
+    // Kiểm tra trạng thái lượt đầu tiên từ SharedPreferences
+    getTurnPreference().then((value) {
+      setState(() {
+        isPlayerTurn = value;
+        if (!isPlayerTurn) {
+          performAIMove(); // AI đi trước nếu trạng thái là false
+        }
+      });
     });
   }
 
@@ -259,13 +280,11 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   void performAIMove() {
-    _aiMove();
     aiHard.aiMove(); // Logic AI di chuyển từ file AI_hard.dart
     setState(() {
       if (checkAIWin()) {
         gameEnded = true;
         winner = 'AI';
-        // Hiệu ứng hiện từng ô
         for (int i = 0; i < winningCells.length; i++) {
           Future.delayed(Duration(milliseconds: i * 300), () {
             setState(() {
@@ -273,7 +292,6 @@ class _GameBoardState extends State<GameBoard> {
             });
           });
         }
-
         Future.delayed(Duration(milliseconds: winningCells.length * 500), () {
           showVictoryDialog();
         });
@@ -281,11 +299,8 @@ class _GameBoardState extends State<GameBoard> {
         gameEnded = true;
         winner = 'Draw';
         showVictoryDialog();
-      } else if (isBoardFull()) {
-        gameEnded = true;
-        winner = 'Draw';
       }
-      isPlayerTurn = true;
+      isPlayerTurn = true; // Chuyển lượt lại cho người chơi sau khi AI đi
     });
   }
 
@@ -406,17 +421,29 @@ class _GameBoardState extends State<GameBoard> {
 
   void resetGame() {
     setState(() {
+      if (winner == 'Player') {
+        isPlayerTurn = false; // AI đi trước
+        saveTurnPreference(false);
+      } else if (winner == 'AI') {
+        isPlayerTurn = true; // Người chơi đi trước
+        saveTurnPreference(true);
+      }
+
+      // Reset game state
       board = List.generate(
         boardSize,
         (_) => List.generate(boardSize, (_) => ''),
       );
-      isPlayerTurn = true;
       gameEnded = false;
       winner = '';
       winningCells = [];
       revealedCells = [];
 
+      // Khởi tạo lại AI và thực hiện nước đi nếu AI đi trước
       aiHard = AI_hard(board, boardSize, ai);
+      if (!isPlayerTurn) {
+        performAIMove();
+      }
     });
   }
 
@@ -746,12 +773,16 @@ class _GameBoardState extends State<GameBoard> {
                   width: MediaQuery.of(context).size.width * 0.05,
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  width: MediaQuery.of(context).size.width * 0.1,
+                  height: screenWidth > 500
+                      ? screenHeight * 0.08
+                      : screenHeight * 0.065,
+                  width: screenWidth > 500
+                      ? screenWidth * 0.1
+                      : screenWidth * 0.153,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/btn_audio.png'),
-                      fit: BoxFit.fitWidth,
+                      fit: BoxFit.fitHeight,
                     ),
                   ),
                 ),
@@ -768,7 +799,7 @@ class _GameBoardState extends State<GameBoard> {
                 Center(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      // Lấy kích thước nhỏ nhất giữa chiều rộng và chiều cao
+                      //Lấy kích thước nhỏ nhất giữa chiều rộng và chiều cao
                       // double size = constraints.maxWidth < constraints.maxHeight
                       //     ? constraints.maxWidth
                       //     : constraints.maxHeight;
@@ -796,7 +827,7 @@ class _GameBoardState extends State<GameBoard> {
                         children: [
                           Container(
                             width: size + 10,
-                            height: size - 10,
+                            height: size + 10,
                             margin: const EdgeInsets.symmetric(horizontal: 5.0),
                             decoration: const BoxDecoration(
                               color: Color.fromARGB(255, 253, 213, 80),
@@ -834,8 +865,10 @@ class _GameBoardState extends State<GameBoard> {
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 15,
-                                    crossAxisSpacing: 0,
-                                    mainAxisSpacing: 0,
+                                    crossAxisSpacing:
+                                        0, // Loại bỏ khoảng cách giữa các ô để khớp với lưới
+                                    mainAxisSpacing:
+                                        0, // Loại bỏ khoảng cách giữa các ô để khớp với lưới
                                   ),
                                   itemCount: 15 * 15,
                                   shrinkWrap: true,
@@ -855,32 +888,34 @@ class _GameBoardState extends State<GameBoard> {
                                         }
                                       },
                                       child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                          margin: const EdgeInsets.all(1.0),
-                                          color: isRevealedWinningCell
-                                              ? Colors
-                                                  .green // Màu nền các ô chiến thắng sau khi hiện
-                                              : Colors.transparent,
-                                          alignment: Alignment.center,
-                                          child: Center(
-                                            child: Text(
-                                              board[row][col],
-                                              style: TextStyle(
-                                                fontSize: 18.sp,
-                                                fontWeight: FontWeight.bold,
-                                                color: isRevealedWinningCell
-                                                    ? Colors.yellow
-                                                    : (board[row][col] == player
-                                                        ? Colors.blue
-                                                        : Colors.red),
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          )),
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.all(
+                                            1), // Đảm bảo ô không tràn viền lưới
+                                        alignment: Alignment.center,
+                                        color: isRevealedWinningCell
+                                            ? Colors
+                                                .green // Màu nền các ô chiến thắng
+                                            : const Color.fromARGB(
+                                                0, 255, 8, 8),
+                                        child: Text(
+                                          board[row][col],
+                                          style: TextStyle(
+                                            fontSize: cellSize *
+                                                0.7, // Tự động điều chỉnh kích thước chữ theo cellSize
+                                            fontWeight: FontWeight.bold,
+                                            color: isRevealedWinningCell
+                                                ? Colors.yellow
+                                                : (board[row][col] == player
+                                                    ? Colors.blue
+                                                    : Colors.red),
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                     );
                                   },
-                                ),
+                                )
                               ],
                             ),
                           ),
@@ -1025,9 +1060,9 @@ class GridPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round; // Bo tròn đầu các đường kẻ
 
     // Tính toán chiều cao và chiều rộng của mỗi ô (dựa trên kích thước khung chứa)
-    double cellHeight = size.height / boardSize; // Tính chiều cao của mỗi ô
+    //double cellHeight = size.height / boardSize; // Tính chiều cao của mỗi ô
     double cellWidth = size.width / boardSize; // Tính chiều rộng của mỗi ô
-
+    double cellHeight = cellWidth;
     // Vẽ các đường ngang (dựa trên chiều cao của khung)
     for (int i = 1; i < boardSize; i++) {
       double y = i * cellHeight; // Vị trí vẽ đường ngang
