@@ -77,7 +77,6 @@ class _GameBoardState extends State<GameBoard> {
     super.initState();
     aiHard = AI_hard(board, boardSize, ai);
 
-
     // Hiệu ứng nhấp nháy
     Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (!mounted) {
@@ -87,7 +86,7 @@ class _GameBoardState extends State<GameBoard> {
           blink = !blink;
         });
       }
-      
+    });
     // Kiểm tra trạng thái lượt đầu tiên từ SharedPreferences
     getTurnPreference().then((value) {
       setState(() {
