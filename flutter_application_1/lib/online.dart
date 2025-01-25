@@ -25,6 +25,7 @@ class CaroGameScreen extends StatefulWidget {
 
 class _CaroGameScreenState extends State<CaroGameScreen> {
   String? nameUser; // Khởi tạo giá trị mặc định
+  bool isBlinking = false; // Trạng thái nhấp nháy
 
   final int boardSize = 15;
   final WebSocketChannel channel = WebSocketChannel.connect(
@@ -43,6 +44,13 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   void initState() {
     super.initState();
+    // Nếu cần hiệu ứng nhấp nháy, chạy Timer để thay đổi trạng thái liên tục
+    Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      setState(() {
+        isBlinking = !isBlinking; // Đổi trạng thái nhấp nháy
+      });
+    });
+
     statusMessage = 'ROOM ID: ${widget.roomId}';
     getInfoLogin().then((_) {
       joinRoom(); // Chỉ gọi joinRoom sau khi getInfoLogin hoàn tất
@@ -812,18 +820,37 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
       height: 100.h,
       child: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: isLeftSide
-                  ? currentPlayerNow == "X"
-                      ? leftSelect
-                      : left
-                  : currentPlayerNow == "O"
-                      ? rightSelect
-                      : right,
-              borderRadius: BorderRadius.circular(25),
-            ),
-          ),
+          player == 1
+              ? AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  decoration: BoxDecoration(
+                    color: currentPlayerNow == "X"
+                        ? (isBlinking ? leftSelect : left) // Nhấp nháy
+                        : left,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                )
+              : AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  decoration: BoxDecoration(
+                    color: currentPlayerNow == "O"
+                        ? (isBlinking ? rightSelect : right) // Nhấp nháy
+                        : right,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+          // Container(
+          //   decoration: BoxDecoration(
+          //     color: isLeftSide
+          //         ? currentPlayerNow == "X"
+          //             ? leftSelect
+          //             : left
+          //         : currentPlayerNow == "O"
+          //             ? rightSelect
+          //             : right,
+          //     borderRadius: BorderRadius.circular(25),
+          //   ),
+          // ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
