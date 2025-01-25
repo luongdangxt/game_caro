@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'AI_hard.dart';
@@ -67,6 +69,7 @@ class _GameBoardState extends State<GameBoard> {
   String winner = '';
   //String avatar = selectedIndex;
 
+  bool blink = false; // Thêm biến trạng thái nhấp nháy
   late AI_hard aiHard;
 
   @override
@@ -74,6 +77,17 @@ class _GameBoardState extends State<GameBoard> {
     super.initState();
     aiHard = AI_hard(board, boardSize, ai);
 
+
+    // Hiệu ứng nhấp nháy
+    Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (!mounted) {
+        timer.cancel();
+      } else {
+        setState(() {
+          blink = !blink;
+        });
+      }
+      
     // Kiểm tra trạng thái lượt đầu tiên từ SharedPreferences
     getTurnPreference().then((value) {
       setState(() {
@@ -920,11 +934,14 @@ class _GameBoardState extends State<GameBoard> {
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        Container(
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
                           width: 150.w,
                           height: 80.h,
                           decoration: BoxDecoration(
-                            color: isPlayerTurn ? leftSelect : left,
+                            color: isPlayerTurn
+                                ? (blink ? left : leftSelect)
+                                : left,
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
@@ -968,11 +985,14 @@ class _GameBoardState extends State<GameBoard> {
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        Container(
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
                           width: 150.w,
                           height: 80.h,
                           decoration: BoxDecoration(
-                            color: isPlayerTurn ? right : rightSelect,
+                            color: isPlayerTurn
+                                ? right
+                                : (blink ? right : rightSelect),
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
