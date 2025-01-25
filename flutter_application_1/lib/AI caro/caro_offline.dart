@@ -279,6 +279,7 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   void performAIMove() {
+    _aiMove();
     aiHard.aiMove(); // Logic AI di chuyển từ file AI_hard.dart
     setState(() {
       if (checkAIWin()) {
