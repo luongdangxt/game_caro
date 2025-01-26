@@ -48,7 +48,40 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    playRandomMusic();
     _startTransition();
+  }
+
+  Future<void> playRandomMusic() async {
+    final List<String> audioPaths = [
+      'assets/audio/stg1.mp3',
+      'assets/audio/stg2.mp3',
+      'assets/audio/stg3.mp3',
+      'assets/audio/stg4.mp3',
+      'assets/audio/stg5.mp3',
+      'assets/audio/stg6.mp3',
+      'assets/audio/stg7.mp3',
+      'assets/audio/str1.mp3',
+      'assets/audio/str2.mp3',
+    ];
+
+    // Chọn ngẫu nhiên một bài hát
+    final randomIndex = Random().nextInt(audioPaths.length);
+    final randomTrack = audioPaths[randomIndex];
+
+    // Dừng nhạc đang phát
+    await AudioManager().stop();
+
+    // Tải và phát nhạc mới
+    await AudioManager().load(randomTrack);
+    await AudioManager().play();
+
+    // Lắng nghe sự kiện khi bài hát kết thúc (chỉ nên đăng ký một lần)
+    AudioManager().audioPlayer.playerStateStream.listen((playerState) {
+      if (playerState.processingState == ProcessingState.completed) {
+        playRandomMusic(); // Phát bài tiếp theo
+      }
+    });
   }
 
   @override

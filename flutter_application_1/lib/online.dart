@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
+import 'package:flutter_application_1/UI/AudioService.dart';
 import 'package:flutter_application_1/request/apiRank.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:flutter_application_1/setup_sence.dart';
@@ -41,9 +43,40 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
 
   final TextEditingController roomIdController = TextEditingController();
 
+  Future<void> playRandomMusic() async {
+    final List<String> audioPaths = [
+      'assets/audio/stg1.mp3',
+      'assets/audio/stg2.mp3',
+      'assets/audio/stg3.mp3',
+      'assets/audio/stg4.mp3',
+      'assets/audio/stg5.mp3',
+      'assets/audio/stg6.mp3',
+      'assets/audio/stg7.mp3',
+    ];
+
+    // Chọn ngẫu nhiên một bài hát
+    final randomIndex = Random().nextInt(audioPaths.length);
+    final randomTrack = audioPaths[randomIndex];
+
+    // Dừng nhạc đang phát
+    await AudioManager().stop();
+
+    // Tải và phát nhạc mới
+    await AudioManager().load(randomTrack);
+    await AudioManager().play();
+
+    // Lắng nghe sự kiện khi bài hát kết thúc (chỉ nên đăng ký một lần)
+    AudioManager().audioPlayer.playerStateStream.listen((playerState) {
+      if (playerState.processingState == ProcessingState.completed) {
+        playRandomMusic(); // Phát bài tiếp theo
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    playRandomMusic();
     // Nếu cần hiệu ứng nhấp nháy, chạy Timer để thay đổi trạng thái liên tục
     Timer.periodic(const Duration(milliseconds: 500), (timer) {
       setState(() {
