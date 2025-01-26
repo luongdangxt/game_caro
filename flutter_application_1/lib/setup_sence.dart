@@ -23,11 +23,6 @@ import 'package:flutter/widgets.dart' as flutter;
 import 'package:rive/rive.dart' as rive;
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // Tải trước nhạc nền
-  final audioService = AudioService();
-  await audioService.preloadMusic('assets/audio/str1.wav');
-  audioService.playMusic();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     routes: {
@@ -58,9 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    final audioService = AudioService();
-    audioService.stopMusic(); // Dừng nhạc trước khi dispose nếu cần.
-    audioService.dispose();
     super.dispose();
   }
 

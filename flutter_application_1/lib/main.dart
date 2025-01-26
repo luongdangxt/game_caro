@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/UI/AudioService.dart';
 import 'package:flutter_application_1/setup_sence.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_application_1/UI/loading.dart';
@@ -34,6 +35,8 @@ class _loginScreenState extends State<loginScreen> {
 
   Future<void> _checkLoginStatus() async {
     final isLoggedIn = await saveLogin().checkLoggedin();
+    // Tải trước nhạc nền
+    await AudioManager().load('assets/audio/str1.mp3');
     if (isLoggedIn) {
       Navigator.pushReplacement(
         context,
@@ -41,6 +44,7 @@ class _loginScreenState extends State<loginScreen> {
           builder: (context) => const HomeScreen(),
         ),
       );
+      await AudioManager().play();
     }
   }
 
@@ -227,6 +231,7 @@ class _loginScreenState extends State<loginScreen> {
                                           ),
                                           (Route<dynamic> route) => false,
                                         );
+                                        await AudioManager().play();
                                       } else {
                                         Navigator.pushAndRemoveUntil(
                                           context,
