@@ -82,7 +82,7 @@ flutter:
     - assets/images/
     - assets/images/loading/
     - assets/audio/
-
+    - assets/data/
     #   - images/a_dot_ham.jpeg
     - assets/rive/
 

@@ -14,7 +14,7 @@ double gamma = 0.95; // Discount factor
 double epsilon = 1.0; // Exploration rate
 double epsilonDecay = 0.995;
 const double epsilonMin = 0.1;
-const String qTableFile = "q_table.json";
+const String qTableFile = "assets/data/q_table.json";
 
 // Helper functions
 List<List<int>> createBoard() {
