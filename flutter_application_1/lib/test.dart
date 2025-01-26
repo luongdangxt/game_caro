@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/request/apiRank.dart';
+import 'package:flutter_application_1/UI/AudioService.dart';
+import 'package:just_audio/just_audio.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,51 +12,33 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: TestAPI(),
+      debugShowCheckedModeBanner: false,
+      home: MusicPlayerScreen(),
     );
   }
 }
 
-class TestAPI extends StatefulWidget {
-  const TestAPI({super.key});
+class MusicPlayerScreen extends StatefulWidget {
+  const MusicPlayerScreen({super.key});
 
   @override
-  State<TestAPI> createState() => _TestAPIState();
+  _MusicPlayerScreenState createState() => _MusicPlayerScreenState();
 }
 
-class _TestAPIState extends State<TestAPI> {
-  String status = "Đang tải...";
-
-  @override
-  void initState() {
-    super.initState();
-    test();
-  }
-
-  Future<void> test() async {
-    try {
-      // Gọi API updateScore
-      await DataRank().updateScore('nnduong', 10);
-      setState(() {
-        status = "Cập nhật điểm thành công!";
-      });
-    } catch (e) {
-      setState(() {
-        status = "Lỗi khi cập nhật điểm: $e";
-      });
-    }
-  }
-
+class _MusicPlayerScreenState extends State<MusicPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Test API'),
+        title: const Text('Phát nhạc nền với just_audio'),
       ),
       body: Center(
-        child: Text(
-          status,
-          style: const TextStyle(fontSize: 18),
+        child: ElevatedButton(
+          onPressed: () async {
+            await AudioManager().load('assets/audio/str1.mp3');
+            await AudioManager().play();
+          },
+          child: const Text('Phát nhạc'),
         ),
       ),
     );

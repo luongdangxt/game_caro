@@ -20,9 +20,13 @@ import 'AI caro/caro_offline.dart';
 import 'package:flutter/widgets.dart' as flutter;
 import 'package:rive/rive.dart' as rive;
 
+<<<<<<< Updated upstream
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
+=======
+void main() async {
+>>>>>>> Stashed changes
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     routes: {
@@ -50,6 +54,14 @@ class _HomeScreenState extends State<HomeScreen> {
     _startTransition();
   }
 
+<<<<<<< Updated upstream
+=======
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+>>>>>>> Stashed changes
   // Hàm đặt lại trạng thái và bắt đầu chuyển đổi
   void _startTransition() {
     setState(() {
