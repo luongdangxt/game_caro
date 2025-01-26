@@ -1,40 +1,32 @@
 import 'package:just_audio/just_audio.dart';
 
-class AudioService {
-  static final AudioService _instance = AudioService._internal();
+class AudioManager {
+  static final AudioManager _instance = AudioManager._internal();
+  late AudioPlayer _audioPlayer;
 
-  factory AudioService() {
+  factory AudioManager() {
     return _instance;
   }
 
-  late final AudioPlayer _audioPlayer;
-
-  AudioService._internal() {
+  AudioManager._internal() {
     _audioPlayer = AudioPlayer();
   }
 
-  Future<void> preloadMusic(String assetPath) async {
-    try {
-      await _audioPlayer.setAsset(assetPath); // Tải trước file nhạc
-      _audioPlayer.setLoopMode(LoopMode.one);
-    } catch (e) {
-      print('Error preloading music: $e');
-    }
+  AudioPlayer get audioPlayer => _audioPlayer;
+
+  Future<void> load(String url) async {
+    await _audioPlayer.setAsset(url);
   }
 
-  void playMusic() {
-    _audioPlayer.play();
+  Future<void> play() async {
+    await _audioPlayer.play();
   }
 
-  Future<void> stopMusic() async {
-    try {
-      await _audioPlayer.stop();
-    } catch (e) {
-      print('Error stopping music: $e');
-    }
+  Future<void> pause() async {
+    await _audioPlayer.pause();
   }
 
-  Future<void> dispose() async {
-    await _audioPlayer.dispose();
+  Future<void> stop() async {
+    await _audioPlayer.stop();
   }
 }
