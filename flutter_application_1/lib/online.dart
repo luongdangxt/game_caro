@@ -88,13 +88,25 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             indexWin = List<int>.from(data['payload']); // Lưu các ô thắng
             if (mySymbol == 'X') {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
-                  () {
+                  () async {
+                try {
+                  await _audioPlayer.setAsset('assets/audio/win.wav');
+                  await _audioPlayer.play();
+                } catch (e) {
+                  print('Error playing audio: $e');
+                }
                 showVictoryDialog();
                 dataRank.updateScore(nameUser!, 10);
               });
             } else {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
-                  () {
+                  () async {
+                try {
+                  await _audioPlayer.setAsset('assets/audio/lose.wav');
+                  await _audioPlayer.play();
+                } catch (e) {
+                  print('Error playing audio: $e');
+                }
                 showLoseDialog();
               });
               dataRank.updateScore(nameUser!, -5);

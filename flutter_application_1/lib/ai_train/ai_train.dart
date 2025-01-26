@@ -115,9 +115,42 @@ void updateQTable(Map<String, Map<String, double>> qTable, String state,
   }
 
   qTable[state] ??= {};
-  qTable[state]![actionKey] =
-      currentQ + alpha * (reward + gamma * maxFutureQ - currentQ);
+  double updatedQ = currentQ + alpha * (reward + gamma * maxFutureQ - currentQ);
+  qTable[state]![actionKey] = updatedQ;
+
+  // Ghi thay đổi vào file JSON
+  _appendToQTableFile(state, actionKey, updatedQ);
 }
+
+void _appendToQTableFile(String state, String actionKey, double updatedQ) {
+  // Ghi thêm vào file dưới dạng dòng JSON
+  try {
+    final File file = File(qTableFile);
+    if (!file.existsSync()) {
+      file.createSync(recursive: true);
+      file.writeAsStringSync('{}'); // Khởi tạo tệp rỗng nếu chưa tồn tại
+    }
+
+    // Đọc nội dung hiện tại và ghi thay đổi
+    Map<String, dynamic> currentData =
+        jsonDecode(file.readAsStringSync()); // Đọc file
+    currentData[state] ??= {};
+    currentData[state][actionKey] = updatedQ;
+    file.writeAsStringSync(jsonEncode(currentData)); // Ghi đè với nội dung mới
+  } catch (e) {
+    print("Lỗi khi ghi vào tệp: $e");
+  }
+}
+
+// Map<String, Map<String, double>> loadQTable() {
+//   // Nếu không thể sử dụng tệp, trả về bảng rỗng
+//   return {};
+// }
+
+// void saveQTable(Map<String, Map<String, double>> qTable) {
+//   // Không lưu ra tệp, in ra console để debug
+//   print(jsonEncode(qTable));
+// }
 
 void saveQTable(Map<String, Map<String, double>> qTable) {
   File(qTableFile).writeAsStringSync(jsonEncode(qTable));

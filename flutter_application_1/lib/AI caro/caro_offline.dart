@@ -144,7 +144,23 @@ class _GameBoardState extends State<GameBoard> {
         }
 
         // Hiển thị container thông báo chiến thắng
-        Future.delayed(Duration(milliseconds: winningCells.length * 500), () {
+        Future.delayed(Duration(milliseconds: winningCells.length * 500),
+            () async {
+          if (winner == "Player") {
+            try {
+              await _audioPlayer.setAsset('assets/audio/win.wav');
+              await _audioPlayer.play();
+            } catch (e) {
+              print('Error playing audio: $e');
+            }
+          } else {
+            try {
+              await _audioPlayer.setAsset('assets/audio/lose.wav');
+              await _audioPlayer.play();
+            } catch (e) {
+              print('Error playing audio: $e');
+            }
+          }
           showVictoryDialog();
         });
       } else if (isBoardFull()) {
