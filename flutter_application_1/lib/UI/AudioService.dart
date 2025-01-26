@@ -29,6 +29,5 @@ class AudioManager {
 
   Future<void> stop() async {
     await _audioPlayer.stop();
-
   }
 }
