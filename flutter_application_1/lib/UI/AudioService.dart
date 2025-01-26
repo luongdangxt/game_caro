@@ -1,5 +1,6 @@
 import 'package:just_audio/just_audio.dart';
 
+
 class AudioManager {
   static final AudioManager _instance = AudioManager._internal();
   late AudioPlayer _audioPlayer;
