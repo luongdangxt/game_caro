@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/UI/loading.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:flutter_application_1/request/apiUser.dart';
+import 'package:flutter_application_1/setup_sence.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class registerScreen extends StatelessWidget {
-  registerScreen({super.key});
+class registerScreen extends StatefulWidget {
+  const registerScreen({super.key});
+
+  @override
+  State<registerScreen> createState() => _registerScreenState();
+}
+
+class _registerScreenState extends State<registerScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     bool isTablet = MediaQuery.of(context).size.width > 500;
@@ -269,7 +278,63 @@ class registerScreen extends StatelessWidget {
                                       SizedBox(height: 24.h),
                                       ElevatedButton(
                                         onPressed: () async {
-                                          // Xử lý sự kiện
+                                          final username =
+                                              usernameController.text;
+                                          final password =
+                                              passwordController.text;
+                                          final confirm =
+                                              confirmController.text;
+                                          // Xử lý đăng kí tại đây
+                                          if (username.isNotEmpty &&
+                                              password.isNotEmpty &&
+                                              password == confirm) {
+                                            try {
+                                              // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const AnimatedBackgroundLoader()),
+                                              );
+                                              final response = await DataUser()
+                                                  .register(username, password);
+                                              final prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              await prefs.setString(
+                                                  'username', username);
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const HomeScreen(),
+                                                ),
+                                              );
+                                            } catch (e) {
+                                              // Đặt isLoading thành true khi bắt đầu quá trình đăng nhập
+                                              Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const registerScreen(),
+                                                ),
+                                                (Route<dynamic> route) => false,
+                                              );
+                                              showError(
+                                                  'Username already exists!');
+                                            }
+                                          } else {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const loginScreen(),
+                                              ),
+                                              (Route<dynamic> route) => false,
+                                            );
+                                            showError(
+                                                'Please enter username, password \nand confirm passworf!');
+                                          }
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
@@ -322,5 +387,92 @@ class registerScreen extends StatelessWidget {
             ),
           );
         });
+  }
+
+  void showError(String err) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Không cho phép đóng khi nhấn ngoài dialog
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0), // Bo góc nếu cần
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: Material(
+              color: Colors.transparent, // Loại bỏ màu nền của AlertDialog
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Container 1: Hình ảnh và nội dung
+                  Container(
+                    height: 550,
+                    width: 350,
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/khung.png'),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 200,
+                        ),
+                        Text(
+                          err,
+                          style: const TextStyle(
+                              fontSize: 20, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Nút Thoát
+                            Container(
+                              height: 70,
+                              width: 150,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/btn.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Quay về màn hình chính
+                                },
+                                child: const Text(
+                                  'Close',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 0, 0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Nút Reset
+                          ],
+                        ),
+                        const SizedBox(height: 160),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
