@@ -185,13 +185,6 @@ class _GameBoardState extends State<GameBoard> {
             } catch (e) {
               print('Error playing audio: $e');
             }
-          } else {
-            try {
-              await _audioPlayer.setAsset('assets/audio/lose.wav');
-              await _audioPlayer.play();
-            } catch (e) {
-              print('Error playing audio: $e');
-            }
           }
           showVictoryDialog();
         });
@@ -333,6 +326,7 @@ class _GameBoardState extends State<GameBoard> {
       if (checkAIWin()) {
         gameEnded = true;
         winner = 'AI';
+
         for (int i = 0; i < winningCells.length; i++) {
           Future.delayed(Duration(milliseconds: i * 300), () {
             setState(() {
@@ -340,7 +334,16 @@ class _GameBoardState extends State<GameBoard> {
             });
           });
         }
-        Future.delayed(Duration(milliseconds: winningCells.length * 500), () {
+        Future.delayed(Duration(milliseconds: winningCells.length * 500),
+            () async {
+          if (winner == 'AI') {
+            try {
+              await _audioPlayer.setAsset('assets/audio/lose.wav');
+              await _audioPlayer.play();
+            } catch (e) {
+              print('Error playing audio: $e');
+            }
+          }
           showVictoryDialog();
         });
       } else if (isBoardFull()) {
