@@ -36,7 +36,7 @@ class _loginScreenState extends State<loginScreen> {
   Future<void> _checkLoginStatus() async {
     final isLoggedIn = await saveLogin().checkLoggedin();
     // Tải trước nhạc nền
-    await AudioManager().load('assets/audio/str1.mp3');
+    //await AudioManager().load('assets/audio/str1.mp3');
     if (isLoggedIn) {
       Navigator.pushReplacement(
         context,
@@ -44,7 +44,7 @@ class _loginScreenState extends State<loginScreen> {
           builder: (context) => const HomeScreen(),
         ),
       );
-      await AudioManager().play();
+      //await AudioManager().play();
     }
   }
 
