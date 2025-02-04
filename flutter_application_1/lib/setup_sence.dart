@@ -925,6 +925,43 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                       ),
                       const SizedBox(height: 15),
                       // Nội dung cuộn với danh sách phòng
+                      Expanded(
+                        child: Scrollbar(
+                          thumbVisibility: true, // Hiển thị thanh cuộn
+                          controller:
+                              scrollController, // Liên kết với ScrollController
+                          child: GridView.builder(
+                            controller:
+                                scrollController, // Liên kết ScrollController với GridView
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 1, vertical: 16),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: screenWidth > 500
+                                  ? 4
+                                  : 2, // Số container mỗi hàng
+                              crossAxisSpacing:
+                                  16, // Khoảng cách ngang giữa các container
+                              mainAxisSpacing:
+                                  16, // Khoảng cách dọc giữa các container
+                              childAspectRatio:
+                                  1, // Tỉ lệ width : height của mỗi container (1 là vuông)
+                            ),
+                            itemCount: 1, // Dựa trên số lượng phòng
+                            itemBuilder: (context, index) {
+                              return buildPlayerCard(
+                                context,
+                                index,
+                                'roomType',
+                                0,
+                                2,
+                                'UYS2504',
+                                'scaw',
+                              );
+                            },
+                          ),
+                        ),
+                      ),
 
                       const SizedBox(
                         height: 280,
