@@ -129,7 +129,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                 } catch (e) {
                   print('Error playing audio: $e');
                 }
-                showVictoryDialog();
+                showVictoryDialog('10');
                 dataRank.updateScore(nameUser!, 10);
               });
             } else {
@@ -141,7 +141,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                 } catch (e) {
                   print('Error playing audio: $e');
                 }
-                showLoseDialog();
+                showLoseDialog('-5');
               });
               dataRank.updateScore(nameUser!, -5);
             }
@@ -151,13 +151,13 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             if (mySymbol == 'O') {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
                   () {
-                showVictoryDialog();
+                showVictoryDialog('10');
                 dataRank.updateScore(nameUser!, 10);
               });
             } else {
               Future.delayed(Duration(milliseconds: winningCells.length * 5000),
                   () {
-                showLoseDialog();
+                showLoseDialog('-5');
                 dataRank.updateScore(nameUser!, -5);
               });
             }
@@ -167,14 +167,14 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
             if (mySymbol != data['symbol']) {
               Future.delayed(
                   Duration(milliseconds: winningCells.length * 33000), () {
-                showVictoryDialog();
+                showVictoryDialog('10');
                 dataRank.updateScore(nameUser!, 10);
-                dataRank.updateScore(dataPlayers[2], -5);
               });
             } else {
               Future.delayed(Duration(milliseconds: winningCells.length * 3000),
                   () {
-                showLoseDialog();
+                showLoseDialog('-5');
+                dataRank.updateScore(nameUser!, -5);
               });
             }
           }
@@ -1004,7 +1004,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     super.dispose();
   }
 
-  void showVictoryDialog() {
+  void showVictoryDialog(String Score) {
     showDialog(
       context: context,
       barrierDismissible: false, // Không cho phép đóng khi nhấn ngoài dialog
@@ -1036,16 +1036,27 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                       children: [
                         Image.asset(
                           'assets/images/win.png',
-                          height: 270,
-                          width: 270,
+                          height: 240,
+                          width: 240,
+                        ),
+                        Text(
+                          'Score: $Score',
+                          style: const TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // Nút Thoát
                             Container(
-                              height: 100,
-                              width: 250,
+                              height: 70,
+                              width: 125,
                               padding: const EdgeInsets.all(8.0),
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
@@ -1089,7 +1100,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     );
   }
 
-  void showLoseDialog() {
+  void showLoseDialog(String Score) {
     showDialog(
       context: context,
       barrierDismissible: false, // Không cho phép đóng khi nhấn ngoài dialog
@@ -1121,16 +1132,27 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                       children: [
                         Image.asset(
                           'assets/images/lose.png',
-                          height: 270,
-                          width: 270,
+                          height: 240,
+                          width: 240,
+                        ),
+                        Text(
+                          'Score: $Score',
+                          style: const TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // Nút Thoát
                             Container(
-                              height: 100,
-                              width: 250,
+                              height: 70,
+                              width: 125,
                               padding: const EdgeInsets.all(8.0),
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
