@@ -112,18 +112,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic>? rankUser;
   late Map<String, dynamic> userName;
   final List<Map<String, dynamic>> _rankList = [
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
+    {'username': 'tuansa', 'score': 125},
+    {'username': 'hahn', 'score': 75},
+    {'username': 'haics', 'score': 55},
+    {'username': 'anhdz', 'score': 40},
   ];
   final List<Map<String, dynamic>> list10 = [];
   Future<List<Room>> callLoadRooms() async {
@@ -501,11 +493,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: screenWidth > 500
                                 ? screenWidth * 0.1
                                 : screenWidth * 0.153,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage(isMuted
-                                    ? 'assets/images/btn_audio_off.png'
-                                    : 'assets/images/btn_audio.png'),
+                                image:
+                                    AssetImage('assets/images/btn_audio.png'),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -752,18 +743,10 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
   Map<String, dynamic>? rankUser;
   late Map<String, dynamic> userName;
   final List<Map<String, dynamic>> rankList = [
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
-    {'username': 'UserA', 'score': 10},
+    {'username': 'tuansa', 'score': 125},
+    {'username': 'hahn', 'score': 75},
+    {'username': 'haics', 'score': 55},
+    {'username': 'anhdz', 'score': 40},
   ];
   final List<Map<String, dynamic>> list10 = [];
   Future<List<Room>> callLoadRooms() async {
@@ -2071,6 +2054,7 @@ Widget buildPlayerCard(BuildContext context, int index, String roomType,
                                   children: [
                                     TextButton(
                                       onPressed: () async {
+                                        DataRoom().deleteRoom(roomId);
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
