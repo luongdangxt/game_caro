@@ -501,10 +501,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: screenWidth > 500
                                 ? screenWidth * 0.1
                                 : screenWidth * 0.153,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               image: DecorationImage(
-                                image:
-                                    AssetImage('assets/images/btn_audio.png'),
+                                image: AssetImage(isMuted
+                                    ? 'assets/images/btn_audio_off.png'
+                                    : 'assets/images/btn_audio.png'),
                                 fit: BoxFit.cover,
                               ),
                             ),

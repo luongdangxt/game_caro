@@ -650,10 +650,11 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                               child: Container(
                                 height: MediaQuery.of(context).size.width * 0.1,
                                 width: MediaQuery.of(context).size.width * 0.1,
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: AssetImage(
-                                        'assets/images/btn_audio.png'),
+                                    image: AssetImage(isMuted
+                                        ? 'assets/images/btn_audio_off.png'
+                                        : 'assets/images/btn_audio.png'),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
