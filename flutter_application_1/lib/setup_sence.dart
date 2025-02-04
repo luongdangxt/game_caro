@@ -1391,7 +1391,103 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                               BorderRadius.circular(4), // Bo tròn hai đầu
                         ),
                       ),
-                      const SizedBox(height: 15),
+                      Row(
+                        children: [
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: screenWidth > 500
+                                  ? screenHeight * 0.06
+                                  : screenHeight * 0.07,
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(
+                                    255, 148, 74, 21), // Màu nền nâu nhạt (tan)
+                                borderRadius:
+                                    BorderRadius.circular(20), // Bo góc khung
+                                border: Border.all(
+                                  color: const Color.fromARGB(
+                                      255, 136, 68, 19), // Màu viền nâu đậm
+                                  width: 2,
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20), // Thêm padding bên trong
+                              child: TextField(
+                                controller: idRoom,
+                                decoration: InputDecoration(
+                                  labelText: "ID Room",
+                                  labelStyle: TextStyle(
+                                    fontSize: screenWidth > 500
+                                        ? screenWidth * 0.03
+                                        : screenWidth * 0.03,
+                                    color: const Color.fromARGB(255, 255, 255,
+                                        255), // Màu chữ của label
+                                  ),
+                                  border: InputBorder
+                                      .none, // Loại bỏ viền mặc định của TextField
+                                ),
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 255, 255,
+                                      255), // Màu chữ của nội dung nhập
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                              alignment: Alignment.center,
+                              height: screenWidth > 500
+                                  ? screenHeight * 0.07
+                                  : screenHeight * 0.08,
+                              width: screenWidth > 500
+                                  ? screenWidth * 0.2
+                                  : screenWidth * 0.2,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/btn.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  final joinRoomId = idRoom.text;
+                                  if (joinRoomId.isNotEmpty) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CaroGameScreen(
+                                            roomId: joinRoomId,
+                                            avatar: widget.avatar,
+                                          ),
+                                        ));
+                                  }
+                                },
+                                child: Text(
+                                  "ENTER",
+                                  style: TextStyle(
+                                    fontSize: screenWidth > 500
+                                        ? screenWidth * 0.03
+                                        : screenWidth * 0.04,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color.fromARGB(
+                                        255, 255, 255, 255),
+                                  ),
+                                ),
+                              )),
+                          const SizedBox(width: 20),
+                        ],
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        height: 2, // Độ dày của đường kẻ
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16), // Thu hẹp chiều dài ở hai đầu
+                        decoration: BoxDecoration(
+                          color: Colors.grey, // Màu sắc của đường kẻ
+                          borderRadius:
+                              BorderRadius.circular(4), // Bo tròn hai đầu
+                        ),
+                      ),
                       // Nội dung cuộn với danh sách phòng
 
                       Expanded(
@@ -1445,8 +1541,8 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                     children: [
                       SizedBox(
                         height: screenWidth > 500
-                            ? screenHeight * 0.8
-                            : screenHeight * 0.75,
+                            ? screenHeight * 0.85
+                            : screenHeight * 0.82,
                       ),
                       Container(
                         alignment: Alignment.center,
@@ -1463,94 +1559,6 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                         width: screenWidth > 500
                             ? screenWidth * 0.9
                             : screenWidth * 0.9,
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: screenWidth > 500
-                                    ? screenHeight * 0.06
-                                    : screenHeight * 0.07,
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 148, 74,
-                                      21), // Màu nền nâu nhạt (tan)
-                                  borderRadius:
-                                      BorderRadius.circular(20), // Bo góc khung
-                                  border: Border.all(
-                                    color: const Color.fromARGB(
-                                        255, 136, 68, 19), // Màu viền nâu đậm
-                                    width: 2,
-                                  ),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20), // Thêm padding bên trong
-                                child: TextField(
-                                  controller: idRoom,
-                                  decoration: InputDecoration(
-                                    labelText: "ID Room",
-                                    labelStyle: TextStyle(
-                                      fontSize: screenWidth > 500
-                                          ? screenWidth * 0.03
-                                          : screenWidth * 0.03,
-                                      color: const Color.fromARGB(255, 255, 255,
-                                          255), // Màu chữ của label
-                                    ),
-                                    border: InputBorder
-                                        .none, // Loại bỏ viền mặc định của TextField
-                                  ),
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(255, 255, 255,
-                                        255), // Màu chữ của nội dung nhập
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                                alignment: Alignment.center,
-                                height: screenWidth > 500
-                                    ? screenHeight * 0.07
-                                    : screenHeight * 0.08,
-                                width: screenWidth > 500
-                                    ? screenWidth * 0.2
-                                    : screenWidth * 0.2,
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage('assets/images/btn.png'),
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                                child: TextButton(
-                                  onPressed: () {
-                                    final joinRoomId = idRoom.text;
-                                    if (joinRoomId.isNotEmpty) {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                CaroGameScreen(
-                                              roomId: joinRoomId,
-                                              avatar: widget.avatar,
-                                            ),
-                                          ));
-                                    }
-                                  },
-                                  child: Text(
-                                    "ENTER",
-                                    style: TextStyle(
-                                      fontSize: screenWidth > 500
-                                          ? screenWidth * 0.03
-                                          : screenWidth * 0.04,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color.fromARGB(
-                                          255, 255, 255, 255),
-                                    ),
-                                  ),
-                                ))
-                          ],
-                        ),
                       ),
                       Stack(
                         alignment: Alignment.center,
