@@ -735,9 +735,11 @@ class PlayOnlineScreen extends StatefulWidget {
 }
 
 class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
+  late Future<List<Room>> _futureRooms;
   @override
   void initState() {
     super.initState();
+    _futureRooms = callLoadRooms();
     addRanksToList();
   }
 
@@ -806,7 +808,7 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: FutureBuilder(
-        future: callLoadRooms(),
+        future: _futureRooms,
         builder: (context, snapshot) {
           // Kiểm tra trạng thái kết nối
           if (snapshot.connectionState == ConnectionState.waiting) {
