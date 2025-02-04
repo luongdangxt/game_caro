@@ -27,7 +27,7 @@ void main() async {
     debugShowCheckedModeBanner: false,
     routes: {
       '/login': (context) => const loginScreen(),
-      '/register': (context) => registerScreen(),
+      '/register': (context) => const registerScreen(),
     },
     home: const HomeScreen(),
   ));
@@ -481,9 +481,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {
-                            // Thêm hành động khi nhấn nút "audio"
-                            print("Button 'audio' pressed!");
+                          onTap: () async {
+                            if (isMuted) {
+                              // Nếu đang tắt, bật lại nhạc với âm lượng 1.0
+                              await AudioManager().audioPlayer.setVolume(1.0);
+                            } else {
+                              // Nếu đang bật, tắt nhạc (giảm âm lượng về 0)
+                              await AudioManager().audioPlayer.setVolume(0.0);
+                            }
+                            setState(() {
+                              isMuted = !isMuted; // Đảo trạng thái
+                            });
+                            print("Audio ${isMuted ? 'muted' : 'unmuted'}");
                           },
                           child: Container(
                             height: screenWidth > 500

@@ -13,7 +13,7 @@ void main() {
     debugShowCheckedModeBanner: false,
     routes: {
       '/login': (context) => const loginScreen(),
-      '/register': (context) => registerScreen(),
+      '/register': (context) => const registerScreen(),
     },
     home: const loginScreen(),
   ));
@@ -290,7 +290,8 @@ class _loginScreenState extends State<loginScreen> {
                                     Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => registerScreen(),
+                                        builder: (context) =>
+                                            const registerScreen(),
                                       ),
                                     );
                                   },
