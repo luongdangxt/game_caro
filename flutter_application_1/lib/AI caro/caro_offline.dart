@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/CaroGame.dart';
 import 'package:flutter_application_1/UI/AudioService.dart';
 import 'package:just_audio/just_audio.dart';
 import 'AI_hard.dart';
@@ -823,17 +824,32 @@ class _GameBoardState extends State<GameBoard> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.05,
                 ),
-                Container(
-                  height: screenWidth > 500
-                      ? screenHeight * 0.08
-                      : screenHeight * 0.065,
-                  width: screenWidth > 500
-                      ? screenWidth * 0.1
-                      : screenWidth * 0.153,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/btn_audio.png'),
-                      fit: BoxFit.fitHeight,
+                GestureDetector(
+                  onTap: () async {
+                    if (isMuted) {
+                      // Nếu đang tắt, bật lại nhạc với âm lượng 1.0
+                      await AudioManager().audioPlayer.setVolume(1.0);
+                    } else {
+                      // Nếu đang bật, tắt nhạc (giảm âm lượng về 0)
+                      await AudioManager().audioPlayer.setVolume(0.0);
+                    }
+                    setState(() {
+                      isMuted = !isMuted; // Đảo trạng thái
+                    });
+                    print("Audio ${isMuted ? 'muted' : 'unmuted'}");
+                  },
+                  child: Container(
+                    height: screenWidth > 500
+                        ? screenHeight * 0.08
+                        : screenHeight * 0.065,
+                    width: screenWidth > 500
+                        ? screenWidth * 0.1
+                        : screenWidth * 0.153,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/btn_audio.png'),
+                        fit: BoxFit.fitHeight,
+                      ),
                     ),
                   ),
                 ),

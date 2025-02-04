@@ -81,6 +81,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     Timer.periodic(const Duration(milliseconds: 500), (timer) {
       setState(() {
         isBlinking = !isBlinking; // Đổi trạng thái nhấp nháy
+        timer.cancel();
       });
     });
 
@@ -628,14 +629,33 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.05,
                             ),
-                            Container(
-                              height: MediaQuery.of(context).size.width * 0.1,
-                              width: MediaQuery.of(context).size.width * 0.1,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image:
-                                      AssetImage('assets/images/btn_audio.png'),
-                                  fit: BoxFit.cover,
+                            GestureDetector(
+                              onTap: () async {
+                                if (isMuted) {
+                                  // Nếu đang tắt, bật lại nhạc với âm lượng 1.0
+                                  await AudioManager()
+                                      .audioPlayer
+                                      .setVolume(1.0);
+                                } else {
+                                  // Nếu đang bật, tắt nhạc (giảm âm lượng về 0)
+                                  await AudioManager()
+                                      .audioPlayer
+                                      .setVolume(0.0);
+                                }
+                                setState(() {
+                                  isMuted = !isMuted; // Đảo trạng thái
+                                });
+                                print("Audio ${isMuted ? 'muted' : 'unmuted'}");
+                              },
+                              child: Container(
+                                height: MediaQuery.of(context).size.width * 0.1,
+                                width: MediaQuery.of(context).size.width * 0.1,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/btn_audio.png'),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
@@ -979,6 +999,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
   @override
   void dispose() {
     _audioPlayer.dispose();
+    timer?.cancel();
     channel.sink.close();
     super.dispose();
   }
