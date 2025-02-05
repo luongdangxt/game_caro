@@ -636,11 +636,13 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                                   await AudioManager()
                                       .audioPlayer
                                       .setVolume(1.0);
+                                  await AudioManager().audioPlayer.play();
                                 } else {
                                   // Nếu đang bật, tắt nhạc (giảm âm lượng về 0)
                                   await AudioManager()
                                       .audioPlayer
                                       .setVolume(0.0);
+                                  await AudioManager().audioPlayer.stop();
                                 }
                                 setState(() {
                                   isMuted = !isMuted; // Đảo trạng thái

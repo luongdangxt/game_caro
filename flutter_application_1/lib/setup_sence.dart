@@ -477,9 +477,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (isMuted) {
                               // Nếu đang tắt, bật lại nhạc với âm lượng 1.0
                               await AudioManager().audioPlayer.setVolume(1.0);
+                              await AudioManager().audioPlayer.play();
                             } else {
                               // Nếu đang bật, tắt nhạc (giảm âm lượng về 0)
                               await AudioManager().audioPlayer.setVolume(0.0);
+                              await AudioManager().audioPlayer.stop();
                             }
                             setState(() {
                               isMuted = !isMuted; // Đảo trạng thái
@@ -914,7 +916,106 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                       ),
 
                       // Hộp tiêu đề "Play Online"
+                      // Hộp tiêu đề "Play Online"
                       const SizedBox(height: 15),
+                      Container(
+                        alignment: Alignment.center,
+                        height: 2, // Độ dày của đường kẻ
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16), // Thu hẹp chiều dài ở hai đầu
+                        decoration: BoxDecoration(
+                          color: Colors.grey, // Màu sắc của đường kẻ
+                          borderRadius:
+                              BorderRadius.circular(4), // Bo tròn hai đầu
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: screenWidth > 500
+                                  ? screenHeight * 0.06
+                                  : screenHeight * 0.07,
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(
+                                    255, 148, 74, 21), // Màu nền nâu nhạt (tan)
+                                borderRadius:
+                                    BorderRadius.circular(20), // Bo góc khung
+                                border: Border.all(
+                                  color: const Color.fromARGB(
+                                      255, 136, 68, 19), // Màu viền nâu đậm
+                                  width: 2,
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20), // Thêm padding bên trong
+                              child: TextField(
+                                controller: idRoom,
+                                decoration: InputDecoration(
+                                  labelText: "ID Room",
+                                  labelStyle: TextStyle(
+                                    fontSize: screenWidth > 500
+                                        ? screenWidth * 0.03
+                                        : screenWidth * 0.03,
+                                    color: const Color.fromARGB(255, 255, 255,
+                                        255), // Màu chữ của label
+                                  ),
+                                  border: InputBorder
+                                      .none, // Loại bỏ viền mặc định của TextField
+                                ),
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 255, 255,
+                                      255), // Màu chữ của nội dung nhập
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                              alignment: Alignment.center,
+                              height: screenWidth > 500
+                                  ? screenHeight * 0.07
+                                  : screenHeight * 0.08,
+                              width: screenWidth > 500
+                                  ? screenWidth * 0.2
+                                  : screenWidth * 0.2,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/images/btn.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  final joinRoomId = idRoom.text;
+                                  if (joinRoomId.isNotEmpty) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CaroGameScreen(
+                                            roomId: joinRoomId,
+                                            avatar: widget.avatar,
+                                          ),
+                                        ));
+                                  }
+                                },
+                                child: Text(
+                                  "ENTER",
+                                  style: TextStyle(
+                                    fontSize: screenWidth > 500
+                                        ? screenWidth * 0.03
+                                        : screenWidth * 0.04,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color.fromARGB(
+                                        255, 255, 255, 255),
+                                  ),
+                                ),
+                              )),
+                          const SizedBox(width: 20),
+                        ],
+                      ),
+
                       Container(
                         alignment: Alignment.center,
                         height: 2, // Độ dày của đường kẻ
@@ -941,6 +1042,11 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                     right: 16,
                     child: Column(
                       children: [
+                        SizedBox(
+                          height: screenWidth > 500
+                              ? screenHeight * 0.85
+                              : screenHeight * 0.82,
+                        ),
                         Container(
                           alignment: Alignment.center,
                           height: 2, // Độ dày của đường kẻ
@@ -953,87 +1059,9 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: screenWidth > 500
-                              ? screenHeight * 0.05
-                              : screenHeight * 0.07,
                           width: screenWidth > 500
-                              ? screenWidth * 0.8
+                              ? screenWidth * 0.9
                               : screenWidth * 0.9,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color.fromARGB(255, 148, 74,
-                                        21), // Màu nền nâu nhạt (tan)
-                                    borderRadius: BorderRadius.circular(
-                                        20), // Bo góc khung
-                                    border: Border.all(
-                                      color: const Color.fromARGB(
-                                          255, 136, 68, 19), // Màu viền nâu đậm
-                                      width: 2,
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20), // Thêm padding bên trong
-                                  child: TextField(
-                                    controller: idRoom,
-                                    decoration: const InputDecoration(
-                                      labelText: "ID Room",
-                                      labelStyle: TextStyle(
-                                        color: Color.fromARGB(255, 255, 255,
-                                            255), // Màu chữ của label
-                                      ),
-                                      border: InputBorder
-                                          .none, // Loại bỏ viền mặc định của TextField
-                                    ),
-                                    style: const TextStyle(
-                                      color: Color.fromARGB(255, 255, 255,
-                                          255), // Màu chữ của nội dung nhập
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                  alignment: Alignment.center,
-                                  height: screenWidth > 500
-                                      ? screenHeight * 0.2
-                                      : screenHeight * 0.14,
-                                  width: screenWidth > 500
-                                      ? screenWidth * 0.15
-                                      : screenWidth * 0.2,
-                                  decoration: const BoxDecoration(
-                                    image: DecorationImage(
-                                      image:
-                                          AssetImage('assets/images/btn.png'),
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      final joinRoomId = idRoom.text;
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                CaroGameScreen(
-                                              roomId: joinRoomId,
-                                              avatar: widget.avatar,
-                                            ),
-                                          ));
-                                    },
-                                    child: const Text(
-                                      "ENTER",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                      ),
-                                    ),
-                                  ))
-                            ],
-                          ),
                         ),
                         Stack(
                           alignment: Alignment.center,
@@ -1041,10 +1069,10 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                             Container(
                                 alignment: Alignment.center,
                                 height: screenWidth > 500
-                                    ? screenHeight * 0.125
+                                    ? screenHeight * 0.1
                                     : screenHeight * 0.13,
                                 width: screenWidth > 500
-                                    ? screenWidth * 0.44
+                                    ? screenWidth * 0.4
                                     : screenWidth * 0.9,
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
@@ -1052,226 +1080,243 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                     fit: BoxFit.fitHeight,
                                   ),
                                 ),
-                                child: TextButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          alignment: Alignment.center,
-                                          backgroundColor: const Color.fromARGB(
-                                              0, 255, 255, 255),
-                                          content: Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.28,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.9,
-                                            decoration: const BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/images/khung.png'),
-                                                fit: BoxFit.fill,
+                                child: SizedBox(
+                                  height: screenWidth > 500
+                                      ? screenHeight * 0.1
+                                      : screenHeight * 0.11,
+                                  width: screenWidth > 500
+                                      ? screenWidth * 0.4
+                                      : screenWidth * 0.6,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            alignment: Alignment.center,
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    0, 255, 255, 255),
+                                            content: Container(
+                                              height: screenWidth > 500
+                                                  ? screenHeight * 0.22
+                                                  : screenHeight * 0.28,
+                                              width: screenWidth > 500
+                                                  ? screenWidth * 0.4
+                                                  : screenWidth * 0.9,
+                                              decoration: const BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/images/khung.png'),
+                                                  fit: BoxFit.fill,
+                                                ),
                                               ),
-                                            ),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal:
-                                                              32.0), // Thêm padding cho hai bên
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          // Hành động khi nhấn vào Container
-                                                          Navigator.pop(
-                                                              context);
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Padding(
+                                                        padding: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal:
+                                                                32.0), // Thêm padding cho hai bên
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            // Hành động khi nhấn vào Container
+                                                            Navigator.pop(
+                                                                context);
 
-                                                          // Hoặc điều hướng, logic khác ở đây
-                                                        },
-                                                        child: Container(
-                                                          height: 35,
-                                                          width: 70,
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            image:
-                                                                DecorationImage(
-                                                              image: AssetImage(
-                                                                  'assets/images/btn_back.png'),
-                                                              fit: BoxFit
-                                                                  .fitHeight,
+                                                            // Hoặc điều hướng, logic khác ở đây
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 70,
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              image:
+                                                                  DecorationImage(
+                                                                image: AssetImage(
+                                                                    'assets/images/btn_back.png'),
+                                                                fit: BoxFit
+                                                                    .fitHeight,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      "Choose type room",
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Color.fromARGB(
-                                                            255, 255, 255, 255),
+                                                    ],
+                                                  ),
+                                                  const Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        "Choose type room",
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              255,
+                                                              255),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.015,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () async {
-                                                        // Gọi API để tạo phòng và lấy roomId
-                                                        final newRoomId =
-                                                            await DataRoom()
-                                                                .createRoom(
-                                                          'roomName',
-                                                          'roomType',
-                                                          "test11@gmail.com",
-                                                          10,
-                                                        );
-
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                CaroGameScreen(
-                                                              roomId: newRoomId,
-                                                              avatar:
-                                                                  widget.avatar,
-                                                            ),
-                                                          ),
-                                                        ).then((result) async {
-                                                          if (result != null) {
-                                                            // Có dữ liệu trả về
-                                                          }
-                                                          // Xóa phòng sau khi quay lại từ CaroGameScreen
-                                                          final deleteResult =
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.015,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          // Gọi API để tạo phòng và lấy roomId
+                                                          final newRoomId =
                                                               await DataRoom()
-                                                                  .deleteRoom(
-                                                                      newRoomId);
-                                                          print(deleteResult);
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        height: 70,
-                                                        width: 100,
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                            image: AssetImage(
-                                                                'assets/images/btn.png'),
-                                                            fit: BoxFit.fill,
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          "Public",
-                                                          style: TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    255,
-                                                                    255,
-                                                                    255),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 30,
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        Navigator.push(
+                                                                  .createRoom(
+                                                            'roomName',
+                                                            'roomType',
+                                                            "test11@gmail.com",
+                                                            10,
+                                                          );
+
+                                                          Navigator.push(
                                                             context,
                                                             MaterialPageRoute(
                                                               builder: (context) =>
                                                                   CaroGameScreen(
                                                                 roomId:
-                                                                    privateIdRoom(),
+                                                                    newRoomId,
                                                                 avatar: widget
                                                                     .avatar,
                                                               ),
-                                                            ));
-                                                      },
-                                                      child: Container(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        height: 70,
-                                                        width: 100,
-                                                        decoration:
-                                                            const BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                            image: AssetImage(
-                                                                'assets/images/btn.png'),
-                                                            fit: BoxFit.fill,
+                                                            ),
+                                                          ).then(
+                                                              (result) async {
+                                                            if (result !=
+                                                                null) {
+                                                              // Có dữ liệu trả về
+                                                            }
+                                                            // Xóa phòng sau khi quay lại từ CaroGameScreen
+                                                            final deleteResult =
+                                                                await DataRoom()
+                                                                    .deleteRoom(
+                                                                        newRoomId);
+                                                            print(deleteResult);
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          height: 70,
+                                                          width: 100,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                              image: AssetImage(
+                                                                  'assets/images/btn.png'),
+                                                              fit: BoxFit.fill,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        child: const Text(
-                                                          "Private",
-                                                          style: TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    255,
-                                                                    255,
-                                                                    255),
+                                                          child: const Text(
+                                                            "Public",
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      255,
+                                                                      255,
+                                                                      255),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 40,
-                                                )
-                                              ],
+                                                      const SizedBox(
+                                                        width: 30,
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        CaroGameScreen(
+                                                                  roomId:
+                                                                      privateIdRoom(),
+                                                                  avatar: widget
+                                                                      .avatar,
+                                                                ),
+                                                              ));
+                                                        },
+                                                        child: Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          height: 70,
+                                                          width: 100,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                              image: AssetImage(
+                                                                  'assets/images/btn.png'),
+                                                              fit: BoxFit.fill,
+                                                            ),
+                                                          ),
+                                                          child: const Text(
+                                                            "Private",
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      255,
+                                                                      255,
+                                                                      255),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 40,
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Text(
-                                    "CREATE ROOM",
-                                    style: TextStyle(
-                                      fontSize: screenWidth > 500
-                                          ? screenWidth * 0.04
-                                          : screenWidth * 0.06,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color.fromARGB(
-                                          255, 255, 255, 255),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Text(
+                                      "CREATE ROOM",
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
+                                      ),
                                     ),
                                   ),
                                 )),
@@ -1577,218 +1622,229 @@ class _PlayOnlineScreenState extends State<PlayOnlineScreen> {
                                   fit: BoxFit.fitHeight,
                                 ),
                               ),
-                              child: TextButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        alignment: Alignment.center,
-                                        backgroundColor: const Color.fromARGB(
-                                            0, 255, 255, 255),
-                                        content: Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.28,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.9,
-                                          decoration: const BoxDecoration(
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/khung.png'),
-                                              fit: BoxFit.fill,
+                              child: SizedBox(
+                                height: screenWidth > 500
+                                    ? screenHeight * 0.1
+                                    : screenHeight * 0.11,
+                                width: screenWidth > 500
+                                    ? screenWidth * 0.4
+                                    : screenWidth * 0.6,
+                                child: TextButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          alignment: Alignment.center,
+                                          backgroundColor: const Color.fromARGB(
+                                              0, 255, 255, 255),
+                                          content: Container(
+                                            height: screenWidth > 500
+                                                ? screenHeight * 0.22
+                                                : screenHeight * 0.28,
+                                            width: screenWidth > 500
+                                                ? screenWidth * 0.4
+                                                : screenWidth * 0.9,
+                                            decoration: const BoxDecoration(
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    'assets/images/khung.png'),
+                                                fit: BoxFit.fill,
+                                              ),
                                             ),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal:
-                                                            32.0), // Thêm padding cho hai bên
-                                                    child: GestureDetector(
-                                                      onTap: () {
-                                                        // Hành động khi nhấn vào Container
-                                                        Navigator.pop(context);
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal:
+                                                              32.0), // Thêm padding cho hai bên
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          // Hành động khi nhấn vào Container
+                                                          Navigator.pop(
+                                                              context);
 
-                                                        // Hoặc điều hướng, logic khác ở đây
+                                                          // Hoặc điều hướng, logic khác ở đây
+                                                        },
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 70,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                              image: AssetImage(
+                                                                  'assets/images/btn_back.png'),
+                                                              fit: BoxFit
+                                                                  .fitHeight,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      "Choose type room",
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Color.fromARGB(
+                                                            255, 255, 255, 255),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.015,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () async {
+                                                        // Gọi API để tạo phòng và lấy roomId
+                                                        final newRoomId =
+                                                            await DataRoom()
+                                                                .createRoom(
+                                                          'roomName',
+                                                          'roomType',
+                                                          "test11@gmail.com",
+                                                          10,
+                                                        );
+
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                CaroGameScreen(
+                                                              roomId: newRoomId,
+                                                              avatar:
+                                                                  widget.avatar,
+                                                            ),
+                                                          ),
+                                                        ).then((result) async {
+                                                          if (result != null) {
+                                                            // Có dữ liệu trả về
+                                                          }
+                                                          // Xóa phòng sau khi quay lại từ CaroGameScreen
+                                                          final deleteResult =
+                                                              await DataRoom()
+                                                                  .deleteRoom(
+                                                                      newRoomId);
+                                                          print(deleteResult);
+                                                        });
                                                       },
                                                       child: Container(
-                                                        height: 35,
-                                                        width: 70,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        height: 70,
+                                                        width: 100,
                                                         decoration:
                                                             const BoxDecoration(
                                                           image:
                                                               DecorationImage(
                                                             image: AssetImage(
-                                                                'assets/images/btn_back.png'),
-                                                            fit: BoxFit
-                                                                .fitHeight,
+                                                                'assets/images/btn.png'),
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          "Public",
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    255,
+                                                                    255,
+                                                                    255),
                                                           ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "Choose type room",
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color.fromARGB(
-                                                          255, 255, 255, 255),
+                                                    const SizedBox(
+                                                      width: 30,
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.015,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () async {
-                                                      // Gọi API để tạo phòng và lấy roomId
-                                                      final newRoomId =
-                                                          await DataRoom()
-                                                              .createRoom(
-                                                        'roomName',
-                                                        'roomType',
-                                                        "test11@gmail.com",
-                                                        10,
-                                                      );
-
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              CaroGameScreen(
-                                                            roomId: newRoomId,
-                                                            avatar:
-                                                                widget.avatar,
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  CaroGameScreen(
+                                                                roomId:
+                                                                    privateIdRoom(),
+                                                                avatar: widget
+                                                                    .avatar,
+                                                              ),
+                                                            ));
+                                                      },
+                                                      child: Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        height: 70,
+                                                        width: 100,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          image:
+                                                              DecorationImage(
+                                                            image: AssetImage(
+                                                                'assets/images/btn.png'),
+                                                            fit: BoxFit.fill,
                                                           ),
                                                         ),
-                                                      ).then((result) async {
-                                                        if (result != null) {
-                                                          // Có dữ liệu trả về
-                                                        }
-                                                        // Xóa phòng sau khi quay lại từ CaroGameScreen
-                                                        final deleteResult =
-                                                            await DataRoom()
-                                                                .deleteRoom(
-                                                                    newRoomId);
-                                                        print(deleteResult);
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      height: 70,
-                                                      width: 100,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
-                                                              'assets/images/btn.png'),
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      ),
-                                                      child: const Text(
-                                                        "Public",
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
+                                                        child: const Text(
+                                                          "Private",
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    255,
+                                                                    255,
+                                                                    255),
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 30,
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                CaroGameScreen(
-                                                              roomId:
-                                                                  privateIdRoom(),
-                                                              avatar:
-                                                                  widget.avatar,
-                                                            ),
-                                                          ));
-                                                    },
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      height: 70,
-                                                      width: 100,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
-                                                              'assets/images/btn.png'),
-                                                          fit: BoxFit.fill,
-                                                        ),
-                                                      ),
-                                                      child: const Text(
-                                                        "Private",
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 40,
-                                              )
-                                            ],
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 40,
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: const Text(
-                                  "CREATE ROOM",
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 255, 255, 255),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: const Text(
+                                    "CREATE ROOM",
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    ),
                                   ),
                                 ),
                               )),

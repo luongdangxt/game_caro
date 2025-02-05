@@ -829,9 +829,11 @@ class _GameBoardState extends State<GameBoard> {
                     if (isMuted) {
                       // Nếu đang tắt, bật lại nhạc với âm lượng 1.0
                       await AudioManager().audioPlayer.setVolume(1.0);
+                      await AudioManager().audioPlayer.play();
                     } else {
                       // Nếu đang bật, tắt nhạc (giảm âm lượng về 0)
                       await AudioManager().audioPlayer.setVolume(0.0);
+                      await AudioManager().audioPlayer.stop();
                     }
                     setState(() {
                       isMuted = !isMuted; // Đảo trạng thái
