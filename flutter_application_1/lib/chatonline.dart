@@ -20,10 +20,11 @@ class ChatOnline extends StatelessWidget {
           height: MediaQuery.of(context).size.height * 0.8, // 80% màn hình
           child: Column(
             children: [
-              const SizedBox(height: 10),
+              const SizedBox(height: 130),
               Expanded(
                 child: Container(
                   width: 400,
+                  padding: const EdgeInsets.only(left: 10, right: 10),
                   decoration: BoxDecoration(
                     color: Colors.white
                         .withOpacity(0.0), // Làm nền trong suốt hoàn toàn
@@ -36,30 +37,33 @@ class ChatOnline extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Nhập tin nhắn...",
-                        filled: true,
-                        fillColor: Colors.white
-                            .withOpacity(0.0), // Làm trong suốt input
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none, // Bỏ viền
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "Nhập tin nhắn...",
+                          filled: true,
+                          fillColor: Colors.white
+                              .withOpacity(0.0), // Làm trong suốt input
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none, // Bỏ viền
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Gửi"),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Gửi"),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
             ],
