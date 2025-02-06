@@ -9,14 +9,49 @@ import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    routes: {
-      '/login': (context) => const loginScreen(),
-      '/register': (context) => const registerScreen(),
-    },
-    home: const loginScreen(),
-  ));
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      AudioManager().pause(); // Tạm dừng nhạc khi ứng dụng vào nền
+    } else if (state == AppLifecycleState.resumed) {
+      AudioManager().play(); // Phát tiếp khi quay lại ứng dụng
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      routes: {
+        '/login': (context) => const loginScreen(),
+        '/register': (context) => const registerScreen(),
+      },
+      home: const loginScreen(),
+    );
+  }
 }
 
 class loginScreen extends StatefulWidget {
