@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
 import 'package:flutter_application_1/UI/AudioService.dart';
-import 'package:flutter_application_1/chatonline.dart';
 import 'package:flutter_application_1/request/apiRank.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:flutter_application_1/setup_sence.dart';
@@ -35,6 +34,8 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
     Uri.parse('wss://carogame.onrender.com'),
   );
 
+  final StreamController<List<String>> _chatStreamController =
+      StreamController.broadcast();
   List<String> dataPlayers = []; // [username1, avatar1, username2, avatar2]
   List<String> cells = [];
   String statusMessage = 'ROOM ID ';
@@ -119,6 +120,7 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           _playerRight();
         } else if (data['type'] == 'chat') {
           chatsNow.add(data['message']);
+          _chatStreamController.add(List.from(chatsNow)); // Phát sự kiện mới
         } else if (data['type'] == 'game-over') {
           print('game-over');
           if (data['message'] == 'X wins!') {
@@ -932,32 +934,41 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                               .withOpacity(0.0), // Làm nền trong suốt
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(8),
-                          itemCount: chatsNow.length,
-                          itemBuilder: (context, index) {
-                            final chat = chatsNow[index];
-                            bool isMe = chat.split(':')[0].trim() == nameUser;
-                            return Align(
-                              alignment: isMe
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(vertical: 5),
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: isMe
-                                      ? Colors.blueAccent
-                                      : Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  chat,
-                                  style: TextStyle(
-                                      color:
-                                          isMe ? Colors.white : Colors.black),
-                                ),
-                              ),
+                        child: StreamBuilder<List<String>>(
+                          stream: _chatStreamController.stream,
+                          initialData: chatsNow,
+                          builder: (context, snapshot) {
+                            final messages = snapshot.data ?? [];
+                            return ListView.builder(
+                              itemCount: messages.length,
+                              itemBuilder: (context, index) {
+                                final chat = messages[index];
+                                bool isMe =
+                                    chat.split(':')[0].trim() == nameUser;
+                                return Align(
+                                  alignment: isMe
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                                  child: Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 5),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: isMe
+                                          ? Colors.blueAccent
+                                          : Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      chat.split(':')[1],
+                                      style: TextStyle(
+                                          color: isMe
+                                              ? Colors.white
+                                              : Colors.black),
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           },
                         ),
@@ -986,8 +997,10 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
                           const SizedBox(width: 10),
                           ElevatedButton(
                             onPressed: () {
-                              controller.text = "";
-                              chat(controller.text);
+                              if (controller.text.isNotEmpty) {
+                                chat('${nameUser!}:${controller.text}');
+                                controller.clear();
+                              }
                             },
                             child: const Text("Gửi"),
                           ),
