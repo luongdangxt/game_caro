@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class AI_hard {
   final List<List<String>> board;
   final int gridSize;
@@ -14,100 +16,115 @@ class AI_hard {
     }
 
     // 2. Nếu người chơi chuẩn bị thắng ngay (chuỗi 4), ưu tiên chặn trước tất cả
-    List<int>? opponentCriticalMove = _findSpecificChain_1("X", 4);
+    List<int>? opponentCriticalMove = _findSpecificChain("X", 4);
     if (opponentCriticalMove != null) {
       _makeMove(opponentCriticalMove[0], opponentCriticalMove[1]);
       return;
     }
+
+    // 3. Nếu đối thủ có chuỗi 3 liên tiếp mà hai đầu chưa bị chặn, ưu tiên chặn
     List<int>? unblockedChain3 = _findUnblockedChain("X", 3);
     if (unblockedChain3 != null) {
       _makeMove(unblockedChain3[0], unblockedChain3[1]);
       return;
     }
-// 6. Nếu AI có chuỗi dài hơn người chơi và không bị chặn, ưu tiên chiến thắng
-    List<int>? unblockedLongestChain = _findUnblockedLongestChain("O");
-    if (unblockedLongestChain != null) {
-      _makeMove(unblockedLongestChain[0], unblockedLongestChain[1]);
-      return;
-    }
 
-    // 3. Nếu AI có chuỗi có ô trống và không bị chặn, ưu tiên đánh mở rộng chuỗi
-    List<int>? expandOwnChainMove = _findChainWithEmptySlot("O");
-    if (expandOwnChainMove != null) {
-      _makeMove(expandOwnChainMove[0], expandOwnChainMove[1]);
-      return;
-    }
-
-    // **Điều kiện mới**: Nếu AI có chuỗi mà hai đầu không bị chặn, ưu tiên mở rộng
-    List<int>? openEndedChainMove = _findOpenEndedChain("O");
-    if (openEndedChainMove != null) {
-      _makeMove(openEndedChainMove[0], openEndedChainMove[1]);
-      return;
-    }
-
-    // 4. Nếu đối thủ có chuỗi 3 liên tiếp mà hai đầu chưa bị chặn, ưu tiên chặn
-    if (unblockedChain3 != null) {
-      _makeMove(unblockedChain3[0], unblockedChain3[1]);
-      return;
-    }
-
-    // 5. Nếu đối thủ có chuỗi 3 đã bị chặn 1 đầu, ưu tiên chặn
+    // 4. Nếu đối thủ có chuỗi 3 đã bị chặn 1 đầu, ưu tiên chặn
     List<int>? semiBlockedChain3 = _findSemiBlockedChain("X", 3);
     if (semiBlockedChain3 != null) {
       _makeMove(semiBlockedChain3[0], semiBlockedChain3[1]);
       return;
     }
 
-    // 6. Nếu AI có chuỗi dài hơn người chơi và không bị chặn, ưu tiên chiến thắng
-    List<int>? unblockedLongestChain_1 = _findUnblockedLongestChain("O");
-    if (unblockedLongestChain_1 != null) {
-      _makeMove(unblockedLongestChain_1[0], unblockedLongestChain_1[1]);
-      return;
-    }
-
-    // 7. Nếu đối thủ có chuỗi có ô trống ở giữa, ưu tiên chặn
+    // 5. Nếu đối thủ có chuỗi có ô trống ở giữa, ưu tiên chặn
     List<int>? chainWithGap = _findChainWithMiddleGap("X", 3);
     if (chainWithGap != null) {
       _makeMove(chainWithGap[0], chainWithGap[1]);
       return;
     }
 
-    // 8. Nếu đối thủ có chuỗi 3 nguy hiểm, chặn ngay
+    // 6. Nếu đối thủ có chuỗi 3 nguy hiểm, chặn ngay
     List<int>? blockingMove3 = _findSpecificChain("X", 3);
     if (blockingMove3 != null) {
       _makeMove(blockingMove3[0], blockingMove3[1]);
       return;
     }
+// 7. Nếu AI có chuỗi dài hơn đáng kể so với người chơi và không bị chặn, ưu tiên chiến thắng
+    List<int>? unblockedLongestAIChain = _findUnblockedLongestChain("O");
+    List<int>? unblockedLongestPlayerChain = _findUnblockedLongestChain("X");
 
-    // 9. Tạo chuỗi 3 tấn công nếu không có nguy cơ thua ngay
+    if (unblockedLongestAIChain != null &&
+        unblockedLongestPlayerChain != null) {
+      int aiChainLength = 0;
+      int playerChainLength = 0;
+
+      const directions = [
+        [0, 1], [1, 0], [1, 1], [1, -1] // Ngang, dọc, chéo chính, chéo phụ
+      ];
+
+      // Kiểm tra độ dài chuỗi lớn nhất của AI
+      for (var dir in directions) {
+        aiChainLength = max(
+            aiChainLength,
+            _evaluateChainLength(unblockedLongestAIChain[0],
+                unblockedLongestAIChain[1], dir, "O"));
+        playerChainLength = max(
+            playerChainLength,
+            _evaluateChainLength(unblockedLongestPlayerChain[0],
+                unblockedLongestPlayerChain[1], dir, "X"));
+      }
+
+      if (aiChainLength >= playerChainLength + 2) {
+        // Đảm bảo AI có chuỗi vượt trội
+        _makeMove(unblockedLongestAIChain[0], unblockedLongestAIChain[1]);
+        return;
+      }
+    }
+
+    // 7. Nếu AI có chuỗi dài hơn người chơi và không bị chặn, ưu tiên chiến thắng
+    List<int>? unblockedLongestChain = _findUnblockedLongestChain("O");
+    if (unblockedLongestChain != null) {
+      _makeMove(unblockedLongestChain[0], unblockedLongestChain[1]);
+      return;
+    }
+
+    // 8. Nếu AI có chuỗi có ô trống và không bị chặn, ưu tiên đánh mở rộng chuỗi
+    List<int>? expandOwnChainMove = _findChainWithEmptySlot("O");
+    if (expandOwnChainMove != null) {
+      _makeMove(expandOwnChainMove[0], expandOwnChainMove[1]);
+      return;
+    }
+
+    // 9. Nếu AI có chuỗi mà hai đầu không bị chặn, ưu tiên mở rộng
+    List<int>? openEndedChainMove = _findOpenEndedChain("O");
+    if (openEndedChainMove != null) {
+      _makeMove(openEndedChainMove[0], openEndedChainMove[1]);
+      return;
+    }
+
+    // 10. Tạo chuỗi 3 tấn công nếu không có nguy cơ thua ngay
     List<int>? offensiveMove = _findSpecificChain("O", 3);
     if (offensiveMove != null) {
       _makeMove(offensiveMove[0], offensiveMove[1]);
       return;
     }
 
-    // 10. Chặn chuỗi 2 nguy hiểm của người chơi
+    // 11. Chặn chuỗi 2 nguy hiểm của người chơi
     List<int>? blockingMove2 = _findSpecificChain("X", 2);
     if (blockingMove2 != null) {
       _makeMove(blockingMove2[0], blockingMove2[1]);
       return;
     }
-
-    // 11. Tìm nước đi chiến lược (trung tâm/góc)
+    List<int>? longestOpponentChain = _findLongestChain("X");
+    if (longestOpponentChain != null) {
+      _makeMove(longestOpponentChain[0], longestOpponentChain[1]);
+      return;
+    }
+    // 12. Tìm nước đi chiến lược (trung tâm/góc)
     List<int>? strategicMove = _findStrategicMove();
     if (strategicMove != null) {
       _makeMove(strategicMove[0], strategicMove[1]);
       return;
-    }
-
-    // 12. Tìm ô trống bất kỳ còn lại
-    for (int row = 0; row < gridSize; row++) {
-      for (int col = 0; col < gridSize; col++) {
-        if (board[row][col] == "") {
-          _makeMove(row, col);
-          return;
-        }
-      }
     }
   }
 
@@ -123,61 +140,59 @@ class AI_hard {
       [1, 1], // Chéo chính
       [1, -1] // Chéo phụ
     ];
-    List<int>? bestMove;
 
     for (int row = 0; row < gridSize; row++) {
       for (int col = 0; col < gridSize; col++) {
-        if (board[row][col] != player) continue;
+        if (board[row][col] == player) {
+          for (var direction in directions) {
+            int count = 1;
+            List<int>? firstEmpty;
+            List<int>? lastEmpty;
+            bool blockedStart = false, blockedEnd = false;
 
-        for (var direction in directions) {
-          int count = 1;
-          List<int>? firstEmpty;
-          List<int>? lastEmpty;
-          bool blockedStart = false, blockedEnd = false;
+            // Kiểm tra hướng chính
+            for (int i = 1; i < chainLength; i++) {
+              int newRow = row + direction[0] * i;
+              int newCol = col + direction[1] * i;
 
-          // Kiểm tra hướng tiến
-          for (int i = 1; i < chainLength; i++) {
-            int newRow = row + direction[0] * i;
-            int newCol = col + direction[1] * i;
-
-            if (_isValidCell(newRow, newCol)) {
-              if (board[newRow][newCol] == player) {
-                count++;
-              } else if (board[newRow][newCol] == "" && firstEmpty == null) {
-                firstEmpty = [newRow, newCol];
-              } else {
-                blockedEnd = true;
-                break;
+              if (_isValidCell(newRow, newCol)) {
+                if (board[newRow][newCol] == player) {
+                  count++;
+                } else if (board[newRow][newCol] == "" && firstEmpty == null) {
+                  firstEmpty = [newRow, newCol];
+                } else {
+                  blockedEnd = true;
+                  break;
+                }
               }
             }
-          }
 
-          // Kiểm tra hướng lùi
-          for (int i = 1; i < chainLength; i++) {
-            int newRow = row - direction[0] * i;
-            int newCol = col - direction[1] * i;
+            // Kiểm tra hướng ngược lại
+            for (int i = 1; i < chainLength; i++) {
+              int newRow = row - direction[0] * i;
+              int newCol = col - direction[1] * i;
 
-            if (_isValidCell(newRow, newCol)) {
-              if (board[newRow][newCol] == player) {
-                count++;
-              } else if (board[newRow][newCol] == "" && lastEmpty == null) {
-                lastEmpty = [newRow, newCol];
-              } else {
-                blockedStart = true;
-                break;
+              if (_isValidCell(newRow, newCol)) {
+                if (board[newRow][newCol] == player) {
+                  count++;
+                } else if (board[newRow][newCol] == "" && lastEmpty == null) {
+                  lastEmpty = [newRow, newCol];
+                } else {
+                  blockedStart = true;
+                  break;
+                }
               }
             }
-          }
 
-          // Kiểm tra điều kiện chuỗi không bị chặn hai đầu
-          if (count >= chainLength && (!blockedStart || !blockedEnd)) {
-            if (firstEmpty != null) return firstEmpty;
-            if (lastEmpty != null) return lastEmpty;
+            // Nếu phát hiện chuỗi có thể thắng, trả về nước chặn
+            if (count >= chainLength - 1 && (!blockedStart || !blockedEnd)) {
+              return firstEmpty ?? lastEmpty;
+            }
           }
         }
       }
     }
-    return bestMove;
+    return null;
   }
 
   List<int>? _findOpenEndedChain(String player) {
@@ -538,8 +553,10 @@ class AI_hard {
 
           for (var direction in directions) {
             int count = 1;
-            List<int>? emptyCell;
+            List<int>? firstEmpty;
+            List<int>? lastEmpty;
 
+            // Kiểm tra hướng chính
             for (int i = 1; i < chainLength; i++) {
               int newRow = row + direction[0] * i;
               int newCol = col + direction[1] * i;
@@ -547,15 +564,15 @@ class AI_hard {
               if (_isValidCell(newRow, newCol)) {
                 if (board[newRow][newCol] == player) {
                   count++;
-                } else if (board[newRow][newCol] == "" && emptyCell == null) {
-                  emptyCell = [newRow, newCol];
+                } else if (board[newRow][newCol] == "" && firstEmpty == null) {
+                  firstEmpty = [newRow, newCol];
                 } else {
                   break;
                 }
               }
             }
 
-            // Kiểm tra phía ngược lại của chuỗi
+            // Kiểm tra hướng ngược lại
             for (int i = 1; i < chainLength; i++) {
               int newRow = row - direction[0] * i;
               int newCol = col - direction[1] * i;
@@ -563,8 +580,8 @@ class AI_hard {
               if (_isValidCell(newRow, newCol)) {
                 if (board[newRow][newCol] == player) {
                   count++;
-                } else if (board[newRow][newCol] == "" && emptyCell == null) {
-                  emptyCell = [newRow, newCol];
+                } else if (board[newRow][newCol] == "" && lastEmpty == null) {
+                  lastEmpty = [newRow, newCol];
                 } else {
                   break;
                 }
@@ -572,8 +589,9 @@ class AI_hard {
             }
 
             // Nếu phát hiện chuỗi nguy hiểm, trả về nước đi chặn
-            if (count >= chainLength - 1 && emptyCell != null) {
-              return emptyCell;
+            if (count >= chainLength &&
+                (firstEmpty != null || lastEmpty != null)) {
+              return firstEmpty ?? lastEmpty;
             }
           }
         }
@@ -592,5 +610,53 @@ class AI_hard {
 
   bool _isValidCell(int row, int col) {
     return row >= 0 && row < gridSize && col >= 0 && col < gridSize;
+  }
+
+  List<int>? _findLongestChain(String player) {
+    int maxLength = 0;
+    List<int>? bestMove;
+
+    const directions = [
+      [0, 1], [1, 0], [1, 1], [1, -1] // Ngang, dọc, chéo chính, chéo phụ
+    ];
+
+    for (int row = 0; row < gridSize; row++) {
+      for (int col = 0; col < gridSize; col++) {
+        if (board[row][col] == "") {
+          // Ô trống có thể đi
+          for (var dir in directions) {
+            int length = _evaluateChainLength(row, col, dir, player);
+            if (length > maxLength) {
+              maxLength = length;
+              bestMove = [row, col];
+            }
+          }
+        }
+      }
+    }
+
+    return bestMove;
+  }
+
+  int _evaluateChainLength(
+      int row, int col, List<int> direction, String player) {
+    int count = 0;
+    count += _countInDirection(row, col, direction[0], direction[1], player);
+    count += _countInDirection(row, col, -direction[0], -direction[1], player);
+    return count;
+  }
+
+  int _countInDirection(int row, int col, int dRow, int dCol, String player) {
+    int r = row + dRow;
+    int c = col + dCol;
+    int count = 0;
+
+    while (_isValidCell(r, c) && board[r][c] == player) {
+      count++;
+      r += dRow;
+      c += dCol;
+    }
+
+    return count;
   }
 }
