@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 
-class ChatOnline extends StatelessWidget {
-  const ChatOnline({super.key});
+class ChatOnline extends StatefulWidget {
+  final List<String> chats; // Chứa danh sách tin nhắn
+  final String username; // Tên người dùng hiện tại
+
+  const ChatOnline({super.key, required this.chats, required this.username});
+
+  @override
+  State<ChatOnline> createState() => _ChatOnlineState();
+}
+
+class _ChatOnlineState extends State<ChatOnline> {
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +36,33 @@ class ChatOnline extends StatelessWidget {
                   width: 400,
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   decoration: BoxDecoration(
-                    color: Colors.white
-                        .withOpacity(0.0), // Làm nền trong suốt hoàn toàn
+                    color: Colors.white.withOpacity(0.0), // Làm nền trong suốt
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const SingleChildScrollView(
-                    padding: EdgeInsets.all(8),
-                    child: Text("Nội dung tin nhắn..."), // Nội dung chat
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: widget.chats.length,
+                    itemBuilder: (context, index) {
+                      final chat = widget.chats[index];
+                      bool isMe = chat.split(':')[0].trim() == widget.username;
+                      return Align(
+                        alignment:
+                            isMe ? Alignment.centerRight : Alignment.centerLeft,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isMe ? Colors.blueAccent : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            chat,
+                            style: TextStyle(
+                                color: isMe ? Colors.white : Colors.black),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -43,6 +73,7 @@ class ChatOnline extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextField(
+                        controller: _controller,
                         decoration: InputDecoration(
                           hintText: "Nhập tin nhắn...",
                           filled: true,
@@ -57,9 +88,7 @@ class ChatOnline extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () {},
                       child: const Text("Gửi"),
                     ),
                   ],
