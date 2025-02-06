@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/CaroGame.dart';
 import 'package:flutter_application_1/UI/AudioService.dart';
+import 'package:flutter_application_1/chatonline.dart';
 import 'package:flutter_application_1/request/apiRank.dart';
 import 'package:flutter_application_1/request/saveLogin.dart';
 import 'package:flutter_application_1/setup_sence.dart';
@@ -836,7 +837,40 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
 
                         SizedBox(
                           height: MediaQuery.of(context).size.height *
-                              0.15, // Chiều cao là 10% chiều cao màn hình
+                              0.03, // Chiều cao là 10% chiều cao màn hình
+                        ),
+                        Row(
+                          children: [
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Xử lý khi ấn nút
+                                  _showChatBox(context);
+                                },
+                                child: Container(
+                                  width: 50.w,
+                                  height: 50.h,
+                                  decoration: const BoxDecoration(
+                                    //shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image:
+                                          AssetImage('assets/images/chat.png'),
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height *
+                              0.05, // Chiều cao là 10% chiều cao màn hình
                         ),
                       ],
                     ),
@@ -847,6 +881,18 @@ class _CaroGameScreenState extends State<CaroGameScreen> {
           ),
         );
       },
+    );
+  }
+
+  void _showChatBox(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Cho phép điều chỉnh kích thước hộp thoại
+      backgroundColor: Colors.transparent, // Tránh bị cắt góc
+      builder: (context) => const Padding(
+        padding: EdgeInsets.all(20),
+        child: ChatOnline(),
+      ),
     );
   }
 
